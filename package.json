@@ -32,8 +32,9 @@
     "dev:harmony-hybrid": "npm run build:harmony-hybrid -- --watch"
   },
   "browserslist": [
-    "defaults and fully supports es6-module",
-    "maintained node versions"
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
   ],
   "author": "",
   "dependencies": {
