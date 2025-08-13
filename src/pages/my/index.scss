@@ -1,0 +1,64 @@
+//FunctionItem
+.function-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-inline: 37px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    position: relative;
+    background-color: #FFFFFF;
+    .href {
+        width: 30px;
+        height: 30px;
+    }
+    .label {
+        color: #3A3B3C;
+        font-size: 16px;
+    }
+    .arrow {
+        position: absolute;
+        right: 45px;
+    }
+}
+
+//My
+.my {
+    background: #F7F7F7;
+    height: 100vh;
+    .head {
+        // background-image: url('');
+        background-color: #018BBC;
+        padding: 42px;
+        .head-wrapper {
+            display: flex;
+            gap: 18px;
+            position: relative;
+            .profile {
+                width: 64px;
+                height: 64px;
+            }
+            .middle-box {
+                display: flex;
+                flex-direction: column;
+                gap: 9px;
+                .name {
+                    font-size: 21px;
+                    color: #FFFFFF;
+                    font-weight: 600;
+                    // font-family: PingFang SC, PingFang SC; ~pending: 字体家族问题
+                }
+                .brief {
+                    // font-family: FZFangSong-Z02S, FZFangSong-Z02S;
+                    font-size: 15px;
+                    color: #FFFFFF;
+                }
+            }
+            .arrow {
+                position: absolute;
+                width: 24px;
+                height: 24px;
+            }
+        }
+    }
+}
