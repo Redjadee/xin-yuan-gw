@@ -11,6 +11,7 @@ export default defineAppConfig({
     navigationBarTitleText: '信缘 · 广外',
   },
   tabBar: {
+    custom: true,
     list: [
        {
         pagePath: 'pages/alumnus/index',
@@ -32,6 +33,5 @@ export default defineAppConfig({
     ],
     color: '#9CC4E6',
     selectedColor: '#018BBC',
-    custom: true
   }
 })

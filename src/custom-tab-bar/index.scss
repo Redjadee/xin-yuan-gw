@@ -1,17 +1,28 @@
 .tab-bar {
     display: flex;
-    padding-bottom: 14px;
-    padding-top: 17px;
     border-radius: 25px 25px 0px 0px;
     box-shadow: 0px -5px 30px 1px rgba(0,0,0,0.16);
+    position: relative;
+    height: 80px;
+    align-items: center;
 }
 
 .tab-bar-item {
-    margin: auto;
+    position: absolute;
     .title {
         font-size: 15px;
     }
     .selected-title {
         font-size: 17px;
     }
+}
+.tab-bar-item0 {
+    left: 33px;
+}
+.tab-bar-item1 {
+    left: 50%;
+    transform: translateX(-50%);
+}
+.tab-bar-item2 {
+    right: 48px;
 }
