@@ -1,5 +1,6 @@
 import { View, Text, Image } from '@tarojs/components'
 import './index.scss'
+import profile from '../../../../temp/images/profile.jpg'
 
 interface MsgType {
   profileHref: string //头像图片链接

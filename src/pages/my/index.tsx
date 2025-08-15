@@ -1,8 +1,8 @@
 import { View, Text, Image } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { useLoad } from '@tarojs/taro'
 import './index.scss'
-
+import profile from '../../temp/images/profile.jpg'
 interface functionItemType {
   href: string
   label: string
@@ -28,10 +28,10 @@ function FunctionItem({ href, label, index, url }: functionItemType) {
 export default function My () {
   useLoad(() => {
     console.log('Page loaded.')
+
   })
-  
   // ~pending:未来用全局状态储存登陆状态，以下包括在内，获取即可
-  const profileHref = ''
+  const profileHref = profile
   const name = '信息人'
   const brief = '个人简介'
 
