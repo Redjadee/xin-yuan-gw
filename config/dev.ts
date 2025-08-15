@@ -5,6 +5,8 @@ export default {
     quiet: false,
     stats: true
   },
-  mini: {},
+  mini: {
+    debugReact: true
+  },
   h5: {}
 } satisfies UserConfigExport<'webpack5'>
