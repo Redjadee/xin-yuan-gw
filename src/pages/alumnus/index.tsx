@@ -7,9 +7,11 @@ export default function Alumnus () {
   useLoad(() => {
     console.log('Page loaded.')
   })
-  //head
+  
   const [ label, setLabel ] = useState('校友')
   const [ blockStyle, setBlockStyle ] = useState('block')
+  const [ filter, setFilter ] = useState(0)
+  //head
   const headLabels = ['校友', '组织']
   function switchLabel(nowLabel: string) {
     if(nowLabel === label){}
@@ -20,6 +22,16 @@ export default function Alumnus () {
   }
   //body
   const bodyLabels = ['推荐', '全部', '同城', '同行', '同院']
+  function switchFilter(nowFilter: number) {
+    if(nowFilter === filter){}
+    else {
+      setFilter(nowFilter)
+    }
+  }
+  function filterStyle(currentFilter: number) {
+    return currentFilter === filter ? 'filter filter-selected' : 'filter'
+  }
+
   return (
     <View className='alumnus'>
       <View className='head'>
@@ -36,10 +48,16 @@ export default function Alumnus () {
       </View>
       <View className='body'>
         <ScrollView scroll-x enable-flex className='scroll-tab'>
-        {bodyLabels.map((value, index) => (
-          <Text className='label' key={`alumnus-scroll-${index}`}>{value}</Text>
-        ))}
+          <View className='filter-box'>
+            {bodyLabels.map((value, index) => (
+            <Text 
+            className={filterStyle(index)}
+            onClick={() => switchFilter(index)}
+            key={`alumnus-scroll-${index}`}>{value}</Text>
+            ))}
+          </View>
         </ScrollView>
+        
       </View>
     </View>
   )
