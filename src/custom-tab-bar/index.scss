@@ -5,10 +5,24 @@
     position: relative;
     height: 80px;
     align-items: center;
+    z-index: 1000;
+    background-color: white;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.2s;
+}
+
+.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
 .tab-bar-item {
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     .title {
         font-size: 15px;
     }
@@ -16,13 +30,37 @@
         font-size: 17px;
     }
 }
+
+.tab-bar-img, .tab-bar-img-s {
+    margin-bottom: 7px;
+}
+
 .tab-bar-item0 {
     left: 33px;
+    .tab-bar-img, .tab-bar-img-s {
+        width: 23px;
+        height: 22.3px;
+    }
 }
+
 .tab-bar-item1 {
     left: 50%;
     transform: translateX(-50%);
+    z-index: 1000;
+    position: relative;
+    top: -28px;
+    overflow: visible;
+    .tab-bar-img, .tab-bar-img-s {
+        width: 76px;
+        height: 76px;
+        margin-bottom: 0;
+    }
 }
+
 .tab-bar-item2 {
-    right: 48px;
+    right: 48px;    
+    .tab-bar-img, .tab-bar-img-s {
+        width: 23px;
+        height: 24px;
+    }
 }

@@ -1,39 +1,212 @@
-import { View, Text, Input, Image, ScrollView, } from '@tarojs/components'
+import { View, Text, Input, Image, ScrollView } from '@tarojs/components'
 import { useLoad } from '@tarojs/taro'
+import { useMemo, useState, useRef } from 'react'
+
+import AlumnusItem from './components/AlumnusItem'
+import { itemType } from './components/AlumnusItem'
+import PopWindow from './components/PopWindow'
+import { setStatusType } from './components/AlumnusItem'
+
+import { useDispatch } from 'react-redux'
+import { switchVisible } from '@/store/tabBarSlice'
+
+import { alumnusImgBase } from '@/global/assets/images/imgBases'
+
 import './index.scss'
-import { useState } from 'react'
+
+
+const myInfor: itemType = {
+    profileHref: '',
+    name: '李华',
+    description: '我是信院2026届新生',
+    status: true,
+    url: '',
+    type: '校友',
+    alumnus: {
+      city: '广州',
+      domain: '前端开发',
+      department: '软工',
+      grade: '2026'
+    }
+  }
+
+const alumnusItemList: itemType[] = [
+  {
+    profileHref: '',
+    name: '李华',
+    description: '我是信院2026届新生',
+    status: false,
+    url: '',
+    type: '校友',
+    alumnus: {
+      city: '上海',
+      domain: '后端开发',
+      department: '软工',
+      grade: '2026'
+    }
+  },
+  {
+    profileHref: '',
+    name: '阿强',
+    description: '我是信院2025届学生',
+    status: false,
+    url: '',
+    type: '校友',
+    alumnus: {
+      city: '北京',
+      domain: '产品经理',
+      department: '软工',
+      grade: '2025'
+    }
+  },
+  {
+    profileHref: '',
+    name: '小红',
+    description: '我是信院2021届毕业生',
+    status: true,
+    url: '',
+    type: '校友',
+    alumnus: {
+      city: '佛山',
+      domain: '设计',
+      department: '计科',
+      grade: '2021'
+    }
+  },
+  {
+    profileHref: '',
+    name: '国强',
+    description: '我是信院2001届老生',
+    status: false,
+    url: '',
+    type: '校友',
+    alumnus: {
+      city: '广州',
+      domain: '前端开发',
+      department: '网安',
+      grade: '2001'
+    }
+  }
+]
+
+const organizationList: itemType[] = [
+  {
+    profileHref: '',
+    name: '广州校友会',
+    description: '广州校友会',
+    status: false,
+    url: '',
+    type: '组织',
+    organization: {
+      professional: false,
+      oversea: true,
+      centainArea: false,
+      industry: false,
+      habit: true
+    }
+  }
+]
+
+const alumnusFilter = ['推荐', '全部', '同城', '同行', '同院', '同级']
+const organizationFilter = ['推荐', '全部', '专业', '地方', '海外', '行业', '兴趣爱好']
 
 export default function Alumnus () {
   useLoad(() => {
     console.log('Page loaded.')
   })
-  
+  //head Hook
   const [ label, setLabel ] = useState('校友')
   const [ blockStyle, setBlockStyle ] = useState('block')
+  //body Hook
+  const [ bodyLabels, setBodyLabels] = useState(alumnusFilter)
   const [ filter, setFilter ] = useState(0)
+  //list Hook
+  const [ alumnuses, setAlumnuses] = useState(alumnusItemList)
+  const [ organizations, setOrganizations ] = useState(organizationList)
+  //popWindow Hook
+  const [ pop, setPop ] = useState(false)
+  const setStatusRef = useRef<setStatusType | null>(null)
+  const dispatch = useDispatch()
+  /**
+   * 控制弹窗打开
+   * @param setStatus 目前Item的关注状态的set函数
+   */
+  const openPop = (setStatus: setStatusType) => {
+    setStatusRef.current = setStatus
+    setPop(true)
+    dispatch(switchVisible())
+  }
+  /**
+   * 控制弹窗关闭
+   * @param type true：确认关闭；false：取消关闭
+   */
+  const closePop = (type: boolean) => {
+    type === true ? setStatusRef.current?.(false) : setStatusRef.current?.(true)
+    setStatusRef.current = null
+    setPop(false)
+    dispatch(switchVisible())
+  }
+
   //head
   const headLabels = ['校友', '组织']
+  
+  /**
+   * 头部开关滑动的实现
+   * @param nowLabel 目前active的标签
+   */
   function switchLabel(nowLabel: string) {
     if(nowLabel === label){}
     else {
       setLabel(nowLabel)
-      setBlockStyle(label === '校友' && nowLabel === '组织' ? 'block block-switch' :  'block')   
+      setBlockStyle(nowLabel === '组织' ? 'block block-switch' :  'block')   
+      setBodyLabels(nowLabel === '组织' ? organizationFilter : alumnusFilter)
+      setFilter(0) //恢复默认设置
     }
   }
-  //body
-  const bodyLabels = ['推荐', '全部', '同城', '同行', '同院']
+
+  //body 
+  /**
+   * 筛选器的更新
+   * @param nowFilter 目前active的筛选器
+   */
   function switchFilter(nowFilter: number) {
     if(nowFilter === filter){}
     else {
       setFilter(nowFilter)
     }
   }
+  /**
+   * 筛选器被选中状态的更新
+   * @param currentFilter 当前筛选器
+   * @returns 对应筛选器状态的样式
+   */
   function filterStyle(currentFilter: number) {
     return currentFilter === filter ? 'filter filter-selected' : 'filter'
   }
 
+  useMemo(() => {
+    switch(filter) {
+    case 0: ;break;
+    case 1: { setAlumnuses(alumnusItemList); setOrganizations(organizationList) }; break;
+    case 2: { setAlumnuses(alumnusItemList.filter(val => val.alumnus?.city === myInfor.alumnus?.city)); 
+              setOrganizations(organizationList.filter(val => val.organization?.professional === true));
+    }; break;
+    case 3: { setAlumnuses(alumnusItemList.filter(val => val.alumnus?.domain === myInfor.alumnus?.domain));
+              setOrganizations(organizationList.filter(val => val.organization?.centainArea === true));         
+     }; break;
+    case 4: { setAlumnuses(alumnusItemList.filter(val => val.alumnus?.department === myInfor.alumnus?.department));
+              setOrganizations(organizationList.filter(val => val.organization?.oversea === true));
+    }; break;
+    case 5: { setAlumnuses(alumnusItemList.filter(val => val.alumnus?.grade === myInfor.alumnus?.grade));
+              setOrganizations(organizationList.filter(val => val.organization?.industry === true));
+    }; break;
+    case 6: { setOrganizations(organizationList.filter(val => val.organization?.habit === true)) }; break;
+  }
+  }, [filter])
+  
   return (
     <View className='alumnus'>
+      {pop && <PopWindow closePop={closePop} />}
       <View className='head'>
           <View className='switch'>
             <View className={blockStyle}></View>
@@ -42,22 +215,31 @@ export default function Alumnus () {
             ))}
           </View>
           <View className='search-bar'>
-            <Image src='' className='icon' />
+            <Image src={`${alumnusImgBase}/search.png`} className='icon' />
             <Input type='text' placeholder={`搜索你的${label}`} placeholderTextColor='#CCC8C8' className='input' />
           </View>
       </View>
       <View className='body'>
         <ScrollView scroll-x enable-flex className='scroll-tab'>
-          <View className='filter-box'>
+          <View className={['filter-box', label !== '校友' && 'box2'].join(' ')}>
             {bodyLabels.map((value, index) => (
-            <Text 
+            <Text
             className={filterStyle(index)}
             onClick={() => switchFilter(index)}
             key={`alumnus-scroll-${index}`}>{value}</Text>
             ))}
           </View>
         </ScrollView>
-        
+        <View className='alumnus-box'>
+          { label === '校友' ? 
+            alumnuses.map((value, index) => (
+              <AlumnusItem key={`alumnus-item-${index}`} value={value} openPop={openPop} />
+            )) :
+            organizations.map((value, index) => (
+              <AlumnusItem key={`alumnus-item-o-${index}`} value={value} openPop={openPop} />
+            )) 
+          }
+        </View>
       </View>
     </View>
   )

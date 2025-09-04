@@ -1,0 +1,69 @@
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .title-box {
+    display: flex;
+    align-items: initial;
+    width: 315px;
+    margin-top: 55px;
+    margin-bottom: 50px;
+    .title {
+      font-size: 25px;
+      color: #262424;
+    }
+  }
+  .below-box {
+    font-size: 14px;
+    color: #CCC8C8;
+    width: 315px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 46px;
+    .remember-box {
+      display: flex;
+      align-items: center;
+      .checkbox {
+        width: 10px;
+        height: 10px;
+        margin: 5px;
+        border: 1px solid #CCC8C8;
+        border-radius: 2px 2px 2px 2px;
+        position: relative;
+        .checkbox-s {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+  .wechat {
+    margin-top: 11px;
+    margin-bottom: 22px;
+    background-color: #00C785;
+    .box {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .logo {
+      width: 30px;
+      height: 30px;
+    }
+  }
+  .register {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    font-size: 14px;
+    color: #666262;
+    .arrow {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

@@ -18,7 +18,9 @@
     }
     .arrow {
         position: absolute;
-        right: 45px;
+        right: 39px;
+        width: 19px;
+        height: 19px;
     }
 }
 
@@ -27,16 +29,27 @@
     background: #F7F7F7;
     height: 100vh;
     .head {
-        // background-image: url('');
-        background-color: #018BBC;
+        position: relative;
         padding: 42px;
+        padding-bottom: 47px;
+        padding-right: 0;
+        width: 100%;
+        .head-bgimg {
+            position: absolute;
+            z-index: 1;
+            bottom: 0;
+            left: -42px;
+            width: 100%;
+        }
         .head-wrapper {
             display: flex;
+            align-items: center;
             gap: 18px;
             position: relative;
+            z-index: 5;
             .profile {
-                width: 64px;
-                height: 64px;
+                width: 66px;
+                height: 66px;
                 border-radius: 50%;
             }
             .middle-box {
@@ -47,16 +60,15 @@
                     font-size: 21px;
                     color: #FFFFFF;
                     font-weight: 600;
-                    // font-family: PingFang SC, PingFang SC; ~pending: 字体家族问题
                 }
                 .brief {
-                    // font-family: FZFangSong-Z02S, FZFangSong-Z02S;
                     font-size: 15px;
                     color: #FFFFFF;
                 }
             }
             .arrow {
                 position: absolute;
+                right: 88px;
                 width: 24px;
                 height: 24px;
             }

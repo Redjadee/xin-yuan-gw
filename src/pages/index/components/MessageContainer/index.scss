@@ -2,12 +2,16 @@
 .msg {
     position: relative;
     display: flex;
+    align-items: center;
     padding: 22px;
+    padding-top: 21px;
+    padding-bottom: 15px;
     border-bottom: #ECECEC 1px solid;
     .profile {
         border-radius: 50%;
         width: 45px;
         height: 45px;
+        margin-right: 10px;
     }
     .middle-box {
         display: flex;
@@ -26,7 +30,11 @@
     .time {
         position: absolute;
         right: 23px;
+        top: 21px;
         color: #999999;
         font-size: 11px;
     }
+}
+.msg-container {
+    margin-top: -11px;
 }

@@ -24,7 +24,7 @@
                 width: 63px;
                 height: 26px;
                 left: 2px;
-                transition: all 0.5s;
+                transition: all 0.3s;
             }
             .block-switch {
                 left: 65px;
@@ -49,7 +49,8 @@
             width: 345px;
             height: 36px;
             .icon {
-                margin-inline: 14px;
+                margin-left: 14px;
+                margin-right: 13px;
                 width: 13px;
                 height: 13px;
             }
@@ -62,13 +63,13 @@
         .scroll-tab {
             height: 41px;
             background-color: rgb(1, 139, 188, 0.2);
-            
             .filter-box {
                 height: 100%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 44px;
+                width: 120%;
                 .filter {
                     font-size: 16px;
                     color: #68BAD7;
@@ -77,6 +78,9 @@
                     color: #018BBC;
                     font-size: 17px;
                 }
+            }
+            .box2 {
+                width: 150%;
             }
         }
     }

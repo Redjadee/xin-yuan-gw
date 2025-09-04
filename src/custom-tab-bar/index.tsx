@@ -1,15 +1,18 @@
 import { Component } from "react"
 import Taro from "@tarojs/taro"
-import { CoverView, CoverImage } from '@tarojs/components'
+import { View, Image } from '@tarojs/components'
 
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '@/store'
 import { setTabBar } from "@/store/tabBarSlice"
 
 import './index.scss'
+
 // 创建映射函数
 const mapStateToProps = (state: RootState) => ({
   tabBarValue: state.tabBar.value,
+  tabBarVisible: state.tabBar.visible,
+  loginStatus: state.auth.isLogged
 })
 
 // 创建连接器
@@ -27,46 +30,68 @@ class Index extends Component<PropsFromRedux> {
             {
                 pagePath: 'pages/alumnus/index',
                 text: '校友组织',
-                iconPath: '',
-                selectedIconPath: ''
+                iconPath: '../global/assets/images/tab-bar/alumnus.png',
+                selectedIconPath: '../global/assets/images/tab-bar/alumnus-s.png'
             },
             {
                 pagePath: 'pages/index/index',
                 text: '首页',
-                iconPath: '',
+                iconPath: '../global/assets/images/tab-bar/tab-logo2.png',
+                selectedIconPath: '../global/assets/images/tab-bar/tab-logo2.png'
             },
             {
                 pagePath: 'pages/my/index',
                 text: '我的',
-                iconPath: '',
-                selectedIconPath: ''
+                iconPath: '../global/assets/images/tab-bar/my.png',
+                selectedIconPath: '../global/assets/images/tab-bar/my-s.png'
             }
         ],
     }
+    /**
+     * 自定义实现tabbar的选中
+     * 
+     * 如果选定索引不变，不做任何操作
+     * 
+     * 如果改变，则检查登录状态，如果未登录，统一跳转登陆页面；如果登录，正常切换tab
+     * 
+     * @param index 被点击tab对应索引
+     * @param url 被点击tab对应url
+     */
     switchTab(index: number, url: string) {
-        Taro.switchTab({ url: `/${url}` }) 
-        this.props.dispatch(setTabBar(index))  
+        if (index === this.props.tabBarValue) {}
+        else {
+            if(!this.props.loginStatus) {
+                Taro.reLaunch({
+                    url: '/loginPkg/pages/login/index'
+                })
+            } else {
+                Taro.switchTab({ url: `/${url}` }) 
+                this.props.dispatch(setTabBar(index)) 
+            }
+        }
     }
 
     render() {
         const { list, selected, color, selectedColor } = this.state
         return (
-         <CoverView className="tab-bar">
+         <View className={["tab-bar", !this.props.tabBarVisible && `hidden`].join(' ')}>
             {list.map((item, index) => {
                 return (
-                    <CoverView 
+                    <View 
                         key={index} 
                         className={['tab-bar-item', `tab-bar-item${index}`].join(' ')}
                         onClick={this.switchTab.bind(this, index, item.pagePath)}>
-                    {/* <CoverImage src={selected === index ? item.selectedIconPath : item.iconPath} /> */}
-                    <CoverView 
+                    <Image 
+                        src={selected === index ? item.selectedIconPath : item.iconPath} 
+                        className={ selected === index ? "tab-bar-img-s" : "tab-bar-img" } />
+                    <View 
                         style={{ color: selected === index ? selectedColor : color }}
                         className={selected === index ? 'selected-title' : 'title' }
-                    >{item.text}</CoverView>
-                    </CoverView>
+                    >{item.text}</View>
+                    </View>
                 )
             })}
-         </CoverView>   
+         </View>   
         )
     }
 }

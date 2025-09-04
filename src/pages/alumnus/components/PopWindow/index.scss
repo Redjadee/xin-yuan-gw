@@ -1,0 +1,50 @@
+.pop-window-bg {
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  position: fixed;
+  
+  .pop-window {
+    border-radius: 25px 25px 25px 25px;
+    border: 1px solid #707070;
+    background: #F8F8F8;
+    width: 280px;
+    height: 130px;
+    z-index: 1000;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    top: 50%;
+    .upper-box {
+      height: 73px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: #ECECEC 1px solid;
+      .confirm {
+        font-size: 19px;
+        color: #000000;
+        -webkit-text-stroke: 1px #000000;
+      }
+    }
+    .under-box {
+      font-size: 18px;
+      height: 56px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .yes {
+        color: #000000;
+        border-right: #ECECEC 1px solid;
+        padding-right: 30px;
+        padding-left: 30px;
+      }
+      .no {
+        color: #018BBC;
+        padding-left: 49px;
+        padding-right: 50px;
+      }
+    }
+  }
+}

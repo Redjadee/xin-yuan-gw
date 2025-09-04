@@ -1,0 +1,61 @@
+.alumnus-item {
+  display: flex;
+  align-items: center;
+  height: 76px;
+  .profile {
+    margin-left: 15px;
+    width: 45px;
+    height: 45px;
+  }
+  .border-box {
+    border-bottom: #ECECEC 1px solid;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    width: 303px;
+    margin-left: 12px;
+  }
+  .middle-box {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    .name {
+      font-size: 15px;
+      color: #08090A;
+    }
+    .description {
+      font-size: 12px;
+      color: #999999;
+    }
+  }
+  .button {
+    border-radius: 14px 14px 14px 14px;
+    border: 1px solid #018BBC;
+    width: 60px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    .text {
+      font-size: 12px;
+      color: #018BBC;
+    }
+    .add-box {
+      display: flex;
+      align-items: center;
+      gap: 3.5px;
+      .add {
+        height: 9.5px;
+        width: 9.5px;
+      }
+    }
+  }
+  .selected {
+    border: 1px solid #ECECEC;
+    .text {
+      color: #999999;
+    }
+  }
+}
