@@ -1,0 +1,12 @@
+.allview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .search {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+  .acti-item-border {
+    border-bottom: 1px solid #ECECEC;
+  }
+}

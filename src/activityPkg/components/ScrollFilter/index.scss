@@ -1,0 +1,20 @@
+.scroll-tab {
+  height: 41px;
+  background-color: rgb(1, 139, 188, 0.2);
+  .filter-box {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 62px;
+    width: 100%;
+    .filter {
+      font-size: 16px;
+      color: #68BAD7;
+    }
+    .filter-selected {
+      color: #018BBC;
+      font-size: 17px;
+    }
+  }
+}

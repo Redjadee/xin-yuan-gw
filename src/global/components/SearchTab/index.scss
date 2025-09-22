@@ -1,0 +1,18 @@
+.search-bar {
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.05);
+  border-radius: 5px 5px 5px 5px;
+  border: 1px solid #ECECEC;
+  width: 345px;
+  height: 36px;
+  .icon {
+    margin-left: 14px;
+    margin-right: 13px;
+    width: 13px;
+    height: 13px;
+  }
+  .input {
+    width: 290px;
+  }
+}

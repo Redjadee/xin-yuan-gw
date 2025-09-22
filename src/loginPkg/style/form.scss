@@ -9,6 +9,19 @@
   border-bottom: #F0F0F0 1px solid;
 }
 
+.complex-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  .label {
+    position: absolute;
+    right: 0;
+    z-index: 3;
+    font-size: 14px;
+    color: #CCC8C8;
+  }
+}
+
 .button {
   width: 315px;
   height: 45px;

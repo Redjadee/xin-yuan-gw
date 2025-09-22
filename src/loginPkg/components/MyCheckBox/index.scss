@@ -1,0 +1,19 @@
+.box {
+  display: flex;
+  align-items: center;
+  .checkbox {
+    width: 10px;
+    height: 10px;
+    margin: 5px;
+    border: 1px solid #CCC8C8;
+    border-radius: 2px 2px 2px 2px;
+    position: relative;
+    .checkbox-s {
+      position: absolute;
+      bottom: -0.1px;
+      left: -0.1px;
+      width: 120%;
+      height: 120%;
+    }
+  }
+}

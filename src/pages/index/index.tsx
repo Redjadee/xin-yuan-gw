@@ -1,35 +1,14 @@
 import { View, Text, Image, Swiper, SwiperItem } from '@tarojs/components'
 import { useLoad } from '@tarojs/taro'
-import MessageContainer from './components/MessageContainer/MessageContainer'
-
+import MessageContainer from './components/MessageContainer'
+import Head from './components/Head'
 import { activityType } from './initData'
 import { swiperActivities } from './initData'
-
 import { homeImgBase } from '@/global/assets/images/imgBases'
+import { MsgType } from "@/pages/index/components/MessageContainer"
+import { testMsg } from "@/pages/index/initData"
 
 import './index.scss'
-
-interface HeadType {
-  type: '热门活动' | '我的消息'
-}
-
-
-
-function Head({ type }: HeadType) {
-  type === '热门活动' ? 1 : 2 //~pending: 路由设置
-
-  return (
-    <View className='head'>
-      <Text className='title'>{type}</Text>
-      <View className='all-button' onClick={() => {}}>
-        <Text>全部</Text>
-        <Image src={`${homeImgBase}/headArrow.png`} className='arrow' />
-      </View>
-    </View>
-  )
-}
-//
-
 
 function HotActivities() {
   const activityList: activityType[] = swiperActivities //~pending: 请求数据
@@ -38,7 +17,7 @@ function HotActivities() {
       {activityList.map((value, index) => (
         <SwiperItem key={`home-hotact-swiper${index}`} className='swiper-item'>
           <Image src={value.imgHref} className='img' />
-          <Image src={`${homeImgBase}/actiMengBan`} className='mengban' />
+          <Image src={`${homeImgBase}/actiMengBan.png`} className='mengban' />
           <View className='label-box'>
             <Text className='name'>{value.name}</Text>
             <Text className='time' >{value.time}</Text>
@@ -51,11 +30,11 @@ function HotActivities() {
 //
 
 
-export default function Index () {
+export default function Index() {
   useLoad(() => {
     console.log('Page loaded.')
   })
-
+  const dataList: MsgType[] = testMsg
   return (
     <View className='index'>
       <View className='title-img-box'>
@@ -66,12 +45,12 @@ export default function Index () {
         </View>
       </View>
       <View className='hot-activities'>
-        <Head type={'热门活动'} />
+        <Head type={'热门活动'} applyon='index' />
         <HotActivities />
       </View>
       <View className='my-messages'>
-        <Head type={'我的消息'} />
-        <MessageContainer />
+        <Head type={'我的消息'} applyon='index' />
+        <MessageContainer dataList={dataList} />
       </View>
     </View>
   )

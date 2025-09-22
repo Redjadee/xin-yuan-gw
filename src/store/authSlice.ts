@@ -3,19 +3,18 @@
  */
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit"
-import { userInforType } from "../../types/authType"
 
 interface authType {
   isLogged: boolean
-  user: userInforType | null
+  userId: string | null 
   token: string | null
   isLoading: boolean
-  error: string | null
+  error: any | null
 }
 
 const initialState: authType = {
   isLogged: false,
-  user: null,
+  userId: null,
   token: null,
   isLoading: false,
   error: null
@@ -31,23 +30,23 @@ export const authSlice = createSlice({
     },
     loginSuccess(
       state,
-      action: PayloadAction<{ user: userInforType, token: string }>
+      action: PayloadAction<{ userId: string, token: string }>
     ) {
       state.isLogged = true
-      state.user = action.payload.user
+      state.userId = action.payload.userId
       state.token = action.payload.token
       state.isLoading = false
     },
-    loginFailure(state, action: PayloadAction<string>) {
+    loginFailure(state, action: PayloadAction<any>) {
       state.isLogged = false
-      state.user = null
+      state.userId = null
       state.token = null
       state.isLoading = false
       state.error = action.payload
     },
     logout(state) {
       state.isLogged = false
-      state.user = null
+      state.userId = null
       state.token = null
       state.error = null
     }

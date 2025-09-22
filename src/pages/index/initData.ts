@@ -1,4 +1,5 @@
 import { profile, homeImgBase } from '@/global/assets/images/imgBases'
+import { MsgType } from './components/MessageContainer'
 
 export interface activityType {
   imgHref: string
@@ -25,13 +26,6 @@ export const swiperActivities: activityType[] = [
 ]
 //
 
-
-export interface MsgType {
-  profileHref: string //头像图片链接
-  name: string
-  content: string
-  time: string //~pending: 类型暂定
-}
 
 export const testMsg: MsgType[] = [
   {

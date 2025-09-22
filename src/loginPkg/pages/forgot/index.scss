@@ -1,0 +1,15 @@
+.forgot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .form {
+    width: 315px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -15px;
+    .forgot-button {
+      margin-top: 25px;
+    }
+  }
+}

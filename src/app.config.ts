@@ -40,7 +40,12 @@ export default defineAppConfig({
     { root: "loginPkg/", pages: [
       "pages/login/index",
       'pages/register/index',
-      'pages/forgot/index'
-    ] }
+      'pages/forgot/index',
+      'pages/reset/index'
+    ]},
+    { root: "activityPkg/", pages: [
+      'pages/allview/index',
+      'pages/detail/index',
+    ]}
   ]
 });

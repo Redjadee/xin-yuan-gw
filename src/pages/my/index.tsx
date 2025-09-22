@@ -1,32 +1,10 @@
 import { View, Text, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useLoad } from '@tarojs/taro'
-
+import FunctionItem from './components/FunctionItem'
 import { myImgBase } from '@/global/assets/images/imgBases'
 
 import './index.scss'
-
-interface functionItemType {
-  href: string
-  label: string
-  index: number
-  url: string
-}
-function FunctionItem({ href, label, index, url }: functionItemType) {
-  //~pending: 确认路由正常
-  return (
-    <View 
-      onClick={() => Taro.navigateTo({ url })} 
-      className='function-item'
-      style={index === 1 ? {marginBottom: 6} : {}}
-      key={`function-item-${index}`}>
-      <Image className='href' src={href} />
-      <Text className='label' >{label}</Text>
-      <Image src={`${myImgBase}/itemArrow.png`} className='arrow'/>
-    </View>
-  )
-}
-
 
 export default function My () {
   useLoad(() => {
@@ -54,7 +32,7 @@ export default function My () {
     {
       href: `${myImgBase}/item3.png`,
       label: '参与活动',
-      url: ''
+      url: '/activityPkg/pages/allview/index?type=1'
     },
     {
       href: `${myImgBase}/item4.png`,
