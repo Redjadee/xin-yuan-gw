@@ -1,3 +1,4 @@
+import axios, { CancelToken } from "axios"
 import { http } from "../request"
 
 export type actiType = {
@@ -15,10 +16,8 @@ export type actiType = {
     coverurl: string
     description: string
 
-    isfeatured?: boolean //是否推荐 0-否 1-是
-    maxparticipants?: number //0-无限制
-    registrationdeadline: string //报名截止时间
-    status?: number //0-草稿 1-已发布 2-进行中 3-已结束 4-已取消
+    id: string
+    isparticipated: boolean
     type: string //0-免费活动 1-付费活动 2-直播活动
 
     starttime: string
@@ -28,18 +27,26 @@ export type actiType = {
     updatedat?: string
 }
 
+export interface actiTypeAdmin extends actiType {
+    isfeatured?: boolean //是否推荐 0-否 1-是
+    maxparticipants?: number //0-无限制
+    registrationdeadline: string //报名截止时间
+    status?: number //0-草稿 1-已发布 2-进行中 3-已结束 4-已取消
+}
+
 // - - - act - - - //
 /**
  * 取消报名活动
  * @param id 活动id
  * @returns 成功-res，失败-undefined
  */
-export async function cancel(id: string) {
+export async function cancel(id: string, cancelToken?: CancelToken) {
     try {
-        const res = await http.post( `/activity/activity/act/cancel/${id}` )
+        const res = await http.post( `/activity/activity/act/cancel/${id}`, { cancelToken } )
         return res
     } catch (err) {
-        console.log(err)
+        if(axios.isCancel(err)) console.log("请求取消", err.message)
+        else console.log(err)
         return undefined
     }
 }
@@ -49,12 +56,13 @@ export async function cancel(id: string) {
  * @param id 活动id
  * @returns 成功-活动object，失败-undefined
  */
-export async function detail(id: string): Promise<actiType | undefined> {
+export async function detail(id: string, cancelToken?: CancelToken): Promise<actiType | undefined> {
     try {
-        const res = await http.get( `/activity/activity/act/detail/${id}` )
+        const res = await http.get( `/activity/activity/act/detail/${id}`, { cancelToken } )
         if (res && res.data) return res.data.activity
     } catch (err) {
-        console.log(err)
+        if(axios.isCancel(err)) console.log("请求取消", err.message)
+        else console.log(err)
         return undefined
     }
 }
@@ -64,12 +72,13 @@ export async function detail(id: string): Promise<actiType | undefined> {
  * @param id 活动id
  * @returns 成功-res，失败-undefined
  */
-export async function enroll(id: string) {
+export async function enroll(id: string, cancelToken?: CancelToken) {
     try {
-        const res = await http.post( `/activity/activity/act/enroll/${id}` )
+        const res = await http.post( `/activity/activity/act/enroll/${id}`, { cancelToken } )
         return res
     } catch (err) {
-        console.log(err)
+        if(axios.isCancel(err)) console.log("请求取消", err.message)
+        else console.log(err)
         return undefined
     }
 }
@@ -78,12 +87,13 @@ export async function enroll(id: string) {
  * 获取活动列表
  * @returns 活动object[]
  */
-export async function list(): Promise<actiType[] | undefined> {
+export async function list(cancelToken?: CancelToken): Promise<actiType[] | undefined> {
     try {
-        const res = await http.get( '/activity/activity/act/list' )
+        const res = await http.get( '/activity/activity/act/list', { cancelToken } )
         if (res && res.data) return res.data.activities
     } catch (err) {
-        console.log(err)
+        if(axios.isCancel(err)) console.log("请求取消", err.message)
+        else console.log(err)
         return undefined
     }
 }
@@ -94,7 +104,7 @@ export async function list(): Promise<actiType[] | undefined> {
  * @param value 活动详细信息
  * @returns 成功-res，失败-undefined
  */
-export async function create(value: actiType) {
+export async function create(value: actiTypeAdmin) {
     try {
         const res = await http.post(
             '/activity/activity/admin/create',
@@ -127,7 +137,7 @@ export async function Actidelete(id: string) {
  * @param id 活动id
  * @returns 成功-活动object，失败-undefined
  */
-export async function adminDetail(id: string): Promise<actiType | undefined> {
+export async function adminDetail(id: string): Promise<actiTypeAdmin | undefined> {
     try {
         const res = await http.get( `/activity/activity/admin/detail/${id}` )
         if(res && res.data) return res.data.activity
@@ -156,7 +166,7 @@ export async function adminList(): Promise<actiType[] | undefined> {
  * @param value 活动object
  * @returns 成功-res，失败-undefined
  */
-export async function update(value: actiType, id: string) {
+export async function update(value: actiTypeAdmin, id: string) {
     try {
         const res = await http.post( 
             `/activity/activity/admin/update/${id}`,

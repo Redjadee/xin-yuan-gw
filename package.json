@@ -57,6 +57,7 @@
     "@tarojs/shared": "4.1.5",
     "@tarojs/taro": "4.1.5",
     "axios": "^1.11.0",
+    "dayjs": "^1.11.18",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-redux": "^9.2.0",

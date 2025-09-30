@@ -1,6 +1,31 @@
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/zh-cn'
 
-// TODO 时间计算器
-// 1天前 5小时前 ...
+dayjs.extend(relativeTime)
+dayjs.locale('zh-cn')
+
+type dateFormaterType = 'YYYY-MM-DD' | 'YYYY-MM-DD HH:mm'
+//ISO 8601 2025-09-23T14:30:00 年-月-日T时:分:秒
+
+/**
+ * 日期格式化
+ * @param d 待格式化日期 'YYYY-MM-DD HH:mm'
+ * @param specificType 指定的日期格式
+ */
+export function dateFormater( d: string, specificType?: dateFormaterType ) {
+  const day = dayjs(d)
+  const now = dayjs()
+  if(!specificType) {
+    if( now.diff(day, 'day') < 3 && now.diff(day, 'day') >= 0) {
+      return day.fromNow()
+    } else {
+      return day.format('YYYY-MM-DD')
+    }
+  } else {
+    return day.format(specificType)
+  }
+}
 
 /**
  * 计算活动状态

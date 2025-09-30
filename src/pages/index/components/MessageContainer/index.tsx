@@ -1,4 +1,5 @@
 import { View, Text, Image } from '@tarojs/components'
+import { dateFormater } from '@/global/utils/common'
 
 import './index.scss'
 
@@ -6,7 +7,7 @@ export interface MsgType {
   profileHref: string //头像图片链接
   name: string
   content: string
-  time: string //~pending: 类型暂定
+  time: string
 }
 
 function Message({ profileHref, name, content, time }: MsgType) {
@@ -17,7 +18,7 @@ function Message({ profileHref, name, content, time }: MsgType) {
         <Text className='name'>{name}</Text>
         <Text className='content'>{content}</Text>
       </View>
-      <Text className='time'>{time}</Text> 
+      <Text className='time'>{dateFormater(time)}</Text> 
     </View>
   )
 }

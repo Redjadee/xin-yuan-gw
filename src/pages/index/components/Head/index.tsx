@@ -24,7 +24,7 @@ export default function Head({ type, applyon, className }: HeadType) {
   }
   if (applyon === 'index') 
   return (
-    <View className='head'>
+    <View className='head-components'>
       <Text className='title'>{type}</Text>
       <View className='all-button' onClick={handleRouter}>
         <Text>全部</Text>
@@ -34,7 +34,7 @@ export default function Head({ type, applyon, className }: HeadType) {
   )
   else
   return (
-    <View className={`head ${className}`}>
+    <View className={`head-components ${className}`}>
       <Text className='title'>{type}</Text>
     </View>
   )

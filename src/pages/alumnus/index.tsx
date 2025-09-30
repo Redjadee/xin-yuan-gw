@@ -114,7 +114,7 @@ export default function Alumnus () {
   
   return (
     <View className='alumnus'>
-      {pop && <PopWindow closePop={closePop} />}
+      {pop && <PopWindow closePop={closePop} type='关注' />}
       <View className='head'>
           <View className='switch'>
             <View className={blockStyle}></View>

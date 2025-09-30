@@ -23,15 +23,15 @@
   }
   .middle-box {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
-    justify-content: left;
+    justify-content: space-between;
     margin-left: 12px;
-    .title-box {
-      display: flex;
-      flex-direction: column;
+    .title {
       margin-bottom: 11px;
       font-size: 16px;
       color: #08090A;
+      margin-right: 100px;
     }
     .time-box {
       margin-bottom: 9px;

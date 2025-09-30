@@ -1,23 +1,11 @@
 import { http } from "../request"
-import { AxiosError } from "axios"
 
 const prefix = '/user'
-
-export async function textlogin(phone: string) {
-  http.post(
-    `${prefix}/base/testlogin`,
-    { phone }
-  ).then(res => {
-    console.log(res.status)
-  }).catch((error: AxiosError) => {
-    console.log(error.response?.data)
-  })
-}
 
 /**
  * 微信登陆注册
  * @param code 微信验证码
- * @returns 若成功，返回token，若失败，返回undefined
+ * @returns 成功-token，失败-undefined
  * @example
  * wechatlogin('42')
  */
@@ -44,7 +32,7 @@ interface graphiccodeReturnType {
 }
 /**
  * 获取图形验证码
- * @returns 图形验证码的id和图片编码 
+ * @returns 图形验证码的id 图片编码 
  */
 export async function graphiccode(): Promise<graphiccodeReturnType | undefined> {
   try {
@@ -101,7 +89,7 @@ interface loginType {
  * @param captcha_code 验证码
  * @param password 密码
  * @param phone 手机号或学号
- * @returns 成功返回token，失败返回undefined
+ * @returns 成功-token，失败-undefined
  */
 export async function login({ captcha_id, captcha_code, password, phone }: loginType) {
   try {
@@ -126,7 +114,7 @@ interface smsReturnType {
 /**
  * 请求短信验证码（默认123456）
  * @param phone 
- * @returns 成功则返回成功响应体，失败则返回undefined
+ * @returns 成功-成功响应体，失败-undefined
  */
 export async function requestsmscode(phone: string) {
   try {

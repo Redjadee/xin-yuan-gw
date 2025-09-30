@@ -5,20 +5,23 @@ import './index.scss'
 
 interface propsType {
   type: 'all' | 'my'
+  getFilterIdx: (idx: number) => void
 }
 
-export default function ScrollFilter({ type }: propsType) {
-  const allFilter = ['付费活动', '全部活动', '免费活动']
+export default function ScrollFilter({ type, getFilterIdx }: propsType) {
+  const allFilter = ['直播活动', '全部活动', '线下活动']
   const MyFilter = ['未开始', '进行中', '已结束']
   const filter = useMemo(() => {
     return type === 'all' ? allFilter : MyFilter
   }, [type])
   
   const [ selected, setSelected ] = useState(1)
+  //onClick event
   function switchFilter(nowIndex: number) {
     if(nowIndex === selected){}
     else {
       setSelected(nowIndex)
+      getFilterIdx(nowIndex)
     }
   }
   function filterStyle(currentIndex: number) {

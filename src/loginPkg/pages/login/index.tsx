@@ -14,56 +14,6 @@ import { loginImgBase, homeImgBase } from '@/global/assets/images/imgBases'
 import './index.scss'
 import '../../style/form.scss'
 
-interface captchaType {
-  onReady: (id: string) => void
-  className?: string
-}
-
-function GraphCaptcha({ onReady, className }: captchaType) {
-  // 关于图形验证码的state
-  const [ loading, setLoading ] = useState(false)
-  const [ err, setErr ] = useState(false)
-  
-  const [ img, setImg ] = useState('')
-
-  const fetchGraphicCode = useCallback(async (isMounted: boolean) => {
-    setLoading(true)
-    setErr(false)
-    try {
-      const res: any = await graphiccode()
-      if (!isMounted) return
-      if (res) {
-        const { captcha_id, captcha_image } = res
-        setImg(captcha_image)
-        onReady(captcha_id)
-      }
-    } catch (e) {
-      console.log(e)
-      setErr(true)
-    } finally {
-      setLoading(false)
-    }
-  }, [onReady])
-  
-  useEffect(() => {
-    let isMounted = true
-    fetchGraphicCode(isMounted)
-    return () => {
-      isMounted = false
-    }
-  }, [fetchGraphicCode])
-
-  if (loading) return (
-    <View className={`${className}`} ><Text>加载中…</Text></View>
-  )
-  if (err) return (
-    <View className={`${className}`} onClick={() => fetchGraphicCode(true)}><Text>加载失败，点击重试</Text></View>
-  )
-  return (
-    <View className={`${className}`} onClick={() => fetchGraphicCode(true)}><Image src={img} /></View>
-  )
-}
-
 export default function Login () {
   useLoad(() => {
     console.log('Page loaded.')
