@@ -1,33 +1,59 @@
 import { View, Text, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useLoad } from '@tarojs/taro'
 import FunctionItem from './components/FunctionItem'
-import { myImgBase } from '@/global/assets/images/imgBases'
+import { getuserinfo } from '@/global/utils/api/usercenter/user'
+import type { userInforType } from '@/global/utils/api/usercenter/user'
+import { showMsg } from '@/global/utils/common'
+import { useEffect, useState, useMemo } from 'react'
 
+import { myImgBase } from '@/global/assets/images/imgBases'
 import './index.scss'
 
-export default function My () {
-  useLoad(() => {
-    console.log('Page loaded.')
 
-  })
-  // ~pending:未来用全局状态储存登陆状态，以下包括在内，获取即可
-  const profileHref = `${myImgBase}/defaultMyProfile.png`
-  const name = '信息人'
-  const brief = '个人简介'
+
+export default function My () {
+  const [ infor, setInfor ] = useState<userInforType>()
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    const getInfor = async () => {
+      const res = await getuserinfo('0', controller.signal)
+      if(res?.data) {
+        setInfor(res.data.userinfo)
+      } else {
+        if(res) showMsg(res.msg)
+      }
+    }
+    getInfor()
+
+    return () => controller.abort()
+  }, [])
+
+  const profileHref = useMemo(() => 
+    infor && infor.avatar !== '' ? infor.avatar : `${myImgBase}/defaultMyProfile.png`, [infor])
+  const name = useMemo(() => infor ? infor.realname : '信息人', [infor])
+  const brief = useMemo(() => infor && infor.bio !== '' ? infor.bio : '个人简介', [infor])
 
   const arrowHref = `${myImgBase}/myDetail.png`
-  const arrowUrl = ''
+  const headRouter = () => {
+    Taro.navigateTo({
+      url: '/myPkg/pages/myinfor/index',
+      success: res => {
+        res.eventChannel.emit('acceptUserinfor', { ...infor })
+      }
+    })
+  }
   const functionItemList  = [
     {
       href: `${myImgBase}/item1.png`,
       label: '校友通讯录',
-      url: ''
+      url: '/myPkg/pages/contract/index?type=0'
     },
     {
       href: `${myImgBase}/item2.png`,
       label: '加入的组织',
-      url: ''
+      url: '/myPkg/pages/contract/index?type=1'
     },
     {
       href: `${myImgBase}/item3.png`,
@@ -37,7 +63,7 @@ export default function My () {
     {
       href: `${myImgBase}/item4.png`,
       label: '账号设置',
-      url: ''
+      url: `/myPkg/pages/setting/index`
     }
   ]
 
@@ -45,7 +71,7 @@ export default function My () {
     <View className='my'>
       <View className='head'>
         <Image src={`${myImgBase}/bgimg.png`} className='head-bgimg' />
-        <View className='head-wrapper' onClick={() => Taro.navigateTo({ url: arrowUrl })}>
+        <View className='head-wrapper' onClick={headRouter}>
           <Image src={profileHref} className='profile' />
           <View className='middle-box'>
             <Text className='name'>{name}</Text>

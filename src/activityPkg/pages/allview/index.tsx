@@ -6,37 +6,42 @@ import { useEffect, useState } from 'react'
 import { useLoad } from '@tarojs/taro'
 
 import { actiType, list } from '@/global/utils/api/activitycenter/activity'
-import axios from "axios"
+import { showMsg } from '@/global/utils/common'
 
 import './index.scss'
 
 export default function Allview() {
-  const [type, setType] = useState('')
+  const [type, setType] = useState<'1' | '0' | ''>('') // 0-全部活动 1-我的活动
   useLoad((options) => {
     setType(options.type)
   })
   
   const [ actis, setActis ] = useState<actiType[]>()
   const [ showActis, setShowactis ] = useState<actiType[]>()
+  
   useEffect(() => {
-    const source = axios.CancelToken.source()
+    const controller = new AbortController()
 
     const getList = async () => {
-      const res = await list()
-      if (res) {
-        setActis(res)
-        setShowactis(res)
+      if(type !== '') {
+        const res = await list(controller.signal, type)
+        if (res) {
+          setActis(res)
+          setShowactis(res)
+        }
       }
     }
-    getList()
+    if(type !== '') getList()
 
-    return () => source.cancel("请求取消")
-  }, [])
+    return () => controller.abort()
+  }, [type])
+
   const getFilterIdx = (idx: number) => {
-    switch (idx) {
-      case 0: setShowactis(actis?.filter(val => val.type === '0')); break;
+    switch (idx) { //FIXME
+      case 0: setShowactis(actis?.filter(val => val.type === '2')); break;
       case 1: setShowactis(actis); break;
-      case 2: setShowactis(actis?.filter(val => val.type === '1')); break;
+      case 2: setShowactis(actis?.filter(val => val.type === '3')); break;
+      default: showMsg('获取活动列表失败，请重试'); break;
     }
   }
 

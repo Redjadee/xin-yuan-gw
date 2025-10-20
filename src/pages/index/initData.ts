@@ -32,30 +32,30 @@ export const testMsg: MsgType[] = [
     profileHref: profile, 
     name: '名字',
     content: '内容',
-    time: '2025-9-27 12:30:00'
+    time: '2025-10-08 12:30:00'
   },
   {
     profileHref: profile, 
     name: '名字',
     content: '内容',
-    time: '2025-9-21 12:30:00'
+    time: '2025-10-06 12:30:00'
   },
   {
     profileHref: profile, 
     name: '名字',
     content: '内容',
-    time: '2025-10-27 12:30:00'
+    time: '2025-10-07 12:30:00'
   },
   {
     profileHref: profile, 
     name: '名字',
     content: '内容',
-    time: '2025-2-27 12:30:00'
+    time: '2025-02-27 12:30:00'
   },
   {
     profileHref: profile, 
     name: '名字',
     content: '内容',
-    time: '2025-9-27 2:30:00'
+    time: '2025-09-27 2:30:00'
   }
 ]

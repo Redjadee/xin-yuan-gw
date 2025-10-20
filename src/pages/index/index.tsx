@@ -1,7 +1,7 @@
 import { View, Text, Image, Swiper, SwiperItem } from '@tarojs/components'
 import { useLoad } from '@tarojs/taro'
-import MessageContainer from './components/MessageContainer'
 import Head from './components/Head'
+import MessageContainer from './components/MessageContainer'
 import { activityType } from './initData'
 import { swiperActivities } from './initData'
 import { homeImgBase } from '@/global/assets/images/imgBases'

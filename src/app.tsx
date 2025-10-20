@@ -1,6 +1,7 @@
 import { PropsWithChildren } from 'react'
 import { useLaunch } from '@tarojs/taro'
 import Taro from '@tarojs/taro'
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 
 import { Provider } from 'react-redux'
 import { store } from './store'

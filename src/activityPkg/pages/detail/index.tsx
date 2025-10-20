@@ -5,12 +5,12 @@ import Head from "@/pages/index/components/Head"
 import MessageContainer from "@/pages/index/components/MessageContainer"
 import PopWindow from "@/pages/alumnus/components/PopWindow"
 import { homeImgBase } from "@/global/assets/images/imgBases"
-import axios from "axios"
-import Taro from "@tarojs/taro"
+import { showMsg } from "@/global/utils/common"
 
 import { MsgType } from "@/pages/index/components/MessageContainer"
 import { actiType } from "@/global/utils/api/activitycenter/activity"
 import { detail, enroll, cancel } from "@/global/utils/api/activitycenter/activity"
+import Taro from "@tarojs/taro"
 
 import { testMsg } from "@/pages/index/initData"
 
@@ -39,18 +39,23 @@ export default function Detail() {
   const [ acti, setActi ] = useState<actiType>()
   const [ msgList, setMsgList ] = useState<MsgType[]>(testMsg)
   //报名状态
-  const [ isparticipated, setIsparticipated ] = useState(false)
-  
-  const showMsg = (msg: string) => Taro.showToast({
-      title: msg,
-      icon: 'none',
-      duration: 1500
-    })
-
+  const [ isparticipated, setIsparticipated ] = useState(false)  
+  //活动事件
   const engage = async () => {
     const res: any = await enroll(id)
     console.log(res)
     if(res?.data) {
+      Taro.requestSubscribeMessage({
+        tmplIds: ['sq9RgdfesWBhMgxwFD_nyPkp1149q7Ycz6IMJPKExJM'],
+        entityIds: [''], //支付宝用，但不写会报错
+        success: res => {
+          console.log('😊微信消息订阅: ', res)
+        },
+        fail: err => {
+          console.log("微信消息订阅: ", err)
+        }
+      })
+      
       setIsparticipated(true)
       showMsg(res.data.message)
     }
@@ -84,10 +89,10 @@ export default function Detail() {
   }
   //请求
   useEffect(() => {
-    const source = axios.CancelToken.source()
+    const controller = new AbortController()
     
     const getActi = async () => {
-      const response = await detail(id, source.token)
+      const response = await detail(id, controller.signal)
       if(response) {
         setActi(response) 
         setIsparticipated(!!response.isparticipated)
@@ -96,17 +101,15 @@ export default function Detail() {
     }
     getActi()
 
-    return () => source.cancel("活动详情")
+    return () => controller.abort()
   }, [id])
   //图片
   const mockImg = `${homeImgBase}/acti3.png`
   const showImg = useMemo(() => acti?.coverurl ? acti.coverurl : mockImg,[acti?.coverurl])
-  
-  
 
   return (
     <View className="acti-detail">
-      { pop && <PopWindow type='报名' closePop={closePop} />}
+      { pop && <PopWindow type='报名活动' closePop={closePop} />}
       <View className="cover-box">
         <Image className="cover" src={showImg} />
       </View>

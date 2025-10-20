@@ -46,6 +46,11 @@ export default defineAppConfig({
     { root: "activityPkg/", pages: [
       'pages/allview/index',
       'pages/detail/index',
+    ]},
+    { root: "myPkg/", pages: [
+      'pages/contract/index',
+      'pages/setting/index',
+      'pages/myinfor/index'
     ]}
   ]
 });

@@ -6,17 +6,13 @@ import Taro from "@tarojs/taro"
 
 import './index.scss'
 
-//TODO
-//防止
-//功能实现
-
 interface propsType {
   phone: string
 }
 
 export default function GetSmsCode({ phone }: propsType) {
   const [ disable, setDisable ] = useState(false)
-  const [ cnt, setCnt ] = useState(3)
+  const [ cnt, setCnt ] = useState(60)
 
   useEffect(() => {
     if ( disable && cnt > 0 ) {
@@ -27,7 +23,7 @@ export default function GetSmsCode({ phone }: propsType) {
       return () => clearTimeout(timer)
     } else if ( cnt === 0 ) {
       setDisable(false)
-      setCnt(3)
+      setCnt(60)
     }
   }, [disable, cnt])
 
@@ -48,7 +44,7 @@ export default function GetSmsCode({ phone }: propsType) {
             duration: 1500,
             icon: "none"
           })
-        } else if (result && result.code !== 0) {
+        } else if (result) {
           Taro.showToast({
             title: result.msg,
             duration: 1500,

@@ -1,58 +1,45 @@
 /**
  * @file 全局登录状态
  */
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit"
+import type { RootState } from "."
 
 interface authType {
   isLogged: boolean
-  userId: string | null 
   token: string | null
-  isLoading: boolean
-  error: any | null
 }
 
 const initialState: authType = {
   isLogged: false,
-  userId: null,
   token: null,
-  isLoading: false,
-  error: null
 }
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginStart(state) {
-      state.isLoading = true
-      state.error = null
-    },
     loginSuccess(
       state,
-      action: PayloadAction<{ userId: string, token: string }>
+      action: PayloadAction<{ token: string }>
     ) {
       state.isLogged = true
-      state.userId = action.payload.userId
       state.token = action.payload.token
-      state.isLoading = false
     },
-    loginFailure(state, action: PayloadAction<any>) {
+    loginFailure(state) {
       state.isLogged = false
-      state.userId = null
       state.token = null
-      state.isLoading = false
-      state.error = action.payload
     },
     logout(state) {
       state.isLogged = false
-      state.userId = null
       state.token = null
-      state.error = null
     }
   }
 })
 
-export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions
+export const { loginSuccess, loginFailure, logout } = authSlice.actions
+
+export const selectToken = (state: RootState) => state.auth.token
+export const selectLogged = (state: RootState) => state.auth.isLogged
 
 export default authSlice.reducer

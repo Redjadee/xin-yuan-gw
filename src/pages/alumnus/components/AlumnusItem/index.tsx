@@ -1,5 +1,7 @@
 import { View, Text, Image } from '@tarojs/components'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { selectLogged } from '@/store/authSlice'
 
 import { alumnusImgBase, profile as profileHref } from '@/global/assets/images/imgBases'
 
@@ -36,17 +38,22 @@ export type setStatusType = React.Dispatch<React.SetStateAction<boolean>>
 
 type propsType = {
   value: itemType
-  openPop: (setStatus: setStatusType) => void
+  openPop: (setStatus?: setStatusType) => void
 }
 
 export default function AlumnusItem({ value, openPop }: propsType) {
+  const logged = useSelector(selectLogged)
   const [status, setStatus] = useState<boolean>(value.status)
 
   const handleOpen = () => {
-    if (status === true) {
-      openPop(setStatus)
+    if(logged) {
+      if (status === true) {
+        openPop(setStatus)
+      } else {
+        setStatus(!status)
+      }
     } else {
-      setStatus(!status)
+      openPop()
     }
   }
   

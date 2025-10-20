@@ -8,24 +8,23 @@ import { dateFormater } from "@/global/utils/common"
 import './index.scss'
 import { actiType } from "@/global/utils/api/activitycenter/activity"
 
-interface starPropsType {
-  grade: number //评分等级
-}
-
-function StarBar({ grade }: starPropsType) {
-  const blankArr = useMemo(() => Array.from({ length: 5-grade }, (_, index) => index + 1), [grade])
-  const gradeArr = useMemo(() => Array.from({ length: grade }, (_, index) => index + 1), [grade])
-  return (
-    <View className="star-bar">
-      {gradeArr.map((_, index) => (
-        <Image className="star" src={`${myImgBase}/fullStar.png`} key={`full-star-${index}`} />
-      ))}
-      {blankArr.map((_, index) => (
-        <Image className="star" src={`${myImgBase}/blankStar.png`} key={`blank-star-${index}`} />
-      ))}
-    </View>
-  )
-}
+// interface starPropsType {
+//   grade: number //评分等级
+// }
+// function StarBar({ grade }: starPropsType) {
+//   const blankArr = useMemo(() => Array.from({ length: 5-grade }, (_, index) => index + 1), [grade])
+//   const gradeArr = useMemo(() => Array.from({ length: grade }, (_, index) => index + 1), [grade])
+//   return (
+//     <View className="star-bar">
+//       {gradeArr.map((_, index) => (
+//         <Image className="star" src={`${myImgBase}/fullStar.png`} key={`full-star-${index}`} />
+//       ))}
+//       {blankArr.map((_, index) => (
+//         <Image className="star" src={`${myImgBase}/blankStar.png`} key={`blank-star-${index}`} />
+//       ))}
+//     </View>
+//   )
+// }
 
 interface actiItemType extends actiType {
   className: string
@@ -34,7 +33,6 @@ interface actiItemType extends actiType {
 export default function ActiItem({ title, starttime, endtime, coverurl, className, id }: actiItemType) {
   const coverUrl = useMemo(() => coverurl ? coverurl : `${myImgBase}/defaultActi.png`, [coverurl])
 
-  //TODO 判断时间逻辑
   const on = useMemo(() => actiStatus(starttime, endtime), [starttime, endtime]) //是否进行中
   const time = useMemo(() => {
     switch (on) {

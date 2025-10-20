@@ -1,8 +1,12 @@
+import Taro from '@tarojs/taro'
+
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import 'dayjs/locale/zh-cn'
 
 dayjs.extend(relativeTime)
+dayjs.extend(customParseFormat)
 dayjs.locale('zh-cn')
 
 type dateFormaterType = 'YYYY-MM-DD' | 'YYYY-MM-DD HH:mm'
@@ -14,7 +18,7 @@ type dateFormaterType = 'YYYY-MM-DD' | 'YYYY-MM-DD HH:mm'
  * @param specificType 指定的日期格式
  */
 export function dateFormater( d: string, specificType?: dateFormaterType ) {
-  const day = dayjs(d)
+  const day = dayjs(d, 'YYYY-MM-DD HH:mm:ss')
   const now = dayjs()
   if(!specificType) {
     if( now.diff(day, 'day') < 3 && now.diff(day, 'day') >= 0) {
@@ -29,7 +33,7 @@ export function dateFormater( d: string, specificType?: dateFormaterType ) {
 
 /**
  * 计算活动状态
- * @param begin 开始时间 (ISO8601 格式)
+ * @param begin 开始时间
  * @param end 结束时间
  * @returns 活动状态
  * 
@@ -43,3 +47,9 @@ export function actiStatus(begin: string, end: string) {
   else if ( endTime > now ) return 1
   else return 0
 }
+
+export const showMsg = (msg: string, succeeded?: boolean, time?: number) => Taro.showToast({
+  title: msg,
+  icon: succeeded ? 'success' : 'none',
+  duration: time ? time : 1500
+})

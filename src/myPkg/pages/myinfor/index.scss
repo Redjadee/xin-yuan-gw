@@ -1,0 +1,41 @@
+//InforItem
+.infor-item {
+  height: 67px;
+  width: 340px;
+  border-bottom: 1px solid #ECECEC;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .label {
+    color: #08090A;
+  }
+  .right-box {
+    color: #999999;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    .avatar {
+      width: 50px;
+      height: 50px;
+    }
+    .arrow {
+      width: 20px;
+      height: 20px;
+    }
+  }  
+}
+
+.my-infor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 16.5px;
+  margin-top: 10px;
+  .hide-profile {
+    width: 340px;
+    padding-top: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

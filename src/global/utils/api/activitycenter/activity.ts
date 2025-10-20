@@ -1,5 +1,6 @@
-import axios, { CancelToken } from "axios"
 import { http } from "../request"
+import axios from 'axios'
+import { showMsg } from "../../common"
 
 export type actiType = {
     province: string
@@ -17,21 +18,21 @@ export type actiType = {
     description: string
 
     id: string
-    isparticipated: boolean
-    type: string //0-免费活动 1-付费活动 2-直播活动
+    isparticipated: '0' | '1'
+    type: '0' | '1' | '2' | '3' //0-免费活动 1-付费活动 2-直播活动 3-线下活动
 
     starttime: string
     endtime: string
-
+    status: number //0-草稿 1-已发布 2-进行中 3-已结束 4-已取消
+    
     createdat?: string
     updatedat?: string
 }
 
 export interface actiTypeAdmin extends actiType {
-    isfeatured?: boolean //是否推荐 0-否 1-是
+    isfeatured?: '0' | '1' //是否推荐 0-否 1-是
     maxparticipants?: number //0-无限制
     registrationdeadline: string //报名截止时间
-    status?: number //0-草稿 1-已发布 2-进行中 3-已结束 4-已取消
 }
 
 // - - - act - - - //
@@ -40,13 +41,12 @@ export interface actiTypeAdmin extends actiType {
  * @param id 活动id
  * @returns 成功-res，失败-undefined
  */
-export async function cancel(id: string, cancelToken?: CancelToken) {
+export async function cancel(id: string) {
     try {
-        const res = await http.post( `/activity/activity/act/cancel/${id}`, { cancelToken } )
+        const res = await http.post( `/api/activity/activity/act/cancel/${id}` )
         return res
     } catch (err) {
-        if(axios.isCancel(err)) console.log("请求取消", err.message)
-        else console.log(err)
+        console.log(err)
         return undefined
     }
 }
@@ -56,13 +56,13 @@ export async function cancel(id: string, cancelToken?: CancelToken) {
  * @param id 活动id
  * @returns 成功-活动object，失败-undefined
  */
-export async function detail(id: string, cancelToken?: CancelToken): Promise<actiType | undefined> {
+export async function detail(id: string, signal: AbortSignal): Promise<actiType | undefined> {
     try {
-        const res = await http.get( `/activity/activity/act/detail/${id}`, { cancelToken } )
+        const res = await http.get( `/api/activity/activity/act/detail/${id}`, { signal } )
         if (res && res.data) return res.data.activity
     } catch (err) {
-        if(axios.isCancel(err)) console.log("请求取消", err.message)
-        else console.log(err)
+        if(!axios.isCancel(err)) showMsg("数据加载失败，请稍后再试")
+        console.log(err)
         return undefined
     }
 }
@@ -72,28 +72,29 @@ export async function detail(id: string, cancelToken?: CancelToken): Promise<act
  * @param id 活动id
  * @returns 成功-res，失败-undefined
  */
-export async function enroll(id: string, cancelToken?: CancelToken) {
+export async function enroll(id: string) {
     try {
-        const res = await http.post( `/activity/activity/act/enroll/${id}`, { cancelToken } )
+        const res = await http.post( `/api/activity/activity/act/enroll/${id}` )
         return res
     } catch (err) {
-        if(axios.isCancel(err)) console.log("请求取消", err.message)
-        else console.log(err)
+        console.log(err)
         return undefined
     }
 }
 
 /**
  * 获取活动列表
- * @returns 活动object[]
+ * @param isparticipated 是否已报名 0-未报名 1-已报名
+ * @returns 成功-活动object[]
  */
-export async function list(cancelToken?: CancelToken): Promise<actiType[] | undefined> {
+export async function list(signal: AbortSignal, isparticipated?: '1' | '0'): Promise<actiType[] | undefined> {
+    const url = isparticipated === '1' ? `/api/activity/activity/act/list?isparticipated=${isparticipated}` : '/api/activity/activity/act/list'
     try {
-        const res = await http.get( '/activity/activity/act/list', { cancelToken } )
+        const res = await http.get( url , { signal } )
         if (res && res.data) return res.data.activities
     } catch (err) {
-        if(axios.isCancel(err)) console.log("请求取消", err.message)
-        else console.log(err)
+        if(!axios.isCancel(err)) showMsg("数据加载失败，请稍后再试")
+        console.log(err)
         return undefined
     }
 }
@@ -107,7 +108,7 @@ export async function list(cancelToken?: CancelToken): Promise<actiType[] | unde
 export async function create(value: actiTypeAdmin) {
     try {
         const res = await http.post(
-            '/activity/activity/admin/create',
+            '/api/activity/activity/admin/create',
             value
         )
         return res
@@ -124,7 +125,7 @@ export async function create(value: actiTypeAdmin) {
  */
 export async function Actidelete(id: string) {
     try {
-        const res = await http.post( `/activity/activity/admin/delete/${id}` )
+        const res = await http.post( `/api/activity/activity/admin/delete/${id}` )
         return res
     } catch (err) {
         console.log(err)
@@ -139,7 +140,7 @@ export async function Actidelete(id: string) {
  */
 export async function adminDetail(id: string): Promise<actiTypeAdmin | undefined> {
     try {
-        const res = await http.get( `/activity/activity/admin/detail/${id}` )
+        const res = await http.get( `/api/activity/activity/admin/detail/${id}` )
         if(res && res.data) return res.data.activity
     } catch (err) {
         console.log(err)
@@ -153,7 +154,7 @@ export async function adminDetail(id: string): Promise<actiTypeAdmin | undefined
  */
 export async function adminList(): Promise<actiType[] | undefined> {
     try {
-        const res = await http.get( '/activity/activity/admin/list' )
+        const res = await http.get( '/api/activity/activity/admin/list' )
         if(res && res.data) return res.data.activities
     } catch (err) {
         console.log(err)
@@ -169,7 +170,7 @@ export async function adminList(): Promise<actiType[] | undefined> {
 export async function update(value: actiTypeAdmin, id: string) {
     try {
         const res = await http.post( 
-            `/activity/activity/admin/update/${id}`,
+            `/api/activity/activity/admin/update/${id}`,
             value
         )
         return res

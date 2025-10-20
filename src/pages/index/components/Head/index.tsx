@@ -1,6 +1,6 @@
 import { View, Text, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { RootState } from '@/store'
+import { selectLogged } from '@/store/authSlice'
 import { useSelector } from 'react-redux'
 import { homeImgBase } from '@/global/assets/images/imgBases'
 
@@ -16,11 +16,13 @@ interface HeadType {
 export default function Head({ type, applyon, className }: HeadType) {
   
   //router
-  const authStatus = useSelector((state: RootState) => state.auth.isLogged)
+  const authStatus = useSelector(selectLogged)
   const handleRouter = () => {
-    type === '热门活动' ?
-    Taro.navigateTo({ url: '/activityPkg/pages/allview/index?type=0' }) :
-    authStatus ? Taro.navigateTo({ url: '' }) : Taro.reLaunch({ url: '/loginPkg/pages/login/index' })
+    if (type === '热门活动') {
+      Taro.navigateTo({ url: '/activityPkg/pages/allview/index?type=0' })
+    } else if ( type === '我的消息' ) {
+      authStatus ? Taro.navigateTo({ url: '' }) : Taro.reLaunch({ url: '/loginPkg/pages/login/index' })
+    }
   }
   if (applyon === 'index') 
   return (

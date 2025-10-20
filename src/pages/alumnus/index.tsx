@@ -1,18 +1,15 @@
 import { View, Text, Input, Image, ScrollView } from '@tarojs/components'
 import { useLoad } from '@tarojs/taro'
 import { useMemo, useState, useRef } from 'react'
-
 import AlumnusItem from './components/AlumnusItem'
 import PopWindow from './components/PopWindow'
 import { setStatusType } from './components/AlumnusItem'
-
 import { useDispatch } from 'react-redux'
 import { switchVisible } from '@/store/tabBarSlice'
+import Taro from '@tarojs/taro'
 
 import { alumnusImgBase } from '@/global/assets/images/imgBases'
-
 import { myInfor, alumnusItemList, organizationList } from './initData'
-
 import './index.scss'
 
 const alumnusFilter = ['推荐', '全部', '同城', '同行', '同院', '同级']
@@ -39,8 +36,10 @@ export default function Alumnus () {
    * 控制弹窗打开
    * @param setStatus 目前Item的关注状态的set函数
    */
-  const openPop = (setStatus: setStatusType) => {
-    setStatusRef.current = setStatus
+  const openPop = (setStatus?: setStatusType) => {
+    if(setStatus) {
+      setStatusRef.current = setStatus
+    }
     setPop(true)
     dispatch(switchVisible())
   }
@@ -49,8 +48,12 @@ export default function Alumnus () {
    * @param type true：确认关闭；false：取消关闭
    */
   const closePop = (type: boolean) => {
-    type === true ? setStatusRef.current?.(false) : setStatusRef.current?.(true)
-    setStatusRef.current = null
+    if(setStatusRef) {
+      type === true ? setStatusRef.current?.(false) : setStatusRef.current?.(true)
+      setStatusRef.current = null
+    } else {
+      Taro.navigateTo({ url: '/loginPkg/pages/register/index?type=1' })
+    }
     setPop(false)
     dispatch(switchVisible())
   }
@@ -114,7 +117,7 @@ export default function Alumnus () {
   
   return (
     <View className='alumnus'>
-      {pop && <PopWindow closePop={closePop} type='关注' />}
+      {pop && <PopWindow closePop={closePop} type='关注用户' />}
       <View className='head'>
           <View className='switch'>
             <View className={blockStyle}></View>

@@ -1,7 +1,5 @@
 import { http } from "../request"
 
-const prefix = '/user'
-
 /**
  * 微信登陆注册
  * @param code 微信验证码
@@ -9,102 +7,74 @@ const prefix = '/user'
  * @example
  * wechatlogin('42')
  */
-export async function wechatlogin(code: string): Promise<string | undefined> {
+export async function wechatlogin(code: string) {
   try {
     const res = await http.post(
-      `${prefix}/base/wechatlogin`,
+      '/api/user/base/wechatlogin',
       { code }
     )
-    return res.data.token
+    return res
   } catch (error) {
     console.log(error)
     return undefined
   }
 }
 
-interface graphiccodeReturnType {
-  code: number
-  msg: string
-  data: {
-    captcha_image: string
-    captcha_id: string
-  }
-}
-/**
- * 获取图形验证码
- * @returns 图形验证码的id 图片编码 
- */
-export async function graphiccode(): Promise<graphiccodeReturnType | undefined> {
-  try {
-    const res = await http.get(`${prefix}/base/graphiccode`)
-    return res.data
-  } catch (error) {
-    console.log(error)
-    return undefined
-  }
-}
-
-interface studentregisterType {
+type studentregisterType = {
   student_id: string
   id_last_six: string
   phone: string
   code: string
   password: string
+  name: string
 }
 /**
  * 学号注册
- * 
- * 接口说明：因为暂时没法和学校学籍库对接，“学籍信息验证”接口暂未完成，暂时使用本接口替代。
- * 两者逻辑上差不多，只是本接口不用微信登录
  * 
  * @param student_id 学号
  * @param id_last_six 身份证后六位
  * @param phone 手机号
  * @param code 手机验证码
  * @param password 密码
- * 
- * @returns 暂未确定 //FIXME
+ * @param name 真实姓名
  */
-export async function studentregister({ student_id, id_last_six, phone, code, password  }: studentregisterType): Promise<null | undefined> {
+export async function studentregister({ student_id, id_last_six, phone, code, password, name  }: studentregisterType) {
   try {
     const res = await http.post(
-      `${prefix}/base/studentregister`,
-      { student_id, id_last_six, phone, code, password }
+      '/api/user/base/studentregister',
+      { student_id, id_last_six, phone, code, password, name }
     )
-    return res.data
+    return res
   } catch (error) {
     return undefined
   }
 }
 
-interface loginType {
+type loginType = {
   captcha_id: string
-  captcha_code: string
   password: string
   phone: string
 }
 /**
  * 手机号/学号登录
  * @param captcha_id 验证id
- * @param captcha_code 验证码
  * @param password 密码
  * @param phone 手机号或学号
- * @returns 成功-token，失败-undefined
  */
-export async function login({ captcha_id, captcha_code, password, phone }: loginType) {
+export async function login({ captcha_id, password, phone }: loginType) {
   try {
     const res = await http.post(
-      `${prefix}/base/login`,
-      { captcha_id, captcha_code, password, phone }
+      '/api/user/base/login',
+      { captcha_id, password, phone }
     )
-    return res.data
+    return res
   } catch (err) {
     console.log(err)
     return undefined
   }
 }
 
-interface smsReturnType {
+type smsReturnType = {
   code: number
   data: {
     message: string
@@ -113,16 +83,66 @@ interface smsReturnType {
 }
 /**
  * 请求短信验证码（默认123456）
- * @param phone 
- * @returns 成功-成功响应体，失败-undefined
+ * @param phone
  */
 export async function requestsmscode(phone: string) {
   try {
     const res: smsReturnType = await http.post(
-      `${prefix}/base/requestsmscode`,
+      '/api/user/base/requestsmscode',
       { phone }
     )
     return res
+  } catch (err) {
+    console.log(err)
+    return undefined
+  }
+}
+
+export type slidecaptchaReturnType = {
+  captcha_id: string
+  master_image: string //主图
+  tile_height: number
+  tile_image: string //拼图
+  tile_width: number
+  tile_x: number //目标位置
+  tile_y: number //目标位置
+}
+/**
+ * 滑动验证码
+ * @returns 验证码object
+ */
+export async function slidecaptcha(signal: AbortSignal): Promise<slidecaptchaReturnType | undefined> {
+  try {
+    const res = await http.get( 
+      '/api/user/base/slidecaptcha',
+      { signal }
+    )
+    if(res) return res.data
+  } catch (err) {
+    console.log(err)
+    return undefined
+  }
+}
+
+export type verifyslidecaptchaType = {
+  captcha_id: string
+  src_x: number
+  src_y: number
+}
+/**
+ * 验证滑动验证码
+ * @param captcha_id
+ * @param src_x
+ * @param src_y
+ * @returns 成功-true
+ */
+export async function verifyslidecaptcha({ captcha_id, src_x, src_y }: verifyslidecaptchaType): Promise<boolean | undefined> {
+  try {
+    const res = await http.post(
+      '/api/user/base/verifyslidecaptcha',
+      { captcha_id, src_x, src_y }
+    )
+    if(res && res.data) return res.data.success
   } catch (err) {
     console.log(err)
     return undefined

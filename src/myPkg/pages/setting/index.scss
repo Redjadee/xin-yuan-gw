@@ -1,0 +1,32 @@
+.setting {
+  background: linear-gradient( 180deg, #ECECEC 0%, #FFFFFF 100%);
+  font-size: 16.5px;
+  color: #08090A;
+  height: 100vh;
+  .upper-box {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .upper-item {
+      height: 64px;
+      width: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ECECEC;
+      .arrow {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+  .below-item {
+    margin-top: 6px;
+    height: 56px;  
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

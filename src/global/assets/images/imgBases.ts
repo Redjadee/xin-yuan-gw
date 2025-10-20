@@ -8,3 +8,4 @@ export const myImgBase = `${process.env.TARO_APP_IMG_API}/my`
 
 export const loginImgBase = `${process.env.TARO_APP_IMG_API}/login`
 export const actiDetailsImgBase = `${process.env.TARO_APP_IMG_API}/actiDetails`
+export const captchaImgBase = `${process.env.TARO_APP_IMG_API}/slideCaptcha`
