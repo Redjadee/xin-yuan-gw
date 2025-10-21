@@ -8,7 +8,7 @@ import type { slidecaptchaReturnType } from '@/global/utils/api/usercenter/base'
 import { showMsg } from '@/global/utils/common'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { loginSuccess, selectToken } from '@/store/authSlice'
+import { loginSuccess, selectToken, verifySuccess } from '@/store/authSlice'
 
 import Title from '../../components/Title'
 import MyCheckBox from '@/loginPkg/components/MyCheckBox'
@@ -186,16 +186,11 @@ export default function Login() {
   })
   //登录成功后，查信息是否完整
   const token = useSelector(selectToken)
-  const backRouter = (infor?: boolean) => {
-    if(infor !== undefined) {
-      showMsg("登录成功！", true)
-      setTimeout(() => {
-        Taro.reLaunch({ url: infor ? '/pages/index/index' : '/loginPkg/pages/register/index?type=1' })
-      }, 2000)
-    } else {
-      showMsg('查询信息失败，请稍后再试')
-    }
-  }
+  const backRouter = (isVerify: boolean) => {
+    showMsg("登录成功！", true)
+    setTimeout(() => {
+      Taro.reLaunch({ url: isVerify ? '/pages/index/index' : '/loginPkg/pages/register/index?type=1' })
+    }, 2000)}
   useEffect(() => {
     const controller = new AbortController()
 
@@ -204,9 +199,10 @@ export default function Login() {
         const res = await getuserinfo('0', controller.signal)
         if(res?.data) {
           const { userinfo } = res.data
-          backRouter(userinfo.isverified)
+          if(userinfo.isverified) dispatch(verifySuccess()) 
+          backRouter(userinfo.isverified) //查信息字段 更新全局状态
         } else {
-          console.log(res?.msg)
+          if(res) showMsg(res.msg)
         }
       } catch (err) {
         console.log(err)
@@ -224,7 +220,8 @@ export default function Login() {
       if(slideData)
       try {
           const res = await Nlogin({
-            captcha_id: slideData?.captcha_id,
+            // captcha_id: slideData?.captcha_id,
+            captcha_id: '', //TEMP
             password: sha1(password),
             phone: account
           })
@@ -240,7 +237,8 @@ export default function Login() {
           console.log(err)
         }
     }
-    if(loginStart) normalLogin()
+    // if(loginStart) normalLogin()
+    normalLogin() //TEMP
 
     return () => controller.abort()
   }, [loginStart])
@@ -249,9 +247,10 @@ export default function Login() {
     else if(account === '') showMsg('账号不能为空')
     else if(password === '') showMsg('密码不能为空')
     else {
-      setLoginStart(false) //重置状态
-      setRetry(!retry) //重置验证码
-      setShowSlide(true) //验证码显示
+      // setLoginStart(false) //重置状态 
+      setLoginStart(!loginStart) //TEMP
+      // setRetry(!retry) //重置验证码 //TEMP
+      // setShowSlide(true) //验证码显示 //TEMP
     }
   }
   const wechatLogin = () => {

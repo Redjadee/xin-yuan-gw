@@ -51,6 +51,9 @@ export default defineAppConfig({
       'pages/contract/index',
       'pages/setting/index',
       'pages/myinfor/index'
+    ]},
+    { root: 'msgPkg/', pages: [
+      'pages/allmsg/index'
     ]}
   ]
 });

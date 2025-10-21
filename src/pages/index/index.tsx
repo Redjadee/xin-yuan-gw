@@ -1,12 +1,14 @@
 import { View, Text, Image, Swiper, SwiperItem } from '@tarojs/components'
-import { useLoad } from '@tarojs/taro'
 import Head from './components/Head'
 import MessageContainer from './components/MessageContainer'
+import VoidHint from '@/global/components/VoidHint'
 import { activityType } from './initData'
 import { swiperActivities } from './initData'
 import { homeImgBase } from '@/global/assets/images/imgBases'
-import { MsgType } from "@/pages/index/components/MessageContainer"
-import { testMsg } from "@/pages/index/initData"
+import { MsgShowType } from "@/pages/index/components/MessageContainer"
+import { showMsg } from '@/global/utils/common'
+import { messageList } from '@/global/utils/api/usercenter/message'
+import { useEffect, useState } from 'react'
 
 import './index.scss'
 
@@ -31,10 +33,24 @@ function HotActivities() {
 
 
 export default function Index() {
-  useLoad(() => {
-    console.log('Page loaded.')
-  })
-  const dataList: MsgType[] = testMsg
+  const [ msgs, setMsgs ] = useState<MsgShowType[]>()
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    const getMsgs = async () => {
+      const res = await messageList(controller.signal)
+      if(res?.data) {
+        setMsgs(res.data.messages)
+      } else {
+        if(res) showMsg(res.msg)
+      }
+    }
+    getMsgs()
+
+    return () => controller.abort()
+  }, [])
+
   return (
     <View className='index'>
       <View className='title-img-box'>
@@ -50,7 +66,7 @@ export default function Index() {
       </View>
       <View className='my-messages'>
         <Head type={'我的消息'} applyon='index' />
-        <MessageContainer dataList={dataList} />
+        {msgs && msgs.length != 0 ? <MessageContainer dataList={msgs} /> : <VoidHint type='消息列表' />}
       </View>
     </View>
   )

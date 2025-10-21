@@ -3,14 +3,18 @@ import { dateFormater } from '@/global/utils/common'
 
 import './index.scss'
 
-export interface MsgType {
+export interface MsgShowType {
+  content: string
+  contenttype: 1 | 2 | 3 | 4 | 5 //内容类型: 1-文本 2-图片 3-语音 4-视频 5-文件
+  
   profileHref: string //头像图片链接
   name: string
-  content: string
-  time: string
+  
+  isread: 0 | 1 //0-未读 1-已读
+  createdat: string
 }
 
-function Message({ profileHref, name, content, time }: MsgType) {
+function Message({ profileHref, name, content, createdat: time }: MsgShowType) {
   return (
     <View className='msg'>
       <Image src={profileHref} className='profile' />
@@ -24,7 +28,7 @@ function Message({ profileHref, name, content, time }: MsgType) {
 }
 
 interface propsType {
-  dataList: MsgType[]
+  dataList: MsgShowType[]
 }
 
 export default function MessageContainer({ dataList }: propsType) {

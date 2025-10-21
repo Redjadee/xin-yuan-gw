@@ -1,6 +1,6 @@
 import { View, Text, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { selectLogged } from '@/store/authSlice'
+import { selectLogged, selectVerify } from '@/store/authSlice'
 import { useSelector } from 'react-redux'
 import { homeImgBase } from '@/global/assets/images/imgBases'
 
@@ -17,11 +17,13 @@ export default function Head({ type, applyon, className }: HeadType) {
   
   //router
   const authStatus = useSelector(selectLogged)
+  const verifyStatus = useSelector(selectVerify)
   const handleRouter = () => {
     if (type === '热门活动') {
       Taro.navigateTo({ url: '/activityPkg/pages/allview/index?type=0' })
     } else if ( type === '我的消息' ) {
-      authStatus ? Taro.navigateTo({ url: '' }) : Taro.reLaunch({ url: '/loginPkg/pages/login/index' })
+      authStatus ? Taro.navigateTo({ url: verifyStatus ? '/msgPkg/pages/allmsg/index' : '/loginPkg/pages/register/index?type=1' }) 
+      : Taro.reLaunch({ url: '/loginPkg/pages/login/index' })
     }
   }
   if (applyon === 'index') 

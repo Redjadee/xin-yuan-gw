@@ -3,8 +3,9 @@ import { deleteuser } from "@/global/utils/api/usercenter/user"
 import { showMsg } from "@/global/utils/common"
 import { useDispatch } from "react-redux"
 import { logout } from "@/store/authSlice"
-import Taro, { useLoad } from "@tarojs/taro"
-import { useState } from "react"
+import { setTabBar } from "@/store/tabBarSlice"
+import Taro from "@tarojs/taro"
+
 
 import { myImgBase } from "@/global/assets/images/imgBases"
 import './index.scss'
@@ -29,6 +30,8 @@ export default function Setting() {
         const res = await deleteuser()
         if(res?.data) {
           showMsg(res.data.message)
+          dispatch(logout())
+          dispatch(setTabBar(1))
           setTimeout(() => {
             Taro.reLaunch({ url: '/pages/index/index' })
           }, 2000)
@@ -39,6 +42,7 @@ export default function Setting() {
       }; break;
       case 1: { //TODO 提示信息
         dispatch(logout())
+        dispatch(setTabBar(1))
         Taro.reLaunch({
           url: '/pages/index/index'
         })

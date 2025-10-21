@@ -23,6 +23,14 @@
       padding-right: 20px;
     }
   }
+  .acti-msg {
+    position: relative;
+    height: 70px;
+    .acti-detail-msg {
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+  }
 }
 
 .regis {

@@ -4,15 +4,16 @@ import { useEffect, useMemo, useState } from "react"
 import Head from "@/pages/index/components/Head"
 import MessageContainer from "@/pages/index/components/MessageContainer"
 import PopWindow from "@/pages/alumnus/components/PopWindow"
+import VoidHint from "@/global/components/VoidHint"
 import { homeImgBase } from "@/global/assets/images/imgBases"
 import { showMsg } from "@/global/utils/common"
-
-import { MsgType } from "@/pages/index/components/MessageContainer"
+import { MsgShowType } from "@/pages/index/components/MessageContainer"
 import { actiType } from "@/global/utils/api/activitycenter/activity"
 import { detail, enroll, cancel } from "@/global/utils/api/activitycenter/activity"
+import { messageActivity } from "@/global/utils/api/usercenter/message"
 import Taro from "@tarojs/taro"
-
-import { testMsg } from "@/pages/index/initData"
+import { useSelector } from "react-redux"
+import { selectVerify } from "@/store/authSlice"
 
 import './index.scss'
 
@@ -29,6 +30,8 @@ function RegisButton({ isparticipated, toggle }: buttonType) {
 }
 
 export default function Detail() {
+  //验证状态
+  const verifyStatus = useSelector(selectVerify)
   //url参数
   const [ id, setId ] = useState('')
   useLoad((options) => {
@@ -37,7 +40,7 @@ export default function Detail() {
 
   //请求 Hook
   const [ acti, setActi ] = useState<actiType>()
-  const [ msgList, setMsgList ] = useState<MsgType[]>(testMsg)
+  const [ msgList, setMsgList ] = useState<MsgShowType[]>()
   //报名状态
   const [ isparticipated, setIsparticipated ] = useState(false)  
   //活动事件
@@ -75,7 +78,11 @@ export default function Detail() {
     if (isparticipated) {
       setPop(true)
     } else {
-      engage()
+      if(verifyStatus) {
+        engage()
+      } else {
+        Taro.reLaunch({ url: '/loginPkg/pages/register/index?type=1' })
+      }
     }
   }
 
@@ -92,14 +99,32 @@ export default function Detail() {
     const controller = new AbortController()
     
     const getActi = async () => {
-      const response = await detail(id, controller.signal)
-      if(response) {
-        setActi(response) 
-        setIsparticipated(!!response.isparticipated)
-        console.log(response.isparticipated)
+      const res = await detail(id, controller.signal)
+      if(res?.data) {
+        const { activity } = res.data
+        setActi(activity) 
+        setIsparticipated(!!activity.isparticipated)
+      } else {
+        if(res) showMsg(res.msg)
       }
     }
-    getActi()
+    if(id) getActi()
+
+    return () => controller.abort()
+  }, [id])
+  useEffect(() => {
+    const controller = new AbortController()
+
+    const getMsg = async () => {
+      const res = await messageActivity(id, controller.signal)
+      if(res?.data) {
+        const { messages } = res.data
+        setMsgList(messages)
+      } else {
+        if(res) showMsg(res.msg)
+      }
+    }
+    if(id) getMsg()
 
     return () => controller.abort()
   }, [id])
@@ -121,7 +146,7 @@ export default function Detail() {
       </View>
       <View className="acti-msg">
         <Head type='活动信息' applyon="acti" />
-        <MessageContainer dataList={msgList} />
+        {msgList && msgList.length != 0 ? <MessageContainer dataList={msgList} /> : <VoidHint className="acti-detail-msg" type='消息列表' />}
       </View>
       <RegisButton isparticipated={isparticipated} toggle={toggleIsparticipated} />
     </View>

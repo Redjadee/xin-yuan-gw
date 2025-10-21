@@ -1,5 +1,4 @@
-import { profile, homeImgBase } from '@/global/assets/images/imgBases'
-import { MsgType } from './components/MessageContainer'
+import { homeImgBase } from '@/global/assets/images/imgBases'
 
 export interface activityType {
   imgHref: string
@@ -25,37 +24,3 @@ export const swiperActivities: activityType[] = [
   },
 ]
 //
-
-
-export const testMsg: MsgType[] = [
-  {
-    profileHref: profile, 
-    name: '名字',
-    content: '内容',
-    time: '2025-10-08 12:30:00'
-  },
-  {
-    profileHref: profile, 
-    name: '名字',
-    content: '内容',
-    time: '2025-10-06 12:30:00'
-  },
-  {
-    profileHref: profile, 
-    name: '名字',
-    content: '内容',
-    time: '2025-10-07 12:30:00'
-  },
-  {
-    profileHref: profile, 
-    name: '名字',
-    content: '内容',
-    time: '2025-02-27 12:30:00'
-  },
-  {
-    profileHref: profile, 
-    name: '名字',
-    content: '内容',
-    time: '2025-09-27 2:30:00'
-  }
-]

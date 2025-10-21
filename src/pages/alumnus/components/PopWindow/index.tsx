@@ -1,7 +1,5 @@
-import { View, Text } from "@tarojs/components";
-import { useSelector } from "react-redux"
-import { selectLogged } from "@/store/authSlice";
-import { useMemo } from "react";
+import { View, Text } from "@tarojs/components"
+import { useMemo } from "react"
 
 import './index.scss'
 
@@ -13,9 +11,8 @@ type propsType = {
 }
 
 export default function PopWindow({ closePop, type }: propsType) {
-  const authStatus = useSelector(selectLogged)
   
-  const handleLabel = useMemo(() => {
+  const labels = useMemo(() => {
     switch(type) {
       case '关注用户': return ['确定取消关注？', '狠心离开', '取消']
       case '报名活动': return ['确定取消报名？', '狠心离开', '取消']
@@ -24,10 +21,6 @@ export default function PopWindow({ closePop, type }: propsType) {
     }
   }, [type])
   
-  const labels = useMemo(() => 
-    authStatus ? handleLabel : 
-    ['暂无权限使用该功能', '取消', '去认证']
-  ,[authStatus])
   return (
     <View className="pop-window-bg">
       <View className="pop-window">

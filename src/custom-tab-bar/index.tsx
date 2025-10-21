@@ -12,7 +12,8 @@ import './index.scss'
 const mapStateToProps = (state: RootState) => ({
   tabBarValue: state.tabBar.value,
   tabBarVisible: state.tabBar.visible,
-  loginStatus: state.auth.isLogged
+  loginStatus: state.auth.isLogged,
+  verifyStatus: state.auth.isVerified
 })
 
 // 创建连接器
@@ -53,6 +54,7 @@ class Index extends Component<PropsFromRedux> {
      * 如果选定索引不变，不做任何操作
      * 
      * 如果改变，则检查登录状态，如果未登录，统一跳转登陆页面；如果登录，正常切换tab
+     * 同理控制验证状态
      * 
      * @param index 被点击tab对应索引
      * @param url 被点击tab对应url
@@ -65,8 +67,14 @@ class Index extends Component<PropsFromRedux> {
                     url: '/loginPkg/pages/login/index'
                 })
             } else {
-                Taro.switchTab({ url: `/${url}` }) 
-                this.props.dispatch(setTabBar(index)) 
+                if(!this.props.verifyStatus) {
+                    Taro.navigateTo({
+                        url: '/loginPkg/pages/register/index?type=1'
+                    })
+                } else {
+                    Taro.switchTab({ url: `/${url}` }) 
+                    this.props.dispatch(setTabBar(index)) 
+                }
             }
         }
     }

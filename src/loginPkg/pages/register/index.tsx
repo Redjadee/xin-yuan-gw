@@ -11,6 +11,7 @@ import { showMsg } from '@/global/utils/common'
 import { sha1 } from 'js-sha1'
 import { useDispatch } from 'react-redux'
 import { loginSuccess } from '@/store/authSlice'
+import { verifySuccess } from '@/store/authSlice'
 
 import { homeImgBase } from '@/global/assets/images/imgBases'
 import './index.scss'
@@ -58,6 +59,7 @@ export default function Register() {
       const res = await studentregister({ password: sha1(password), name, student_id: stuId, id_last_six: id, code, phone })
       if(res?.data) {
         dispatch(loginSuccess({ token: res.data.token }))
+        dispatch(verifySuccess())
         showMsg(res.data.message)
         Taro.login({
           success: async res => {
@@ -82,7 +84,8 @@ export default function Register() {
     } else {
       const res = await verifystudentinfo({ password: sha1(password), name, studentid: stuId, id_last_six: id, code, phone })
       if(res?.data) {
-        showMsg(res.data.message, true)
+        dispatch(verifySuccess())
+        showMsg(res.data.message)
         setTimeout(() => {
           Taro.reLaunch({ url: '/pages/index/index' })
         }, 2000)

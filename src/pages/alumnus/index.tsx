@@ -1,15 +1,21 @@
 import { View, Text, Input, Image, ScrollView } from '@tarojs/components'
 import { useLoad } from '@tarojs/taro'
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import AlumnusItem from './components/AlumnusItem'
 import PopWindow from './components/PopWindow'
+import VoidHint from '@/global/components/VoidHint'
 import { setStatusType } from './components/AlumnusItem'
 import { useDispatch } from 'react-redux'
 import { switchVisible } from '@/store/tabBarSlice'
 import Taro from '@tarojs/taro'
+import { showMsg } from '@/global/utils/common'
+
+import { potentialList } from '@/global/utils/api/usercenter/friend'
+import { orgList } from '@/global/utils/api/activitycenter/org'
+import type { alumnusSayhiType, filterType } from '@/global/utils/api/usercenter/friend'
+import type { orginSayhiType } from '@/global/utils/api/activitycenter/org'
 
 import { alumnusImgBase } from '@/global/assets/images/imgBases'
-import { myInfor, alumnusItemList, organizationList } from './initData'
 import './index.scss'
 
 const alumnusFilter = ['推荐', '全部', '同城', '同行', '同院', '同级']
@@ -26,12 +32,15 @@ export default function Alumnus () {
   const [ bodyLabels, setBodyLabels] = useState(alumnusFilter)
   const [ filter, setFilter ] = useState(0)
   //list Hook
-  const [ alumnuses, setAlumnuses] = useState(alumnusItemList)
-  const [ organizations, setOrganizations ] = useState(organizationList)
+  const [ alumnuses, setAlumnuses] = useState<alumnusSayhiType[]>()
+  const [ alumFilter, setAlumFilter ] = useState<filterType>('all')
+  const [ organizations, setOrganizations ] = useState<orginSayhiType[]>()
+  const [ organFilter, setOrganFilter ] = useState()
   //popWindow Hook
   const [ pop, setPop ] = useState(false)
   const setStatusRef = useRef<setStatusType | null>(null)
   const dispatch = useDispatch()
+  //弹窗控制
   /**
    * 控制弹窗打开
    * @param setStatus 目前Item的关注状态的set函数
@@ -95,25 +104,45 @@ export default function Alumnus () {
     return currentFilter === filter ? 'filter filter-selected' : 'filter'
   }
 
+  useEffect(() => {
+    const controller = new AbortController()
+
+    if( label === '校友' ) {
+      const getAlum = async () => {
+        const res = await potentialList(alumFilter, controller.signal)
+        if(res?.data) {
+          setAlumnuses(res.data.users)
+        } else {
+          if(res) showMsg(res.msg)
+        }               
+      }
+      getAlum()
+    } else {
+      const getOrg = async () => {
+        const res = await orgList(controller.signal)
+        if(res?.data) {
+          setOrganizations(res.data.organizations)
+        } else {
+          if(res) showMsg(res.msg)
+        }
+      }
+      getOrg()
+    }
+
+    return () => controller.abort()
+  }, [filter, label])
+
   useMemo(() => {
     switch(filter) {
-    case 0: ;break;
-    case 1: { setAlumnuses(alumnusItemList); setOrganizations(organizationList) }; break;
-    case 2: { setAlumnuses(alumnusItemList.filter(val => val.alumnus?.city === myInfor.alumnus?.city)); 
-              setOrganizations(organizationList.filter(val => val.organization?.professional === true));
-    }; break;
-    case 3: { setAlumnuses(alumnusItemList.filter(val => val.alumnus?.domain === myInfor.alumnus?.domain));
-              setOrganizations(organizationList.filter(val => val.organization?.centainArea === true));         
-     }; break;
-    case 4: { setAlumnuses(alumnusItemList.filter(val => val.alumnus?.department === myInfor.alumnus?.department));
-              setOrganizations(organizationList.filter(val => val.organization?.oversea === true));
-    }; break;
-    case 5: { setAlumnuses(alumnusItemList.filter(val => val.alumnus?.grade === myInfor.alumnus?.grade));
-              setOrganizations(organizationList.filter(val => val.organization?.industry === true));
-    }; break;
-    case 6: { setOrganizations(organizationList.filter(val => val.organization?.habit === true)) }; break;
+    case 0: return label === '校友' ? setAlumFilter('recommend') : setOrganFilter()
+    case 1: return label === '校友' ? setAlumFilter('all') : setOrganFilter()
+    case 2: return label === '校友' ? setAlumFilter('location') : setOrganFilter()
+    case 3: return label === '校友' ? setAlumFilter('industry') : setOrganFilter()
+    case 4: return label === '校友' ? setAlumFilter('college') : setOrganFilter()
+    case 5: return label === '校友' ? {} : setOrganFilter()
+    case 6: return label === '校友' ? {} : setOrganFilter()
   }
-  }, [filter])
+  }, [filter, label])
   
   return (
     <View className='alumnus'>
@@ -143,12 +172,12 @@ export default function Alumnus () {
         </ScrollView>
         <View className='alumnus-box'>
           { label === '校友' ? 
-            alumnuses.map((value, index) => (
-              <AlumnusItem key={`alumnus-item-${index}`} value={value} openPop={openPop} />
-            )) :
-            organizations.map((value, index) => (
-              <AlumnusItem key={`alumnus-item-o-${index}`} value={value} openPop={openPop} />
-            )) 
+            (alumnuses && alumnuses.length !== 0 ? alumnuses.map((value, index) => (
+              <AlumnusItem key={`alumnus-item-${index}`} type='校友' value={value} openPop={openPop} />
+            )) : <VoidHint type='校友组织列表' />) :
+            (organizations && organizations.length !== 0 ? organizations.map((value, index) => (
+              <AlumnusItem key={`alumnus-item-o-${index}`} type='组织' value={value} openPop={openPop} />
+            )) : <VoidHint type='校友组织列表' />) 
           }
         </View>
       </View>
