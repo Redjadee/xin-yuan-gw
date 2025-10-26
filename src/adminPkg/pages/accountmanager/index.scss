@@ -1,0 +1,94 @@
+.account-manager {
+  background: linear-gradient( 180deg, #ECECEC 0%, #FFFFFF 100%);
+  font-size: 16.5px;
+  color: #08090A;
+  height: 100vh;
+  padding: 0;
+
+  .page-header {
+    background-color: #ffffff;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    border-bottom: 0px solid #ECECEC;
+    position: relative;
+    margin-bottom: 0px;
+
+    .back-arrow {
+      width: 24px;
+      height: 24px;
+      padding: 20px;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .page-title {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      width: 100%;
+    }
+  }
+
+  .am-list {
+    background-color: #ffffff;
+
+    .am-item {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid #ECECEC;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .info {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        .name {
+          font-size: 16.5px;
+        }
+
+        .role {
+          color: #999;
+          margin-left: 10px;
+        }
+      }
+
+      .arrow {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+      }
+
+      .delete-btn {
+        background-color: #ff4d4f;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .add-admin-btn {
+    margin-top: 20px;
+    height: 56px;
+    background-color: #ffffff;
+    color: #08090A;
+    font-size: 16.5px;
+    border: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
