@@ -54,6 +54,10 @@ export default defineAppConfig({
     ]},
     { root: 'msgPkg/', pages: [
       'pages/allmsg/index'
-    ]}
+    ]},
+    { root: 'adminPkg/', pages: [
+      'pages/home/index',
+      'pages/accountmanager/index'
+    ]},
   ]
 });
