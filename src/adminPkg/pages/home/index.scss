@@ -1,0 +1,137 @@
+.admin-home {
+  padding: 10px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+
+  .title-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 12px 0;
+      padding: 10px 0;
+  }
+
+  .title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #090909;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 1rpx;
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #090909;
+    }
+
+    .download-btn {
+      height: 30px;
+      font-size: 14px;
+      color: #95a1a4;
+      background-color: #ffffff;
+      border-color: #95a1a4;
+      margin: 1rpx;
+    }
+  }
+
+  .overview-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .overview-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0;
+
+      .label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .value {
+        font-size: 16px;
+        font-weight: bold;
+        color: #090909;
+        margin-bottom: 5px;
+      }
+
+      .sub-value {
+        font-size: 12px;
+
+        &.positive {
+          color: #52c41a;
+        }
+
+        &.negative {
+          color: #ff4d4f;
+        }
+      }
+    }
+  }
+
+  .menu-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #090909;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .menu-list {
+      .menu-item {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #ececec;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .menu-label {
+          font-size: 16px;
+          color: #090909;
+        }
+
+        .arrow {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+
+  .logout-btn {
+    margin-top: 20px;
+    width: 100%;
+    color: #090909;
+    background-color: #ffffff;
+    border-color: #ffffff;
+  }
+}
