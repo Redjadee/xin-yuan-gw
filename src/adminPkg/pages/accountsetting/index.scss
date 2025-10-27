@@ -1,0 +1,78 @@
+.account-setting {
+  //   background: linear-gradient(180deg, #ececec 0%, #ffffff 100%);
+  background-color: #f8f8f8;
+  font-size: 16.5px;
+  color: #08090a;
+  height: 100vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+
+  .page-header {
+    background-color: #ffffff;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    border-bottom: 0px solid #ececec;
+    position: relative;
+    margin-bottom: 0px;
+    flex-shrink: 0;
+
+    .back-arrow {
+      width: 24px;
+      height: 24px;
+      padding: 20px;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .page-title {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      width: 100%;
+    }
+  }
+
+  .settings {
+    background-color: #ffffff;
+    padding: 16px;
+    height: 64px;
+    flex-grow: 1;
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      height: 44px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .delete-admin-btn {
+    display: flex;
+    margin-top: 8px;
+    margin-bottom: 100px;
+    height: 56px;
+    width: 100%;
+    padding: 12px;
+    color: #090909;
+    background-color: #ffffff;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+
+    &:active {
+      background-color: #f6f6f6;
+    }
+  }
+}
+// 感觉和前面的页面风格有点不统一了）））

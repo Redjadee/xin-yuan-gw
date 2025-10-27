@@ -57,7 +57,8 @@ export default defineAppConfig({
     ]},
     { root: 'adminPkg/', pages: [
       'pages/home/index',
-      'pages/accountmanager/index'
+      'pages/accountmanager/index',
+      'pages/accountsetting/index'
     ]},
   ]
 });
