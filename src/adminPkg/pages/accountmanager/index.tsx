@@ -58,6 +58,12 @@ export default function AccountManager() {
     Taro.navigateBack({ delta: 1 })
   }
 
+  const handleAdminSettings = (id: string) => {
+    Taro.navigateTo({
+      url: `/adminPkg/pages/accountsetting?id=${id}`
+    });
+  }
+
   return (
     <View className="account-manager">
       <View className="page-header">
@@ -77,7 +83,7 @@ export default function AccountManager() {
       ) : admins.length > 0 ? (
         <View className="am-list">
           {admins.map((admin) => (
-            <View className="am-item" key={admin.id}>
+            <View className="am-item" key={admin.id} onClick={() => handleAdminSettings(admin.id)}>
               <View className="info">
                 <Text className="name">{admin.name}</Text>
                 <Text className="role">{admin.role}</Text>

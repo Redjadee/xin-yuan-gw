@@ -1,7 +1,7 @@
 .account-manager {
-  background: linear-gradient( 180deg, #ECECEC 0%, #FFFFFF 100%);
+  background: linear-gradient(180deg, #ececec 0%, #ffffff 100%);
   font-size: 16.5px;
-  color: #08090A;
+  color: #08090a;
   height: 100vh;
   padding: 0;
 
@@ -10,7 +10,7 @@
     height: 64px;
     display: flex;
     align-items: center;
-    border-bottom: 0px solid #ECECEC;
+    border-bottom: 0px solid #ececec;
     position: relative;
     margin-bottom: 0px;
 
@@ -41,7 +41,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
-      border-bottom: 1px solid #ECECEC;
+      border-bottom: 1px solid #ececec;
 
       &:last-child {
         border-bottom: none;
@@ -80,15 +80,16 @@
   }
 
   .add-admin-btn {
-    margin-top: 20px;
+    margin-top: 2px;
     height: 56px;
     background-color: #ffffff;
-    color: #08090A;
+    color: #08090a;
     font-size: 16.5px;
     border: none;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 20px; /* 底部留白 */
   }
 }
