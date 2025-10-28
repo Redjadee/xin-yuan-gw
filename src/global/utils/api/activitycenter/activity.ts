@@ -89,14 +89,29 @@ export async function enroll(id: string) {
  * @param type 0-免费活动 1-付费活动 2-直播活动 3-线下活动
  * @returns 成功-活动object[]
  */
-export async function list(signal: AbortSignal, isparticipated: '1' | '0', status: '0' | '1' | '2' | '3' | '4', type?: '0' | '1' | '2' | '3'): Promise<actiType[] | undefined> {
-    const url = isparticipated === '1' ? `/api/activity/activity/act/list?isparticipated=${isparticipated}&status=${status}`
+export async function list(signal: AbortSignal, isparticipated: '1' | '0', status: '0' | '1' | '2' | '3' | '4', keyword: string, type?: '0' | '1' | '2' | '3'): Promise<actiType[] | undefined> {    
+    const basicUrl = isparticipated === '1' ? `/api/activity/activity/act/list?isparticipated=${isparticipated}&status=${status}`
      : type ? `/api/activity/activity/act/list?isparticipated=${isparticipated}&type=${type}` : `/api/activity/activity/act/list?isparticipated=${isparticipated}`
-    try {
+    const url = keyword === '' ? basicUrl : `/api/activity/activity/act/list?isparticipated=${isparticipated}&keyword=${keyword}`
+     try {
         const res = await http.get( url , { signal } )
         if (res && res.data) return res.data.activities
     } catch (err) {    
         console.log(err)
+    }
+}
+
+/**
+ * 获取推荐活动
+ * @returns data: { total, activities }
+ */
+export async function actRecommend(signal: AbortSignal) {
+    try {
+        const res = await http.get( '/api/activity/activity/act/recommend', { signal } )
+        return res
+    } catch (err) {
+        console.log(err)
+        return undefined
     }
 }
 

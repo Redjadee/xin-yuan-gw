@@ -48,12 +48,12 @@ export default function My () {
     {
       href: `${myImgBase}/item1.png`,
       label: '校友通讯录',
-      url: '/myPkg/pages/contract/index?type=0'
+      url: '/myPkg/pages/contact/index?type=0'
     },
     {
       href: `${myImgBase}/item2.png`,
       label: '加入的组织',
-      url: '/myPkg/pages/contract/index?type=1'
+      url: '/myPkg/pages/contact/index?type=1'
     },
     {
       href: `${myImgBase}/item3.png`,

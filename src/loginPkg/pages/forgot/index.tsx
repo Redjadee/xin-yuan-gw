@@ -1,8 +1,9 @@
-import { View, Text, Form, Input, Button, Textarea } from "@tarojs/components"
+import { View, Text, Form, Input, Button } from "@tarojs/components"
 import Title from "@/loginPkg/components/Title"
 import GetSmsCode from "@/loginPkg/components/GetSmsCode"
+import TextArea from "@/global/components/Textarea"
 import { useLoad } from "@tarojs/taro"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { forgetpasswordRequest } from "@/global/utils/api/usercenter/user"
 import Taro from "@tarojs/taro"
 import { forgetstudentid } from '@/global/utils/api/usercenter/user'
@@ -24,31 +25,14 @@ export default function Forgot() {
   //人工申诉
   const [ contract, setContract ] = useState('')
   const [ content, setContent ] = useState('')
+  const handleContent = useCallback((val: string) => setContent(val), [])
   const [ showPh, setShowPh ] = useState(true)
-  
-  const textareaPlaceHolder = 
-  `您可以给我们提供以下信息：
-  1、姓名
-  2、身份证号后六位
-  3、入学年份
-  4、就读专业
-  5、手机号
-  方便我们更好的帮助您进行查看`
-
-  const handleInput = (e) => { //FIXME 输入时 若内容为空 显示ph
-    setShowPh(false)
-    setContent(() => e.detail.value)
-  }
-  const handleFocus = () => {
-    setShowPh(false)
-  }
-  const handleBlur = () => {
-    if(content === '') setShowPh(true)
-  }
+  const show = useCallback(() => setShowPh(true), [])
+  const notshow = useCallback(() => setShowPh(false), [])
 
   //router
  const confirmRouter = async () => {
-    if (type === '0') { //TODO Test
+    if (type === '0') {
       const res = await forgetpasswordRequest(code, phone)
       if(res?.data) {
         const { token } = res.data
@@ -92,10 +76,7 @@ export default function Forgot() {
         <Title>人工申诉</Title>
         <Form className="form">
           <Input value={contract} onInput={e => setContract(e.detail.value)} placeholder="请输入联系方式" placeholderClass="inputPH" className="input" />
-          <View className="textarea-container">
-            <Textarea maxlength={300} className="textarea" onFocus={handleFocus} onBlur={handleBlur} onInput={handleInput} />
-            { showPh && <View><Text className="textarea-ph">{textareaPlaceHolder}</Text><Text className="hint">不多于300字</Text></View> }
-          </View>
+          <TextArea maxlength={300} handleContent={handleContent} showPh={showPh} show={show} notshow={notshow} />
           <Button onClick={confirmRouter} className="button manual-button"><Text>确认</Text></Button>
         </Form>
       </View>

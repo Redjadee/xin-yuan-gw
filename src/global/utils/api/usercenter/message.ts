@@ -21,10 +21,10 @@ export async function messageActivity(actiId: string, signal: AbortSignal) {
  * 获取消息列表
  * @returns data: { msgs, total }
  */
-export async function messageList(signal: AbortSignal) {
+export async function messageList(signal: AbortSignal, ps?: 'fromHome') {
   try {
     const res = await http.get(
-      '/api/user/message/list',
+      ps ? '/api/user/message/list?page=1&pagesize=3' : '/api/user/message/list',
       { signal }
     )
     return res

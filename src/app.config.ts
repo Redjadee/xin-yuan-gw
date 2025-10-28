@@ -48,12 +48,13 @@ export default defineAppConfig({
       'pages/detail/index',
     ]},
     { root: "myPkg/", pages: [
-      'pages/contract/index',
+      'pages/contact/index',
       'pages/setting/index',
       'pages/myinfor/index'
     ]},
     { root: 'msgPkg/', pages: [
-      'pages/allmsg/index'
+      'pages/allmsg/index',
+      'pages/chat/index'
     ]}
   ]
 });
