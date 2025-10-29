@@ -1,6 +1,6 @@
 import { View, Text, Image } from '@tarojs/components'
 import { TextEllipsis } from '@taroify/core'
-import '@taroify/core/text-ellipsis/style/index'
+import '@taroify/core/text-ellipsis/index.css'
 import { dateFormater } from '@/global/utils/common'
 import Taro from '@tarojs/taro'
 

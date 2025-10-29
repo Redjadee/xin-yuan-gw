@@ -12,7 +12,7 @@ import { showMsg } from "@/global/utils/common"
 import { getCurrentInstance } from "@tarojs/taro"
 import Taro from "@tarojs/taro"
 import { AreaPicker, DatetimePicker } from '@taroify/core'
-import '@taroify/core/area-picker/style/index'
+import '@taroify/core/area-picker'
 import '@taroify/core/datetime-picker'
 import { areaList } from "@vant/area-data"
 import { myImgBase } from "@/global/assets/images/imgBases"
