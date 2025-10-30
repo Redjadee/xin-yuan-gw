@@ -39,6 +39,7 @@ export default function TextArea({ showPh, show, notshow, handleContent, maxleng
     }
     setInputted(true)
     if(e.detail.value === '') setInputted(false)  
+    setNowlength(e.detail.value.length)
   }
   const handleFocus = () => {
     if(notshow) notshow()
@@ -49,19 +50,18 @@ export default function TextArea({ showPh, show, notshow, handleContent, maxleng
       if(show) show()
     }
   }
-  const handleEnd = (e) => setNowlength(e.detail.value.length)
 
   if(placeHolder) {
     return (
       <View className={`textarea-container ${boxClass}`}>
-        <Textarea confirmType='done' maxlength={maxlength} className={`textarea ${textareaClass}`} placeholderClass="textarea-ph-normal" placeholder={textareaPlaceHolder} onFocus={handleFocus} onBlur={handleBlur} onInput={handleInput} onKeyboardCompositionEnd={handleEnd} />
+        <Textarea maxlength={maxlength} className={`textarea ${textareaClass}`} placeholderClass="textarea-ph-normal" placeholder={textareaPlaceHolder} onFocus={handleFocus} onBlur={handleBlur} onInput={handleInput} />
         <Text className="hint">{inputted ? `${nowlength}/${maxlength}` : `不多于${maxlength}字`}</Text>
       </View>
     )
   } else {
     return (
     <View className={`textarea-container ${boxClass}`}>
-      <Textarea confirmType='done' maxlength={maxlength} className={`textarea ${textareaClass}`} onFocus={handleFocus} onBlur={handleBlur} onInput={handleInput} />
+      <Textarea maxlength={maxlength} className={`textarea ${textareaClass}`} onFocus={handleFocus} onBlur={handleBlur} onInput={handleInput} />
       <View>
         { showPh && <Text className="textarea-ph">{textareaPlaceHolder}</Text> }      
         <Text className="hint">{inputted ? `${nowlength}/${maxlength}` : `不多于${maxlength}字`}</Text>

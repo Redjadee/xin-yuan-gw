@@ -12,8 +12,8 @@ import { showMsg } from "@/global/utils/common"
 import { getCurrentInstance } from "@tarojs/taro"
 import Taro from "@tarojs/taro"
 import { AreaPicker, DatetimePicker } from '@taroify/core'
-import '@taroify/core/area-picker'
-import '@taroify/core/datetime-picker'
+import '@taroify/core/datetime-picker/style/index'
+import '@taroify/core/area-picker/style/index'
 import { areaList } from "@vant/area-data"
 import { myImgBase } from "@/global/assets/images/imgBases"
 
@@ -56,15 +56,23 @@ function PopUp({ handleSetInfor, K, pop, closePop }: popupPropsType) {
     }
   }
 
-  
+  //简介
+  const [ keyboardHeight, setKeyboardHeight ] = useState(0)
+  useEffect(() => {
+    Taro.onKeyboardHeightChange(res => setKeyboardHeight(res.height))
+  }, [])
+  const dynamicHeight = useMemo(() => { return { height: keyboardHeight } }, [keyboardHeight])
+  //生日
   const nowDate = useRef(new Date())
   const minDate = useRef(new Date(1970, 0, 1))
+  //
   const content = useMemo(() => {
     switch(K) {
       case 'bio': return (
         <View className="bio-page">
           <Text className="title">简介</Text>
           <TextArea boxClass="bio-textarea-box" textareaClass="bio-textarea" placeHolder="请输入个人简介" maxlength={15} handleContent={handleSubmit} />
+          { keyboardHeight !== 0 && <View style={dynamicHeight} />}
         </View>
       )
       case 'birthday': return (

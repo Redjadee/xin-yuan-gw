@@ -95,7 +95,7 @@ export default function AlphabetList() {
     getList()
 
     return () => controller.abort()
-  }, [])
+  }, [type])
   
   return (
     <View className='alphabet'>
