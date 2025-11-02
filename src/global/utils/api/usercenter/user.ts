@@ -86,7 +86,7 @@ export type userInforType = {
   birthday: string //format: 2006-03-03
   city?: string
   district?: string
-  gender: '0' | '1' | '2' //性别: 0-未知 1-男 2-女
+  gender: 0 | 1 | 2 //性别: 0-未知 1-男 2-女
   hideprofile: boolean
   major?: string
   profession?: string
@@ -135,7 +135,7 @@ export type myInforType = {
   avatar: string //头像
   realname: string
   bio: string //简介
-  gender: '0' | '1' | '2' //性别: 0-未知 1-男 2-女
+  gender: 0 | 1 | 2 //性别: 0-未知 1-男 2-女
   birthday: string //format: 2006-03-03
   profession?: string
   city?: string

@@ -30,6 +30,7 @@ export default function Forgot() {
   const show = useCallback(() => setShowPh(true), [])
   const notshow = useCallback(() => setShowPh(false), [])
 
+  
   //router
  const confirmRouter = async () => {
     if (type === '0') {

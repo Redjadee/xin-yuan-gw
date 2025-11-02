@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
 import { Textarea, View, Text } from "@tarojs/components"
+import { showMsg } from "@/global/utils/common"
 
 import './index.scss'
 
@@ -45,26 +46,49 @@ export default function TextArea({ showPh, show, notshow, handleContent, maxleng
     if(notshow) notshow()
   }
   const handleBlur = (e) => {
-    handleContent(e.detail.value)
-    if(e.detail.value === '') {
+    const currentValue = e.detail.value
+    const isExceeded = currentValue.length > maxlength
+
+    if (isExceeded) {
+      showMsg(`内容不能超过${maxlength}字`)
+      return
+    }
+
+    handleContent(currentValue)
+    if(currentValue === '') {
       if(show) show()
     }
   }
 
+  const displayText = useMemo(() => inputted ? `${nowlength}/${maxlength}` : `不多于${maxlength}字`, [inputted, nowlength, maxlength])
+  const isCountExceeded = useMemo(() => nowlength > maxlength, [nowlength, maxlength])
+
   if(placeHolder) {
     return (
       <View className={`textarea-container ${boxClass}`}>
-        <Textarea maxlength={maxlength} className={`textarea ${textareaClass}`} placeholderClass="textarea-ph-normal" placeholder={textareaPlaceHolder} onFocus={handleFocus} onBlur={handleBlur} onInput={handleInput} />
-        <Text className="hint">{inputted ? `${nowlength}/${maxlength}` : `不多于${maxlength}字`}</Text>
+        <Textarea
+          className={`textarea ${textareaClass}`}
+          placeholderClass="textarea-ph-normal"
+          placeholder={textareaPlaceHolder}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onInput={handleInput}
+        />
+        <Text className={`hint ${isCountExceeded ? 'exceeded' : ''}`}>{displayText}</Text>
       </View>
     )
   } else {
     return (
     <View className={`textarea-container ${boxClass}`}>
-      <Textarea maxlength={maxlength} className={`textarea ${textareaClass}`} onFocus={handleFocus} onBlur={handleBlur} onInput={handleInput} />
+      <Textarea
+        className={`textarea ${textareaClass}`}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onInput={handleInput}
+      />
       <View>
-        { showPh && <Text className="textarea-ph">{textareaPlaceHolder}</Text> }      
-        <Text className="hint">{inputted ? `${nowlength}/${maxlength}` : `不多于${maxlength}字`}</Text>
+        { showPh && <Text className="textarea-ph">{textareaPlaceHolder}</Text> }
+        <Text className={`hint ${isCountExceeded ? 'exceeded' : ''}`}>{displayText}</Text>
       </View>
     </View>
   )

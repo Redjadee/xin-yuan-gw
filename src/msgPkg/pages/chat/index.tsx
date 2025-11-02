@@ -1,39 +1,36 @@
 import { View, Text, Image } from "@tarojs/components"
 import { useState, useEffect } from 'react'
 import { useLoad } from '@tarojs/taro'
-import { dateFormater } from "@/global/utils/common"
+import { dateFormater, showMsg } from "@/global/utils/common"
+import { conversation } from "@/global/utils/api/usercenter/message"
+import { MsgShowType } from "@/pages/index/components/MessageContainer"
 
 import './index.scss'
 
-interface notifiPropsType {
-  type: 'time' | 'result'
+
+function Notification({val}) {
+  return (
+    <View className="notifi-bg">
+      <Text className="notifi"></Text>
+    </View>
+  )
 }
 
-function Notification({ type }: notifiPropsType) {
-  if(type === 'time') {
-    return (
-      <Text className="notifi">{dateFormater('2025-03-12')}</Text>
-    )
-  } else if (type === 'result') {
-    return (
-      <View className="notifi-bg">
-        <Text className="notifi"></Text>
-      </View>
-    )
-  }
+function Time({val}) {
+  return (<Text className="notifi">{dateFormater(val, 'HH:mm')}</Text>)
 }
-
 interface chatBubblePropsType {
   type: 'left' | 'right'
+  avatar: string
+  content: string
 }
-
-function ChatBubble({ type }: chatBubblePropsType) {
+function Bubble({ type, content, avatar }: chatBubblePropsType) {
   if(type === 'left') {
     return (
       <View className="chat-bubble left">
-        <Image className="profile" src="" />
+        <Image className="profile" src={avatar} />
         <View className="bubble">
-          <Text></Text>
+          <Text>{content}</Text>
         </View>
       </View>
     )
@@ -41,24 +38,49 @@ function ChatBubble({ type }: chatBubblePropsType) {
     return (
       <View className="chat-bubble right">
         <View className="bubble">
-          <Text></Text>
+          <Text>{content}</Text>
         </View>
-        <Image className="profile" src="" />
+        <Image className="profile" src={avatar} />
       </View>
     )
   }
 }
 
+function ChatChild() {
+  return (
+    <>
+      <Time  />
+      <Bubble />
+    </>
+  )
+}
+
 export default function Chat() {
-  const [ fromid, setFromid ] = useState('')
+  const [ from, setFrom ] = useState({ id: '', type: '' })
+  const [ list, setList ] = useState<MsgShowType[]>([])
   useLoad(options => {
-    setFromid(options.id)
+    setFrom({id: options.id, type: options.type })
   })
-  
+  useEffect(() => {
+    const controller = new AbortController()
+
+    const getContent = async () => {
+      const res = await conversation(from.id, from.type as 'personal' | 'activity' | 'broadcast', controller.signal)
+      if(res?.data) {
+        setList(res.data.messages)
+      } else {
+        if(res) showMsg(res.msg)
+      }
+    }
+    getContent()
+
+    return () => controller.abort()
+  }, [])
+
   return (
     <View className="chat">
-      <Text className="title">王同学</Text>
-      
+      <Text className="title">{list[0].fromusername}</Text>
+      {list.map((val, index) => <ChatChild />)}
     </View>
   )
 }

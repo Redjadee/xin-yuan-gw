@@ -25,6 +25,10 @@
     right: 3px;
     font-size: 12px;
     color: #CCC8C8;
+
+    &.exceeded {
+      color: #ff4757;
+    }
   }
 
   .textarea-ph-normal {
