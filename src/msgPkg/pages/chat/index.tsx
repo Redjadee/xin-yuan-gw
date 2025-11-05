@@ -70,8 +70,8 @@ function ChatChild(val: conversationType) {
   const type = useMemo(() => {
     if(!val.messageitems) return 'left'
     const key = val.messageitems.filter((val) => val.itemkey === 'show_direction')
-    if(key[0].itemvalue === 'send') return 'left'
-    else return 'right'
+    if(key[0].itemvalue === 'send') return 'right'
+    else return 'left'
   }, [val])
   return (
     <>
@@ -110,7 +110,7 @@ export default function Chat() {
   return (
     <View className="chat">
       <Text className="title">{from.title}</Text>
-      {list.map((val, index) => <ChatChild {...val} key={`chatChild-${index}`} />)}
+      {[...list].reverse().map((val, index) => <ChatChild {...val} key={`chatChild-${list.length - 1 - index}`} />)}
     </View>
   )
 }
