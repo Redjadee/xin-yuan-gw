@@ -20,9 +20,6 @@ import { fileUpload } from "@/global/utils/api/usercenter/fileupload"
 
 import './index.scss'
 
-//TODO 
-// 修改实现
-// 提交实现
 interface popupPropsType {
   handleSetInfor: <K extends keyof myInforType>(key: K, val: myInforType[K]) => void
   K: keyof myInforType | 'place'
@@ -243,28 +240,21 @@ export default function Myinfor() {
   const closePop = () => isPop(false)
 
   //submit
-  const inforRef = useRef(infor)
-  const hideRef = useRef(hide)
-  // Update refs when values change
   useEffect(() => {
-    inforRef.current = infor
-  }, [infor])
-  useEffect(() => {
-    hideRef.current = hide
-  }, [hide])
-  useEffect(() => {
-    return () => {
-      const handleSubmitInfo = async () => {
-        const res = await updateuserinfo(inforRef.current, true, hideRef.current)
-        if(res?.data) {
-          showMsg(res.data.message)
-        } else {
-          if(res) showMsg(res.msg)
-        }
+    const controller = new AbortController()
+
+    const handleSubmitInfo = async () => {
+      const res = await updateuserinfo(infor, true, hide, controller.signal)
+      if(res?.data) {
+        showMsg(res.data.message)
+      } else {
+        if(res) showMsg(res.msg)
       }
-      handleSubmitInfo()
     }
-  }, [])
+    handleSubmitInfo()
+
+    return () => controller.abort()
+  }, [infor])
 
   return (
     <View className="my-infor">

@@ -3,8 +3,10 @@ import { TextEllipsis } from '@taroify/core'
 import '@taroify/core/text-ellipsis/index.css'
 import { dateFormater } from '@/global/utils/common'
 import Taro from '@tarojs/taro'
+import { MessageItem } from '@/msgPkg/pages/chat'
 
 import './index.scss'
+import { useCallback, useMemo } from 'react'
 
 export interface MsgShowType {
   content: string
@@ -16,12 +18,18 @@ export interface MsgShowType {
 
   isread: 0 | 1 //0-未读 1-已读
   createdat: string
+
+  messageitem: MessageItem[]
 }
 
-function Message({ fromuseravatar, fromusername, content, createdat: time, fromuserid }: MsgShowType) {
-  const handleRouter = () => {
-    Taro.navigateTo({ url: `/msgPkg/pages/chat/index?id=${fromuserid}` })
-  }
+function Message({ fromuseravatar, fromusername, content, createdat: time, fromuserid, messageitem }: MsgShowType) {
+  const key = useMemo(() => {
+    if(messageitem) return messageitem.filter(val => val.itemkey === 'messagetype')
+    else return [{ itemvalue: 'personal' }]
+  }, [messageitem])
+  const handleRouter = useCallback(() => {
+    Taro.navigateTo({ url: `/msgPkg/pages/chat/index?id=${fromuserid}&type=${key[0].itemvalue}&title=${fromusername}` })
+  }, [key])
   
   return (
     <View className='msg' onClick={handleRouter}>

@@ -113,11 +113,11 @@ async function getAuthorization(filename: string, imagetype: imageType, articlei
  *  securityToken 安全令牌
  *  }
  */
-export const fileUpload = async (imagetype: imageType, articleid?: string) => {
+export const fileUpload = async (imagetype: imageType, sizeType: 'compressed'| 'original', articleid?: string) => {
   // 选择文件
   Taro.chooseMedia({
     count: 1, // 默认9
-    sizeType: ['compressed'],
+    sizeType: [sizeType],
     sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
     success: function (res) {
       const authData: any = getAuthorization(res.tempFiles[0].tempFilePath, imagetype, articleid)

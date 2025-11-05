@@ -150,11 +150,12 @@ export type myInforType = {
  * @param hideprofile 隐私设置: 0-公开 1-隐藏
  * @returns 成功-更新后的用户信息
  */
-export async function updateuserinfo( value: myInforType, returndata: boolean, hideprofile: boolean ) {
+export async function updateuserinfo( value: myInforType, returndata: boolean, hideprofile: boolean, signal: AbortSignal ) {
   try {
     const res = await http.post(
       '/api/user/user/updateuserinfo',
-      { ...value, returndata, hideprofile }
+      { ...value, returndata, hideprofile },
+      { signal }
     )
     // if(res && res.data) return res.data.userinfo
     return res

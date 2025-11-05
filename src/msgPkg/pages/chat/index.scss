@@ -1,5 +1,6 @@
 .chat {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   .title {
@@ -10,7 +11,7 @@
   }
 
   .notifi {
-    font-size: 10px;
+    font-size: 11px;
     color: #999999;
   }
   .notifi-bg {
@@ -30,13 +31,17 @@
     gap: 12px;
     color: #08090A;
     font-size: 15px;
+    margin-top: 20px;
+    margin-bottom: 26px;
     .profile {
       height: 45px;
       width: 45px;
       border-radius: 50%;
     }
     .bubble {
-      padding-inline: 11px;
+      padding-inline: 12px;
+      padding-top: 11px;
+      padding-bottom: 11px;
     }
   }
   .left {

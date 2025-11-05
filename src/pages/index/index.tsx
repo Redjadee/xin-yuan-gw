@@ -9,7 +9,7 @@ import { messageList } from '@/global/utils/api/usercenter/message'
 import { actRecommend } from '@/global/utils/api/activitycenter/activity'
 import type { actiType } from '@/global/utils/api/activitycenter/activity'
 import { useEffect, useState } from 'react'
-import Taro from '@tarojs/taro'
+import Taro, { useDidHide } from '@tarojs/taro'
 import { useDidShow } from '@tarojs/taro'
 
 import './index.scss'
@@ -56,9 +56,12 @@ function HotActivities() {
 
 
 export default function Index() {
+  const [ show, setShow ] = useState(true)
+  useDidShow(() => setShow(true))
+  useDidHide(() => setShow(false))
+  
   const [ msgs, setMsgs ] = useState<MsgShowType[]>()
-
-  useDidShow(() => {
+  useEffect(() => {
     const controller = new AbortController()
 
     const getMsgs = async () => {
@@ -69,10 +72,10 @@ export default function Index() {
         if(res) showMsg(res.msg)
       }
     }
-    getMsgs()
+    if(show) getMsgs()
 
     return () => controller.abort()
-  })
+  }, [show])
 
   return (
     <View className='index'>

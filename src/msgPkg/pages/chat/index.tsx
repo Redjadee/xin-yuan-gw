@@ -1,14 +1,34 @@
 import { View, Text, Image } from "@tarojs/components"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useLoad } from '@tarojs/taro'
 import { dateFormater, showMsg } from "@/global/utils/common"
 import { conversation } from "@/global/utils/api/usercenter/message"
-import { MsgShowType } from "@/pages/index/components/MessageContainer"
 
 import './index.scss'
 
+export interface MessageItem {
+  createdat: string
+  id: string
+  itemkey: string
+  itemvalue: string
+  messageid: string
+  updatedat: string
+}
+interface conversationType {
+  content: string
+  contenttype: 1 | 2 | 3 | 4 | 5 //内容类型: 1-文本 2-图片 3-语音 4-视频 5-文件
+  
+  fromuseravatar: string //头像图片链接
+  fromusername: string
+  fromuserid: string //发送者用户ID
 
-function Notification({val}) {
+  isread: 0 | 1 //0-未读 1-已读
+  createdat: string
+
+  messageitems: MessageItem[]
+}
+
+function Notification({val}) { //TODO
   return (
     <View className="notifi-bg">
       <Text className="notifi"></Text>
@@ -46,21 +66,30 @@ function Bubble({ type, content, avatar }: chatBubblePropsType) {
   }
 }
 
-function ChatChild() {
+function ChatChild(val: conversationType) {
+  const type = useMemo(() => {
+    if(!val.messageitems) return 'left'
+    const key = val.messageitems.filter((val) => val.itemkey === 'show_direction')
+    if(key[0].itemvalue === 'send') return 'left'
+    else return 'right'
+  }, [val])
   return (
     <>
-      <Time  />
-      <Bubble />
+      <Time val={val.createdat}  />
+      <Bubble type={type} content={val.content} avatar={val.fromuseravatar} />
     </>
   )
 }
 
 export default function Chat() {
-  const [ from, setFrom ] = useState({ id: '', type: '' })
-  const [ list, setList ] = useState<MsgShowType[]>([])
+  const [ from, setFrom ] = useState({ id: '', type: '', title: '' })
+  const [ fromChanged, setFromChanged ] = useState(false)
   useLoad(options => {
-    setFrom({id: options.id, type: options.type })
+    setFrom({id: options.id, type: options.type, title: options.title })
+    setFromChanged(true)
   })
+
+  const [ list, setList ] = useState<conversationType[]>([])
   useEffect(() => {
     const controller = new AbortController()
 
@@ -68,19 +97,20 @@ export default function Chat() {
       const res = await conversation(from.id, from.type as 'personal' | 'activity' | 'broadcast', controller.signal)
       if(res?.data) {
         setList(res.data.messages)
+        console.log(res.data)
       } else {
         if(res) showMsg(res.msg)
       }
     }
-    getContent()
+    if(fromChanged) getContent()
 
     return () => controller.abort()
-  }, [])
+  }, [fromChanged])
 
   return (
     <View className="chat">
-      <Text className="title">{list[0].fromusername}</Text>
-      {list.map((val, index) => <ChatChild />)}
+      <Text className="title">{from.title}</Text>
+      {list.map((val, index) => <ChatChild {...val} key={`chatChild-${index}`} />)}
     </View>
   )
 }
