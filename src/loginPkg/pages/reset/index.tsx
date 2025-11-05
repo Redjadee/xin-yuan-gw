@@ -7,6 +7,7 @@ import Taro from "@tarojs/taro"
 import { showMsg } from "@/global/utils/common"
 import { sha1 } from "js-sha1"
 
+import './index.scss'
 import '@/loginPkg/style/form.scss'
 
 export default function Reset() {
@@ -53,10 +54,10 @@ export default function Reset() {
   return (
     <View className="reset">
       <Title>重置密码</Title>
-      <Form>
-        <Input value={password} onInput={e => setPassword(e.detail.value)} placeholder="请输入密码" placeholderClass="inputPH" className="input" />
-        <Input value={confrim} onInput={e => setConfirm(e.detail.value)} placeholder="请再次确定密码" placeholderClass="inputPH" className="input" />
-        <Button onClick={handleSubmit} className="button" ><Text>确定</Text></Button>
+      <Form className="form">
+        <Input password value={password} onInput={e => setPassword(e.detail.value)} placeholder="请输入密码" placeholderClass="inputPH" className="input" />
+        <Input password value={confrim} onInput={e => setConfirm(e.detail.value)} placeholder="请再次确定密码" placeholderClass="inputPH" className="input" />
+        <Button onClick={handleSubmit} className="button reset-buttom" ><Text>确定</Text></Button>
       </Form>
     </View>
   )

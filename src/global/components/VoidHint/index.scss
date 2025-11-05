@@ -7,8 +7,10 @@
   color: #838383;
   width: 250px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 24px;
   .below-box {
     display: flex;
     align-items: center;

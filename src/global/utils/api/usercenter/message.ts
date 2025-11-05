@@ -17,14 +17,32 @@ export async function messageActivity(actiId: string, signal: AbortSignal) {
   }
 }
 
+export type conversationType = 'personal' | 'activity' | 'broadcast'
+/**
+ * 获取对话内容
+ * @param id 对应的个人/活动ID
+ * @param type 对话类型: personal-个人, activity-活动, broadcast-广播
+ */
+export async function conversation(id: string, type: conversationType, signal: AbortSignal) {
+  try {
+    const res = await http.get(
+      `/api/user/message/conversation?id=${id}&type=${type}`,
+      { signal }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 /**
  * 获取消息列表
  * @returns data: { msgs, total }
  */
-export async function messageList(signal: AbortSignal) {
+export async function messageList(signal: AbortSignal, ps?: 'fromHome') {
   try {
     const res = await http.get(
-      '/api/user/message/list',
+      ps ? '/api/user/message/list?page=1&pagesize=3' : '/api/user/message/list',
       { signal }
     )
     return res

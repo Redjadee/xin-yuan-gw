@@ -5,7 +5,8 @@ import { useDispatch } from "react-redux"
 import { logout } from "@/store/authSlice"
 import { setTabBar } from "@/store/tabBarSlice"
 import Taro from "@tarojs/taro"
-
+import PopWindow from "@/pages/alumnus/components/PopWindow"
+import { useState } from "react"
 
 import { myImgBase } from "@/global/assets/images/imgBases"
 import './index.scss'
@@ -24,10 +25,11 @@ export default function Setting() {
       case 3:
     }
   }
-  const handleClick = async (idx: number) => {
-    switch(idx) {
-      case 0: {
-        const res = await deleteuser()
+
+  const [ pop, setPop ] = useState(false)
+  const handleDelete = async (type: boolean) => {
+    if(type) {
+      const res = await deleteuser()
         if(res?.data) {
           showMsg(res.data.message)
           dispatch(logout())
@@ -38,7 +40,15 @@ export default function Setting() {
         }
         else {
           if(res) showMsg(res.msg)
-        }
+      }
+    } else {}
+    setPop(false)
+  }
+
+  const handleClick = async (idx: number) => {
+    switch(idx) {
+      case 0: {
+        setPop(true)
       }; break;
       case 1: { //TODO 提示信息
         dispatch(logout())
@@ -52,6 +62,7 @@ export default function Setting() {
 
   return (
     <View className="setting">
+      { pop && <PopWindow type='注销' closePop={handleDelete} /> }
       <View className="upper-box">
         {upperLabels.map((value, index) => (
           <View onClick={() => handleRouter(index)} className="upper-item" key={`setting-upper-${index}`}>

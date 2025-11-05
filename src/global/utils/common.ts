@@ -9,7 +9,7 @@ dayjs.extend(relativeTime)
 dayjs.extend(customParseFormat)
 dayjs.locale('zh-cn')
 
-type dateFormaterType = 'YYYY-MM-DD' | 'YYYY-MM-DD HH:mm'
+type dateFormaterType = 'YYYY-MM-DD' | 'YYYY-MM-DD HH:mm' | 'HH:mm'
 //ISO 8601 2025-09-23T14:30:00 年-月-日T时:分:秒
 
 /**

@@ -1,0 +1,13 @@
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  height: 80px;
+  font-size: 15px;
+  color: #3A3B3C;
+  margin-left: 15px;
+  .avatar {
+    width: 50px;
+    height: 50px;
+  }
+}

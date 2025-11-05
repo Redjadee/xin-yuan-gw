@@ -11,6 +11,23 @@ export type orginSayhiType = {
 export type orginType = orginActiType & orginSayhiType & {
   adminuserid: string
 }
+
+/**
+ * 获取已加入的组织列表
+ * @returns data: { organizations, total }
+ */
+export async function orgContactList(signal: AbortSignal) {
+  try {
+    const res = http.get(
+      '/api/activity/org/contact/list',
+      { signal }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 /**
  * 创建组织
  * @param val 组织属性
@@ -61,14 +78,17 @@ export async function orgJoin(organizationid: string, applicationremark: string)
   }
 }
 
+export type orginFilterType = 'recommend' | 'all' | 'major' | 'location' | 'overseas' | 'industry' | 'hobby'
+//筛选选项: recommend-推荐, all-全部, major-同专业, location-地方, overseas-海外, industry-同行业, hobby-兴趣爱好
+
 /**
  * 获取组织列表
  * @returns data: { organizations, total }
  */
-export async function orgList(signal: AbortSignal) {
+export async function orgList(signal: AbortSignal, keyword: string, filter: orginFilterType) {
   try {
     const res = http.get(
-      '/api/activity/org/list',
+      keyword ? `/api/activity/org/list?keyword=${keyword}` : `/api/activity/org/list?filter=${filter}`,
       { signal }
     )
     return res

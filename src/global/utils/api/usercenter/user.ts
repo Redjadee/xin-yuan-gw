@@ -1,5 +1,4 @@
 import { http } from "../request"
-import { myInforType } from "@/myPkg/pages/myinfor"
 
 type verifyStuInfor = {
   code: string
@@ -87,14 +86,14 @@ export type userInforType = {
   birthday: string //format: 2006-03-03
   city?: string
   district?: string
-  gender: '0' | '1' | '2' //性别: 0-未知 1-男 2-女
+  gender: 0 | 1 | 2 //性别: 0-未知 1-男 2-女
   hideprofile: boolean
   major?: string
   profession?: string
   province?: string
   realname: string
   studentid: string
-  id: number
+  id: string
 }
 /**
  * 获取个人信息
@@ -132,11 +131,23 @@ export async function updatenotificationsettings(notificationtiming: '1' | '2' |
   }
 }
 
-
+export type myInforType = {
+  avatar: string //头像
+  realname: string
+  bio: string //简介
+  gender: 0 | 1 | 2 //性别: 0-未知 1-男 2-女
+  birthday: string //format: 2006-03-03
+  profession?: string
+  city?: string
+  district?: string
+  province?: string
+  major?: string
+}
 /**
  * 修改个人信息
  * @param value 用户信息
  * @param returndata 是否返回完整数据
+ * @param hideprofile 隐私设置: 0-公开 1-隐藏
  * @returns 成功-更新后的用户信息
  */
 export async function updateuserinfo( value: myInforType, returndata: boolean, hideprofile: boolean ) {
@@ -204,11 +215,11 @@ export async function forgetpasswordRequest(code: string, phone: string) {
  * 
  * @returns 成功-res
  */
-export async function forgetpasswordVerify(code: string, newPassword: string, token: string) {
+export async function forgetpasswordVerify(code: string, newpassword: string, token: string) {
   try {
     const res = await http.post(
       '/api/user/user/forgetpassword/verify',
-      { code, newPassword, token }
+      { code, newpassword, token }
     )
     return res
   } catch (err) {

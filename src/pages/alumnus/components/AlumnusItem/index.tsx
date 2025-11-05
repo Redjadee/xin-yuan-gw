@@ -1,40 +1,42 @@
 import { View, Text, Image } from '@tarojs/components'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import type { alumnusSayhiType } from '@/global/utils/api/usercenter/friend'
 import type { orginSayhiType } from '@/global/utils/api/activitycenter/org'
 import { alumnusImgBase, profile as profileHref } from '@/global/assets/images/imgBases'
-import { greetingSend } from '@/global/utils/api/usercenter/friend'
+import { friendUnfollow, greetingSend } from '@/global/utils/api/usercenter/friend'
 import { orgExit, orgJoin } from '@/global/utils/api/activitycenter/org'
 import { showMsg } from '@/global/utils/common'
 
 import './index.scss'
 
 export type setStatusType = React.Dispatch<React.SetStateAction<boolean>>
+export type recallType = () => Promise<void>
 
 type propsType = {
   value: alumnusSayhiType | orginSayhiType
-  openPop: (setStatus?: setStatusType) => void
+  openPop: (setStatus?: setStatusType, recall?: () => Promise<void>) => void
   type: '校友' | '组织'
+  refresh: () => void
 }
 
-export default function AlumnusItem({ value, openPop, type }: propsType) {
+export default function AlumnusItem({ value, openPop, type, refresh }: propsType) {
   const [status, setStatus] = useState<boolean>(value.isfollow)
 
   const sayHi = async () => {
     if(type === '校友') {
-      // @ts-ignore
       const res = await greetingSend(value.id)
       if(res?.data) {
         showMsg(res.data.message)
         setStatus(!status)
+        refresh()
       } else {
         if(res) showMsg(res.msg)
       }
     } else {
-      // @ts-ignore
       const res = await orgJoin(value.id, '')
       if(res?.data) {
         showMsg(res.data.message)
+        refresh()
       } else {
         if(res) showMsg(res.msg)
       }
@@ -42,12 +44,18 @@ export default function AlumnusItem({ value, openPop, type }: propsType) {
   }
   const recall = async () => {
     if(type === '校友') {
-
+      const res = await friendUnfollow(value.id)
+      if(res?.data) {
+        showMsg(res.data.message)
+        refresh()
+      } else {
+        if(res) showMsg(res.msg)
+      }
     } else {
-      // @ts-ignore
       const res = await orgExit(value.id)
       if(res?.data) {
         showMsg(res.data.message)
+        refresh()
       } else {
         if(res) showMsg(res.msg)
       }
@@ -56,7 +64,7 @@ export default function AlumnusItem({ value, openPop, type }: propsType) {
 
   const handleOpen = () => {
     if (status === true) {
-      openPop(setStatus)
+      openPop(setStatus, recall)
     } else {
       sayHi()      
     }
