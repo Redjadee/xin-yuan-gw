@@ -17,12 +17,12 @@ export default function Setting() {
   const upperLabels = ['通知设置', '隐私设置', '账号安全', '帮助与服务']
   const belowLabels = ['注销账号', '退出登录']
   
-  const handleRouter = (idx: number) => { //FIXME
+  const handleRouter = (idx: number) => {
     switch(idx) {
-      case 0: 
-      case 1:
-      case 2:
-      case 3:
+      case 0: Taro.navigateTo({ url: '/myPkg/pages/settingdetail/index?label=通知设置' }); break;
+      case 1: Taro.navigateTo({ url: '/myPkg/pages/settingdetail/index?label=隐私设置' }); break;
+      case 2: Taro.navigateTo({ url: '/myPkg/pages/settingdetail/index?label=账号安全' }); break;
+      case 3: Taro.navigateTo({ url: '/loginPkg/pages/forgot/index?type=2' }); break;
     }
   }
 
@@ -50,7 +50,7 @@ export default function Setting() {
       case 0: {
         setPop(true)
       }; break;
-      case 1: { //TODO 提示信息
+      case 1: {
         dispatch(logout())
         dispatch(setTabBar(1))
         Taro.reLaunch({

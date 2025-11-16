@@ -28,9 +28,10 @@ import { actiType } from "@/global/utils/api/activitycenter/activity"
 
 interface actiItemType extends actiType {
   className: string
+  isAdmin?: boolean
 }
 
-export default function ActiItem({ title, starttime, endtime, coverurl, className, id }: actiItemType) {
+export default function ActiItem({ title, starttime, endtime, coverurl, className, id, isAdmin }: actiItemType) {
   const coverUrl = useMemo(() => coverurl ? coverurl : `${myImgBase}/defaultActi.png`, [coverurl])
 
   const on = useMemo(() => actiStatus(starttime, endtime), [starttime, endtime]) //是否进行中
@@ -45,7 +46,7 @@ export default function ActiItem({ title, starttime, endtime, coverurl, classNam
     switch (on) {
       case 0: return '已结束'
       case 1: return '进行中'
-      case 2: return '未开始'
+      case 2: return isAdmin ? '待发布' : '未开始'
     }
   },[on])
 
@@ -59,7 +60,7 @@ export default function ActiItem({ title, starttime, endtime, coverurl, classNam
       <Text className="title">{title}</Text>
       <View className={["time-box", on === 1 ? "active-time" : ''].join(' ')}>
         <Text className="label">{onLabel}</Text>
-        <Text>{time}</Text>
+        { !isAdmin && <Text>{time}</Text>}
       </View>
       {/* <StarBar grade={grade} /> */}
     </View>

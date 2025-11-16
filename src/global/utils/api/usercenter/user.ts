@@ -112,13 +112,36 @@ export async function getuserinfo(userid: string, signal: AbortSignal) {
   }
 }
 
+export type notifiSettingType = {
+  notificationtiming: 1 | 2 | 3, //通知时间选择: 1-提前3天 2-提前1天 3-当天
+  showphone: 0 | 1 | 2 | 3 | 4, //公开手机号和微信号 手机号 微信号 不公开
+  wechatnotificationenabled: 0 | 1 //微信服务通知开关: 0-关闭 1-开启
+}
+
+/**
+ * 获取通知设置
+ * @returns 
+ */
+export async function getnotificationsettings(signal: AbortSignal) {
+  try {
+    const res = await http.get(
+      '/api/user/user/getnotificationsettings',
+      { signal }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+    return undefined
+  }
+}
+
 /**
  * 更新通知设置
  * @param notificationtiming 通知时间选择: 1-提前3天 2-提前1天 3-当天
- * @param showphone 是否公开手机号: 0-不公开 1-公开
+ * @param showphone 公开手机号和微信号 手机号 微信号 不公开
  * @param wechatnotificationenabled 微信服务通知开关: 0-关闭 1-开启
  */
-export async function updatenotificationsettings(notificationtiming: '1' | '2' | '3', showphone: '0' | '1', wechatnotificationenabled: '0' | '1') {
+export async function updatenotificationsettings({ notificationtiming, showphone, wechatnotificationenabled }: notifiSettingType) {
   try {
     const res = await http.post(
       '/api/user/user/updatenotificationsettings',
@@ -150,7 +173,7 @@ export type myInforType = {
  * @param hideprofile 隐私设置: 0-公开 1-隐藏
  * @returns 成功-更新后的用户信息
  */
-export async function updateuserinfo( value: myInforType, returndata: boolean, hideprofile: boolean, signal: AbortSignal ) {
+export async function updateuserinfo( value: myInforType | null, returndata: boolean, hideprofile: boolean, signal: AbortSignal ) {
   try {
     const res = await http.post(
       '/api/user/user/updateuserinfo',
@@ -267,12 +290,29 @@ export async function bindwechat(code:string) {
 }
 
 /**
- * 删除用户
+ * 注销账号
  */
 export async function deleteuser() {
   try {
     const res = await http.post(
       '/api/user/user/cancelaccount',
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+/**
+ * 通过短信验证码修改手机号
+ * @param code 验证码
+ * @param newphone 新手机号
+ */
+export async function changephonebycode(code: string, newphone: string) {
+  try {
+    const res = await http.post(
+      '/api/user/user/changephonebycode',
+      { code, newphone }
     )
     return res
   } catch (err) {

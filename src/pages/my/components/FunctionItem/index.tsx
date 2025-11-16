@@ -12,7 +12,6 @@ interface functionItemType {
 }
 
 export default function FunctionItem({ href, label, index, url }: functionItemType) {
-  //~pending: 确认路由正常
   return (
     <View 
       onClick={() => Taro.navigateTo({ url })} 

@@ -10,7 +10,6 @@ import type { userInforType, myInforType } from "@/global/utils/api/usercenter/u
 import { updateuserinfo } from "@/global/utils/api/usercenter/user"
 import { showMsg } from "@/global/utils/common"
 import { getCurrentInstance } from "@tarojs/taro"
-import Taro from "@tarojs/taro"
 import { AreaPicker, DatetimePicker } from '@taroify/core'
 import '@taroify/core/datetime-picker/style/index'
 import '@taroify/core/area-picker/style/index'
@@ -25,9 +24,10 @@ interface popupPropsType {
   K: keyof myInforType | 'place'
   pop: boolean
   closePop: () => void
+  infor: myInforType
 }
 
-function PopUp({ handleSetInfor, K, pop, closePop }: popupPropsType) {
+function PopUp({ handleSetInfor, K, pop, closePop, infor }: popupPropsType) {
   const handleBack = () => closePop()
   const handleSubmit = (val: Date | string[] | string) => {
     handleBack()
@@ -60,20 +60,12 @@ function PopUp({ handleSetInfor, K, pop, closePop }: popupPropsType) {
     }
   }
 
-  const [ keyboardHeight, setKeyboardHeight ] = useState(0)
-
-  useEffect(() => {
-    if (K === 'bio' && pop) {
-      Taro.onKeyboardHeightChange(res => setKeyboardHeight(res.height))
-      return () => {
-        Taro.offKeyboardHeightChange()
-      }
-    }
-  }, [K, pop])
-  const dynamicHeight = useMemo(() => { return { height: keyboardHeight } }, [keyboardHeight])
   //生日
   const nowDate = useRef(new Date())
   const minDate = useRef(new Date(1970, 0, 1))
+  const defaultDate = useMemo(() => infor.birthday !== '' ? new Date(infor.birthday) : new Date(2000, 0, 1), [infor])
+  //Area
+  const defaultArea = useMemo(() => infor.province !== '' && infor.city !== '' && infor.district !== '' && infor.province && infor.city && infor.district ? [infor.province, infor.city, infor.district] : ["110000", "110100", "110101"], [infor])
   //
   const content = useMemo(() => {
     switch(K) {
@@ -81,17 +73,18 @@ function PopUp({ handleSetInfor, K, pop, closePop }: popupPropsType) {
         <View className="bio-page">
           <Text className="title">简介</Text>
           <TextArea
+            key="bio-textarea" // Add key to force re-creation
             boxClass="bio-textarea-box"
             textareaClass="bio-textarea"
             placeHolder="请输入个人简介"
             maxlength={15}
             handleContent={handleSubmit}
+            initialValue={infor.bio}
           />
-          { keyboardHeight !== 0 && <View style={dynamicHeight} />}
         </View>
       )
       case 'birthday': return (
-        <DatetimePicker type='date' onCancel={handleBack} onConfirm={handleSubmit} max={nowDate.current} min={minDate.current}>
+        <DatetimePicker type='date' onCancel={handleBack} onConfirm={handleSubmit} defaultValue={defaultDate} max={nowDate.current} min={minDate.current}>
           <DatetimePicker.Toolbar>
             <DatetimePicker.Button>取消</DatetimePicker.Button>
             <DatetimePicker.Title>选择日期</DatetimePicker.Title>
@@ -103,23 +96,28 @@ function PopUp({ handleSetInfor, K, pop, closePop }: popupPropsType) {
         <View className="bio-page">
           <Text className="title">职业</Text>
           <TextArea
+            key="profession-textarea" // Add key to force re-creation
             boxClass="bio-textarea-box"
             textareaClass="bio-textarea"
             placeHolder="请输入您的职业"
             maxlength={15}
             handleContent={handleSubmit}
+            initialValue={infor.profession}
           />
-          { keyboardHeight !== 0 && <View style={dynamicHeight} />}
         </View>
       )
       case 'place': return (
-        <AreaPicker defaultValue={["110000", "110100", "110101"]} areaList={areaList} title={'选择地区'} onConfirm={handleSubmit} onCancel={handleBack} confirmText={'确认'} cancelText={'取消'}  />
+        <AreaPicker defaultValue={defaultArea} areaList={areaList} title={'选择地区'} onConfirm={handleSubmit} onCancel={handleBack} confirmText={'确认'} cancelText={'取消'}  />
       )
     }
   }, [K])
 
   return(
-    <PageContainer show={pop} round={true} onClickOverlay={handleBack}>
+    <PageContainer
+      show={pop}
+      round={true}
+      onClickOverlay={handleBack}
+    >
       {content}
     </PageContainer>
   )
@@ -130,9 +128,10 @@ interface inforItemType {
   val: string
   K: keyof myInforType | 'place'
   openPop: (K: keyof myInforType | 'place') => void
+  handleSetInfor: <K extends keyof myInforType>(key: K, val: myInforType[K]) => void
 }
 
-function InforItem({ label, val, K, openPop }: inforItemType) {  
+function InforItem({ label, val, K, openPop, handleSetInfor }: inforItemType) {  
   const finalVal = useMemo(() => {
     if(K === 'gender') {
       switch(val) {
@@ -148,7 +147,15 @@ function InforItem({ label, val, K, openPop }: inforItemType) {
 
   const handleClick = () => {
     if(K === 'avatar') {
-      fileUpload('avatar')
+      const changeAvatar = async () => {
+        try {
+          const finalURL = await fileUpload('avatar', 'original')
+          if(finalURL) handleSetInfor('avatar', finalURL)
+        } catch (error) {
+          console.error('Upload failed:', error)
+        }
+      }
+      changeAvatar()
     } else if ( K !== 'realname' && K !== 'gender' && K !== 'major') {
       openPop(K)
     }
@@ -258,11 +265,11 @@ export default function Myinfor() {
 
   return (
     <View className="my-infor">
-      <PopUp closePop={closePop} handleSetInfor={handleSetInfor} K={k} pop={pop} />
+      <PopUp closePop={closePop} handleSetInfor={handleSetInfor} K={k} pop={pop} infor={infor} />
       {labels.map((value, index) => {
-        if(index <= 5) return <InforItem openPop={openPop} K={vals[index][0] as keyof myInforType} val={vals[index][1].toString()} label={value} key={`inforItem-${index}`} />
-        else if (index === 6) return <InforItem openPop={openPop} K={'place'} val={place} label={value} key={`inforItem-${index}`} />
-        else return <InforItem openPop={openPop} K={vals[9][0] as keyof myInforType} val={vals[9][1].toString()} label={value} key={`inforItem-${index}`} />
+        if(index <= 5) return <InforItem openPop={openPop} K={vals[index][0] as keyof myInforType} val={vals[index][1].toString()} label={value} key={`inforItem-${index}`} handleSetInfor={handleSetInfor} />
+        else if (index === 6) return <InforItem openPop={openPop} K={'place'} val={place} label={value} key={`inforItem-${index}`} handleSetInfor={handleSetInfor} />
+        else return <InforItem openPop={openPop} K={vals[9][0] as keyof myInforType} val={vals[9][1].toString()} label={value} key={`inforItem-${index}`} handleSetInfor={handleSetInfor} />
       })}
       <View className="hide-profile">
         <Text>隐藏个人信息</Text>

@@ -6,7 +6,7 @@ import './index.scss'
 interface propsType {
   checked: boolean
   toggleChecked: () => void
-  children?: any
+  children?: React.ReactNode
 }
 
 export default function MyCheckBox({ checked, toggleChecked, children }: propsType) {

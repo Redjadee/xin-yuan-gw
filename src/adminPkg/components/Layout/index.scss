@@ -1,0 +1,11 @@
+.admin-bg {
+  background-color: #ECECEC;
+  height: 100vh;
+  .admin {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 80vh;
+  }
+}

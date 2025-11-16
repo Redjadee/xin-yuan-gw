@@ -18,7 +18,7 @@ import { Base64 } from 'js-base64'
 import { sha1 } from 'js-sha1'
 
 import './index.scss'
-import '../../style/form.scss'
+import '@/global/style/form.scss'
 
 interface slideType {
   slideData: slidecaptchaReturnType
@@ -113,9 +113,11 @@ function Slidecaptcha({ slideData, retryGetCaptcha, startLogin, closeSlide }: sl
 }
 
 export default function Login() {
-  useLoad(() => {
-    console.log('Page loaded.')
-  })
+  const [ isAdmin, setIsAdmin ] = useState('0')
+  const toggleAdmin = () => {
+    if(isAdmin === '0') setIsAdmin('1')
+    else setIsAdmin('0')
+  }
 
   //登录状态
   const dispatch = useDispatch()
@@ -159,9 +161,13 @@ export default function Login() {
   //记住密码
   //查本地存储
   useEffect(() => {
-    const res = Taro.getStorageInfoSync()
-    const [ remember, account, password ] = res.keys
-    setRemember(!!remember)
+    const rememberVal = Taro.getStorageSync('remember')
+    const remember = rememberVal === '1' ? true : false
+    setRemember(remember)
+    
+    const account = Taro.getStorageSync('account')
+    const password = Taro.getStorageSync('password')
+  
     if(remember && account && password) {
       setAccount(account)
       setPassword(Base64.decode(password))
@@ -170,10 +176,11 @@ export default function Login() {
 
   //在登录成功后，保存密码
   const saveRemember = () => {
-    Taro.setStorageSync('remember', remember)
+    const rememberVal = remember ? '1' : '0'
+    Taro.setStorageSync('remember', rememberVal)
     if (remember) {
-      Taro.setStorageSync(account, 'account')
-      Taro.setStorageSync(Base64.encode(password), 'password')
+      Taro.setStorageSync('account', account)
+      Taro.setStorageSync('password', Base64.encode(password))
     }
   }
 
@@ -186,11 +193,12 @@ export default function Login() {
   })
   //登录成功后，查信息是否完整
   const token = useSelector(selectToken)
-  const backRouter = (isVerify: boolean) => {
+  const NormalbackRouter = (isVerify: boolean) => {
     showMsg("登录成功！", true)
     setTimeout(() => {
       Taro.reLaunch({ url: isVerify ? '/pages/index/index' : '/loginPkg/pages/register/index?type=1' })
     }, 2000)}
+  const toAdmin = (roleids: number[]) => Taro.reLaunch({ url: '/adminPkg/pages/home/index?data=' + JSON.stringify(roleids) })
   useEffect(() => {
     const controller = new AbortController()
 
@@ -198,9 +206,12 @@ export default function Login() {
       try {
         const res = await getuserinfo('0', controller.signal)
         if(res?.data) {
-          const { userinfo } = res.data
-          if(userinfo.isverified) dispatch(verifySuccess()) 
-          backRouter(userinfo.isverified) //查信息字段 更新全局状态
+          const { userinfo } = res.data            
+          if(userinfo.isverified) dispatch(verifySuccess()) //查信息字段 更新全局状态
+          
+          const { roleids } = userinfo  
+          if(roleids.length !== 0 && isAdmin === '1') toAdmin(roleids)
+          else NormalbackRouter(userinfo.isverified) 
         } else {
           if(res) showMsg(res.msg)
         }
@@ -217,7 +228,7 @@ export default function Login() {
     const controller = new AbortController()
 
     const normalLogin = async () => {
-      if(slideData)
+      // if(slideData)
       try {
           const res = await Nlogin({
             // captcha_id: slideData?.captcha_id,
@@ -237,8 +248,7 @@ export default function Login() {
           console.log(err)
         }
     }
-    // if(loginStart) normalLogin()
-    normalLogin() //TEMP
+    if(loginStart) normalLogin()
 
     return () => controller.abort()
   }, [loginStart])
@@ -275,10 +285,10 @@ export default function Login() {
   
   return (
     <View className='login'>
-      <Title>账号密码登录</Title>
+      <Title>{isAdmin === '1' ? '管理员登录' : '账号密码登录'}</Title>
       <Form>
         <View>
-          <Input value={account} onInput={e => setAccount(e.detail.value)} type='text' maxlength={11} placeholder='请输入手机号' placeholderClass='inputPH' className='input' />
+          <Input value={account} onInput={e => setAccount(e.detail.value)} type='text' maxlength={11} placeholder='请输入手机号或学号' placeholderClass='inputPH' className='input' />
           <Input value={password} onInput={e => setPassword(e.detail.value)} password placeholder='请输入密码' placeholderClass='inputPH' className='input' />
         </View>
         <View className='below-box'>
@@ -289,16 +299,17 @@ export default function Login() {
         </View>
         <Button className='button' onClick={normalLoginClick}><Text>登录</Text></Button>
       </Form>
-      <Button className='button wechat' onClick={wechatLogin} >
+      {isAdmin !== '1' && <Button className='button wechat' onClick={wechatLogin} >
         <View className='box'>
           <Image src={`${loginImgBase}/wechatLogo.png`} className='logo' />
           <Text>微信快速登录</Text>
         </View>
-      </Button>
-      <View className='register' onClick={toRegister} >
+      </Button>}
+      {isAdmin !== '1' && <View className='register' onClick={toRegister} >
         <Text>新用户注册</Text>
         <Image src={`${homeImgBase}/headArrow.png`} className='arrow' />
-      </View>
+      </View>}
+      <Text className='admin-entrance' onClick={toggleAdmin}>{isAdmin === '1' ? '账号密码登录' : '管理员登录'}</Text>
       { showCaptcha && slideData && <Slidecaptcha closeSlide={closeSlide} startLogin={startLogin} retryGetCaptcha={retryGetCaptcha} slideData={slideData} />}
     </View>
   )

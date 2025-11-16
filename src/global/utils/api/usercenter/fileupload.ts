@@ -8,10 +8,11 @@ import Taro from "@tarojs/taro"
 export type imageType = 'avatar' | 'article' | 'activity'
 
 // 新的预签名URL返回类型
-type PresignedURLResponse = {
+type fileReturnType = {
   cosHost: string
   cosKey: string
   expires: number
+  finalURL: string
   message: string
   method: string
   presignedURL: string
@@ -29,54 +30,65 @@ const camSafeUrlEncode = str => {
     .replace(/\*/g, '%2A')
 }
 
-// 使用预签名URL进行PUT上传
-const putFileWithPresignedURL = async (filePath: string, presignedURL: string, securityToken: string) => {
-  const wxfs = Taro.getFileSystemManager();
-  wxfs.readFile({
-    filePath,
-    success: function (fileRes) {
-      const requestTask = Taro.request({
-        url: presignedURL,
-        method: 'PUT',
-        header: {
-          'x-cos-security-token': securityToken,
-        },
-        data: fileRes.data,
-        success: function success(res) {
-          // 构建最终访问URL
-          const finalURL = presignedURL.split('?')[0]; // 去掉查询参数部分
-          if (res.statusCode === 200) {
-            Taro.showModal({
-              title: '上传成功',
-              content: finalURL,
-              showCancel: false,
-            });
-          } else {
-            Taro.showModal({
+// 从微信临时文件路径中提取文件名
+const extractFilename = (filePath: string): string => {
+  // 微信临时文件路径格式通常是: wxfile://tmp_xxx.jpg 或类似格式
+  // 我们只需要文件名部分
+  const lastSlashIndex = filePath.lastIndexOf('/');
+  const filenameWithQuery = lastSlashIndex !== -1 ? filePath.substring(lastSlashIndex + 1) : filePath;
+  // 如果包含查询参数（如 ?timestamp=xxx），只保留文件名部分
+  const questionMarkIndex = filenameWithQuery.lastIndexOf('?');
+  const filename = questionMarkIndex !== -1 ? filenameWithQuery.substring(0, questionMarkIndex) : filenameWithQuery;
+
+  return filename;
+}
+
+const putFile = async (filePath: string, presignedURL: string, securityToken: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const wxfs = Taro.getFileSystemManager();
+    wxfs.readFile({
+      filePath,
+      success: function (fileRes) {
+        const requestTask = Taro.request({
+          url: presignedURL,
+          method: 'PUT',
+          header: {
+            'x-cos-security-token': securityToken,
+          },
+          data: fileRes.data,
+          success: function success(res) {
+            const finalURL = presignedURL.split('?')[0]; // 去掉查询参数部分
+            if (res.statusCode === 200) {
+              Taro.showToast({
+                title: '上传成功',
+                icon: 'success'
+              });
+              resolve(finalURL);
+            } else {
+              Taro.showToast({
+                title: '上传失败',
+                icon: 'error'
+              });
+              reject(new Error('上传失败'));
+            }
+          },
+          fail: function fail(res) {
+            Taro.showToast({
               title: '上传失败',
-              content: JSON.stringify(res),
-              showCancel: false,
+              icon: 'error'
             });
-          }
-          console.log('上传状态码:', res.statusCode);
-          console.log('最终访问URL:', finalURL);
-        },
-        fail: function fail(res) {
-          Taro.showModal({
-            title: '上传失败',
-            content: JSON.stringify(res),
-            showCancel: false,
-          });
-        },
-      });
-    },
-    fail: function (error) {
-      Taro.showModal({
-        title: '文件读取失败',
-        content: JSON.stringify(error),
-        showCancel: false,
-      });
-    }
+            reject(new Error('上传请求失败'));
+          },
+        });
+      },
+      fail: function (error) {
+        Taro.showToast({
+          title: '文件读取失败',
+          icon: 'error'
+        });
+        reject(new Error('文件读取失败'));
+      }
+    });
   });
 };
 
@@ -90,6 +102,7 @@ const putFileWithPresignedURL = async (filePath: string, presignedURL: string, s
  *  cosHost: COS服务地址
  *  cosKey: 文件在COS中的路径
  *  expires: 过期时间（秒）
+ *  finalURL: 文件url
  *  message: 返回消息
  *  method: HTTP方法（PUT）
  *  presignedURL: 预签名上传URL
@@ -97,60 +110,57 @@ const putFileWithPresignedURL = async (filePath: string, presignedURL: string, s
  *  success: 是否成功
  *  }
  */
-async function getPresignedUploadURL(filename: string, imagetype: imageType, articleid?: string, expires?: number) {
+async function getAuthorizationAndUpload(filename: string, tempFilePath: string, imagetype: imageType, articleid?: string): Promise<string> {
   try {
     const res = await http.post(
       '/api/user/fileupload/presigned/url/sts',
-      { filename, imagetype, articleid, expires }
+      { filename, imagetype, articleid }
     )
 
-    if (res.data && res.data.success) {
+    if(res.data && res.data.success) {
       // 使用预签名URL进行上传
-      await putFileWithPresignedURL(filename, res.data.presignedURL, res.data.securityToken)
-      // 返回最终访问URL
-      return res.data.presignedURL.split('?')[0]
+      const finalURL = await putFile(tempFilePath, res.data.presignedURL, res.data.securityToken);
+      return finalURL;
     } else {
       throw new Error(res.data?.message || '获取预签名URL失败')
     }
-    return res.data
   } catch (error) {
     console.log('获取预签名URL错误:', error)
-    Taro.showModal({
+    Taro.showToast({
       title: '获取上传链接失败',
-      content: error.message || '未知错误',
-      showCancel: false,
+      icon: 'error'
     });
     throw error
   }
 }
 
 /**
- * 上传文件（使用预签名URL方式）
+ * 上传文件
  * @param imagetype 图片类型: avatar-头像, article-文章图片, activity-活动图片
- * @param articleid 文章/活动ID（可选）
- * @param expires URL过期时间（秒），默认3600秒（1小时）
- * @returns 最终的文件访问URL
+ * @param sizeType 'compressed'| 'original'
+ * @param articleid 活动ID（仅活动图片需要）
+ * @returns data: { 
+ *  authorization 签名信息
+ *  cosHost COS主机地址
+ *  cosKey 文件路径
+ *  securityToken 安全令牌
+ *  }
  */
-export const fileUpload = async (imagetype: imageType, articleid?: string, expires?: number) => {
-  return new Promise((resolve, reject) => {
+export const fileUpload = async (imagetype: imageType, sizeType: 'compressed'| 'original', articleid?: string): Promise<string> => {
+  return new Promise<string>((resolve, reject) => {
     // 选择文件
     Taro.chooseMedia({
       count: 1, // 默认9
-      sizeType: ['compressed'],
+      sizeType: [sizeType],
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
       success: async function (res) {
         try {
-          const tempFile = res.tempFiles[0]
-          // 从文件路径中提取文件名，如果没有则使用时间戳
-          let filename = tempFile.tempFilePath
-          const lastSlashIndex = filename.lastIndexOf('/')
-          if (lastSlashIndex !== -1) {
-            filename = filename.substring(lastSlashIndex + 1)
-          }
+          const tempFilePath = res.tempFiles[0].tempFilePath;
+          const filename = extractFilename(tempFilePath);
 
           // 获取预签名URL并上传
-          const finalURL = await getPresignedUploadURL(tempFile.tempFilePath, imagetype, articleid, expires)
-          resolve(finalURL)
+          const finalURL = await getAuthorizationAndUpload(filename, tempFilePath, imagetype, articleid);
+          resolve(finalURL);
         } catch (error) {
           reject(error)
         }
@@ -159,21 +169,5 @@ export const fileUpload = async (imagetype: imageType, articleid?: string, expir
         reject(new Error('选择文件失败: ' + JSON.stringify(error)))
       }
     });
-  })
-}
-
-// 导出新的接口函数
-export { getPresignedUploadURL }
-export const fileUpload = async (imagetype: imageType, sizeType: 'compressed'| 'original', articleid?: string) => {
-  // 选择文件
-  Taro.chooseMedia({
-    count: 1, // 默认9
-    sizeType: [sizeType],
-    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-    success: function (res) {
-      const authData: any = getAuthorization(res.tempFiles[0].tempFilePath, imagetype, articleid)
-      // 确认 AuthData 格式是否正确
-      console.log(authData)      
-    },
   });
 }

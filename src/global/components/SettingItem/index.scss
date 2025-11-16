@@ -1,0 +1,29 @@
+.SettingItem-box {
+  background-color: #fff;
+  width: calc(345px - 8px - 15px);
+  height: 67px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 8px;
+  padding-left: 15px;
+  font-size: 16.5px;
+  color: #08090A;
+  border-bottom: #ECECEC 1px solid;
+  .arrow {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+  .right-label-box {
+    display: flex;
+    align-items: center;
+  }
+  .right-label {
+    font-size: 17px;
+    color: #999999;
+  }
+}
+.no-border {
+  border-bottom: none;
+}

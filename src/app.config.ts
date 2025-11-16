@@ -50,11 +50,19 @@ export default defineAppConfig({
     { root: "myPkg/", pages: [
       'pages/contact/index',
       'pages/setting/index',
-      'pages/myinfor/index'
+      'pages/myinfor/index',
+      'pages/settingdetail/index',
     ]},
     { root: 'msgPkg/', pages: [
       'pages/allmsg/index',
       'pages/chat/index'
+    ]},
+    { root: 'adminPkg/', pages: [
+      'pages/home/index',
+      'pages/setting/index',
+      'pages/import/index',
+      'pages/new/index',
+      'pages/adminManage/index',
     ]}
   ]
 });

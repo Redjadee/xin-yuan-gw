@@ -4,13 +4,12 @@ import GetSmsCode from "@/loginPkg/components/GetSmsCode"
 import TextArea from "@/global/components/Textarea"
 import { useLoad } from "@tarojs/taro"
 import { useCallback, useState } from "react"
-import { forgetpasswordRequest } from "@/global/utils/api/usercenter/user"
+import { forgetpasswordRequest, forgetstudentid, changephonebycode } from "@/global/utils/api/usercenter/user"
 import Taro from "@tarojs/taro"
-import { forgetstudentid } from '@/global/utils/api/usercenter/user'
+import { showMsg } from "@/global/utils/common"
 
 import './index.scss'
-import '@/loginPkg/style/form.scss'
-import { showMsg } from "@/global/utils/common"
+import '@/global/style/form.scss'
 
 export default function Forgot() {
   const [type, setType] = useState('')
@@ -38,29 +37,42 @@ export default function Forgot() {
       if(res?.data) {
         const { token } = res.data
         Taro.navigateTo({
-          url: `/loginPkg/pages/reset/index?token=${token}&code=${code}`,
+          url: `/loginPkg/pages/reset/index?token=${token}&code=${code}&type=0`,
         })
       } else {
         if(res) showMsg(res.msg)
       }
+    } else if (type === '1' || type === '2') {
+      if(contract === '') showMsg('联系方式不能为空')
+      else if (content === '') showMsg('请描述情况')
+      else {
+        const res = await forgetstudentid(contract, content)
+        console.log("contract content res", contract, ' ', content, ' ', res)
+        if(res?.data) {
+          showMsg(res.data.message)
+          if(type === '1') {
+            setTimeout(() => {
+              Taro.reLaunch({ url: '/pages/index/index'})
+            }, 2000)
+          }
+        } else {
+          if(res) showMsg(res.msg)
+        }
+      }
     } else {
-      const res = await forgetstudentid(contract, content)
-      console.log("contract content res", contract, ' ', content, ' ', res)
+      const res = await changephonebycode(code, phone)
       if(res?.data) {
         showMsg(res.data.message)
-        setTimeout(() => {
-          Taro.reLaunch({ url: '/pages/index/index'})
-        }, 2000)
       } else {
         if(res) showMsg(res.msg)
       }
     }
   }
 
-  if (type === '0') {
+  if (type === '0' || type === '3') {
     return (
       <View className="forgot"> 
-        <Title>忘记密码</Title>
+        <Title>{type === '0' ? '忘记密码' : '更换手机号'}</Title>
         <Form className="form">
           <Input value={phone} onInput={(e) => setPhone(e.detail.value)}  maxlength={11} type="number" placeholder="请输入手机号" placeholderClass="inputPH" className="input" />
           <View className="complex-input">
@@ -71,13 +83,24 @@ export default function Forgot() {
         </Form>
       </View>
     )
-  } else {
+  } else if (type === '1') {
     return (
       <View className="forgot">
         <Title>人工申诉</Title>
         <Form className="form">
           <Input value={contract} onInput={e => setContract(e.detail.value)} placeholder="请输入联系方式" placeholderClass="inputPH" className="input" />
           <TextArea maxlength={300} handleContent={handleContent} showPh={showPh} show={show} notshow={notshow} />
+          <Button onClick={confirmRouter} className="button manual-button"><Text>确认</Text></Button>
+        </Form>
+      </View>
+    )
+  } else if (type === '2') {
+    return (
+      <View className="forgot">
+        <Title>帮助与服务</Title>
+        <Form className="form">
+          <Input value={contract} onInput={e => setContract(e.detail.value)} placeholder="请输入联系方式" placeholderClass="inputPH" className="input" />
+          <TextArea maxlength={300} handleContent={handleContent} placeHolder="请描述情况" />
           <Button onClick={confirmRouter} className="button manual-button"><Text>确认</Text></Button>
         </Form>
       </View>

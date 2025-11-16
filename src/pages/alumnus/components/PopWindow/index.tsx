@@ -3,11 +3,9 @@ import { useMemo } from "react"
 
 import './index.scss'
 
-//TODO 禁止滑动
-
 type propsType = {
   closePop: (type: boolean) => void
-  type: '关注用户' | '报名活动' | '退出组织' | '不可查看' | '注销'
+  type: '关注用户' | '报名活动' | '退出组织' | '不可查看' | '注销' | '删除账号' | '禁用账号' | '修改账号'
 }
 
 export default function PopWindow({ closePop, type }: propsType) {
@@ -19,6 +17,9 @@ export default function PopWindow({ closePop, type }: propsType) {
       case '退出组织': return ['确定退出组织？', '狠心离开', '取消']
       case '不可查看': return ['对方设置了不可查看', '', '确定']
       case '注销': return ['确定注销账号？', '确定', '取消']
+      case '删除账号': return ['确定删除账号？', '确定', '取消']
+      case '禁用账号': return ['确定禁用账号？', '确定', '取消']
+      case '修改账号': return ['确定修改账号？', '确定', '取消']
     }
   }, [type])
   

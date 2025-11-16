@@ -89,11 +89,12 @@ export async function enroll(id: string) {
  * @param type 0-免费活动 1-付费活动 2-直播活动 3-线下活动
  * @returns 成功-活动object[]
  */
-export async function list(signal: AbortSignal, isparticipated: '1' | '0', status: '0' | '1' | '2' | '3' | '4', keyword: string, type?: '0' | '1' | '2' | '3'): Promise<actiType[] | undefined> {    
-    const basicUrl = isparticipated === '1' ? `/api/activity/activity/act/list?isparticipated=${isparticipated}&status=${status}`
-     : type ? `/api/activity/activity/act/list?isparticipated=${isparticipated}&type=${type}` : `/api/activity/activity/act/list?isparticipated=${isparticipated}`
-    const url = keyword === '' ? basicUrl : `/api/activity/activity/act/list?isparticipated=${isparticipated}&keyword=${keyword}`
-     try {
+export async function list(signal: AbortSignal, isparticipated: '1' | '0' | '2', status: '0' | '1' | '2' | '3' | '4', keyword: string, type?: '0' | '1' | '2' | '3') {    
+    let url = `/api/activity/activity/act/list?status=${status}`
+    if(isparticipated === '1') url += '&isparticipated=1'
+    if(type) url += `&type=${type}`
+    if(keyword !== '') url+= `&keyword=${keyword}`
+    try {
         const res = await http.get( url , { signal } )
         if (res && res.data) return res.data.activities
     } catch (err) {    

@@ -5,6 +5,7 @@ import { getuserinfo } from '@/global/utils/api/usercenter/user'
 import type { userInforType } from '@/global/utils/api/usercenter/user'
 import { showMsg } from '@/global/utils/common'
 import { useEffect, useState, useMemo } from 'react'
+import { useDidHide, useDidShow } from '@tarojs/taro'
 
 import { myImgBase } from '@/global/assets/images/imgBases'
 import './index.scss'
@@ -12,8 +13,11 @@ import './index.scss'
 
 
 export default function My () {
+  const [ show, setShow ] = useState(true)
+  useDidShow(() => setShow(true))
+  useDidHide(() => setShow(false))
+  
   const [ infor, setInfor ] = useState<userInforType>()
-
   useEffect(() => {
     const controller = new AbortController()
 
@@ -25,17 +29,16 @@ export default function My () {
         if(res) showMsg(res.msg)
       }
     }
-    getInfor()
+    if(show) getInfor()
 
     return () => controller.abort()
-  }, [])
+  }, [show])
 
   const profileHref = useMemo(() => 
     infor && infor.avatar !== '' ? infor.avatar : `${myImgBase}/defaultMyProfile.png`, [infor])
   const name = useMemo(() => infor ? infor.realname : '信息人', [infor])
   const brief = useMemo(() => infor && infor.bio !== '' ? infor.bio : '个人简介', [infor])
 
-  const arrowHref = `${myImgBase}/myDetail.png`
   const headRouter = () => {
     Taro.navigateTo({
       url: '/myPkg/pages/myinfor/index',
@@ -77,7 +80,7 @@ export default function My () {
             <Text className='name'>{name}</Text>
             <Text className='brief' >{brief}</Text>
           </View>
-          <Image src={arrowHref} className='arrow'  />
+          <Image src={`${myImgBase}/myDetail.png`} className='arrow'  />
         </View>
       </View>
       {functionItemList.map((value, index) => FunctionItem({...value, index}))}

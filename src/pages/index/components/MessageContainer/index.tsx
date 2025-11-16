@@ -27,9 +27,7 @@ function Message({ fromuseravatar, fromusername, content, createdat: time, fromu
     if(messageitem) return messageitem.filter(val => val.itemkey === 'messagetype')
     else return [{ itemvalue: 'personal' }]
   }, [messageitem])
-  const handleRouter = useCallback(() => {
-    Taro.navigateTo({ url: `/msgPkg/pages/chat/index?id=${fromuserid}&type=${key[0].itemvalue}&title=${fromusername}` })
-  }, [key])
+  const handleRouter = useCallback(() => Taro.navigateTo({ url: `/msgPkg/pages/chat/index?id=${fromuserid}&type=${key[0].itemvalue}&title=${fromusername}` }) , [key, fromuserid, fromusername])
   
   return (
     <View className='msg' onClick={handleRouter}>

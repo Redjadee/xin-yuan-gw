@@ -15,7 +15,7 @@ import { verifySuccess } from '@/store/authSlice'
 
 import { homeImgBase } from '@/global/assets/images/imgBases'
 import './index.scss'
-import '../../style/form.scss'
+import '@/global/style/form.scss'
 
 export default function Register() {
   const [type, setType] = useState('')
