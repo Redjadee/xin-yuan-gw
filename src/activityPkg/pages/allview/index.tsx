@@ -19,7 +19,7 @@ export default function Allview() {
     if(options.type === '2') Taro.setNavigationBarTitle({ title: '活动设置' })
   })
   //活动查询 Hook
-  const [ status, setStatus ] = useState<'0' | '1' | '2' | '3' | '4'>('2')
+  const [ status, setStatus ] = useState<'0' | '1' | '2' | '3' | '4'>(type === '2' ? '0' : '1')
   const [ actiType, setActiType ] = useState<'0' | '1' | '2' | '3'>()
   //活动 Hook
   const [ actis, setActis ] = useState<actiType[]>()
@@ -55,20 +55,21 @@ export default function Allview() {
     }
   }
 
+  const toNewActivi = () => Taro.navigateTo({ url: '/adminPkg/pages/newActivi/index' })
+
   return (
     <View className='allview'>
       <SearchTab className='search' setIsInputing={setIsInputing} getInputVal={getInputVal} />
-      { !isInputing && !inputVal && <ScrollFilter type={type === '0' ? 'all' : type === '1' ? 'my' : 'admin'} getFilterIdx={getFilterIdx} />}
+      <ScrollFilter type={type === '0' ? 'all' : type === '1' ? 'my' : 'admin'} getFilterIdx={getFilterIdx} className={isInputing && inputVal ? 'scroll-view-hide' : '' } />
       <View className='container'>
         {actis?.length === 0 ?
         <VoidHint type={type === '0' ? '活动列表' : '我的活动' } />  :
-        actis && actis.map((value, index) => <ActiItem {...value} className={ index !== actis.length - 1? 'acti-item-border' : ''} key={`acti-item-${index}`} />)
+        actis && actis.map((value, index) => <ActiItem {...value} className={ index !== actis.length - 1? 'acti-item-border' : ''} key={`acti-item-${index}`} isAdmin={type === '2'} />)
       }
       </View>
-      <View> 
-        {/* //TODO */}
-        <AdminButton label='新增活动' />
-      </View>
+      { type === '2' && <View className='new-acti-box'> 
+        <AdminButton label='新增活动' onClick={toNewActivi} />
+      </View>}
     </View>
   )
 }

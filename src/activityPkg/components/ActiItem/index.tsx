@@ -51,7 +51,7 @@ export default function ActiItem({ title, starttime, endtime, coverurl, classNam
   },[on])
 
   //router
-  const toDetail = () => Taro.navigateTo({ url: `/activityPkg/pages/detail/index?id=${id}` })
+  const toDetail = () => Taro.navigateTo({ url: isAdmin ? '/adminPkg/pages/newActivi/index' : `/activityPkg/pages/detail/index?id=${id}` })
 
   return (
    <View className={`acti-item ${className}`}>

@@ -61,7 +61,7 @@ export default defineAppConfig({
       'pages/home/index',
       'pages/setting/index',
       'pages/import/index',
-      'pages/new/index',
+      'pages/newActivi/index',
       'pages/adminManage/index',
     ]}
   ]

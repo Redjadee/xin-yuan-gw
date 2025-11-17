@@ -32,7 +32,7 @@ export type orginActiType = { //同时出现在活动和组织中的属性
 export type actiTypeAdmin = actiType & {
     isfeatured?: '0' | '1' //是否推荐 0-否 1-是
     maxparticipants?: number //0-无限制
-    registrationdeadline: string //报名截止时间
+    registrationdeadline?: string //报名截止时间
 }
 
 // - - - act - - - //

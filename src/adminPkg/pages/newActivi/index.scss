@@ -1,0 +1,74 @@
+.new-acti {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 315px;
+    padding-top: 30px;
+    padding-bottom: 15px;
+    .cover {
+      width: 82px * 1.6;
+      height: 60px * 1.6;
+      background: #999999;
+      border-radius: 5px 5px 5px 5px;
+      opacity: 0.5;
+    }
+    .radio-group {
+      font-size: 15px;
+      display: flex;
+      gap: 30px;
+    }
+  }
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 315px;
+    padding-top: 16px;
+    .box {
+      width: 60px;
+      height: 28px;
+      border-radius: 14px 14px 14px 14px;
+      border: 1px solid #999999;
+      color: #999999;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .blue {
+      border-color: #018BBC;
+      color: #018BBC;
+    }
+  }
+  .show-in-home {
+    font-size: 16px;
+    color: #08090A;
+    width: 315px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 55px;
+  }
+}
+
+.taroify-picker__cancel {
+  font-size: 16px;
+  color: #303030;
+}
+.taroify-picker__title {
+  font-size: 18px;
+  color: #303030;
+}
+.taroify-picker__confirm {
+  font-size: 16px;
+  color: #018BBC;
+}
+.taroify-picker-column {
+  font-size: 17px;
+  color: #000000;
+}

@@ -54,8 +54,8 @@ function DataOverview() {
         url: res.data.downloadurl,        
         success: res => {
           const filePath = res.tempFilePath
-          Taro.openDocument({
-            filePath,
+          Taro.saveFile({
+            tempFilePath: filePath,
             success: () => console.log("打开报表成功")
           })
         }

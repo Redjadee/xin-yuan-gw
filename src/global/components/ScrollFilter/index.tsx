@@ -7,9 +7,10 @@ import './index.scss'
 interface propsType {
   type: 'all' | 'my' | 'admin'
   getFilterIdx: (idx: number) => void
+  className?: string
 }
 
-export default function ScrollFilter({ type, getFilterIdx }: propsType) {
+export default function ScrollFilter({ type, getFilterIdx, className }: propsType) {
   const allFilter = ['直播活动', '全部活动', '线下活动']
   const MyFilter = ['未开始', '进行中', '已结束']
   const adminFilter = ['进行中', '待发布', '已结束']
@@ -52,7 +53,7 @@ export default function ScrollFilter({ type, getFilterIdx }: propsType) {
   }, [type])
 
   return (
-    <ScrollView scroll-x enable-flex className='scroll-tab'>
+    <ScrollView scroll-x enable-flex className={`scroll-tab ${className}`}>
       <View className={['filter-box'].join(' ')}>
         {filter.map((value, index) => (
           type === 'admin'  ? 
