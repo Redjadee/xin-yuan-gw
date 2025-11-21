@@ -139,12 +139,7 @@ async function getAuthorizationAndUpload(filename: string, tempFilePath: string,
  * @param imagetype 图片类型: avatar-头像, article-文章图片, activity-活动图片
  * @param sizeType 'compressed'| 'original'
  * @param articleid 活动ID（仅活动图片需要）
- * @returns data: { 
- *  authorization 签名信息
- *  cosHost COS主机地址
- *  cosKey 文件路径
- *  securityToken 安全令牌
- *  }
+ * @returns 文件url
  */
 export const fileUpload = async (imagetype: imageType, sizeType: 'compressed'| 'original', articleid?: string): Promise<string> => {
   return new Promise<string>((resolve, reject) => {

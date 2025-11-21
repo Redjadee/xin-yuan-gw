@@ -1,4 +1,7 @@
 //PopUp
+.myinfor-pop-up {
+  max-height: 120px;
+}
 .taroify-picker__cancel {
   font-size: 16px;
   color: #303030;
@@ -32,6 +35,45 @@
   .bio-textarea {
     height: 145px;
   }
+}
+//profession
+.taroify-cascader {
+  height: 430px;
+  min-height: 430px;
+  margin-bottom: 20px;
+  .taroify-cascader__header {
+    font-size: 17px;
+    height: 60px;
+  }
+  .taroify-tabs__wrap {
+    height: 25px !important;
+    .taroify-tabs__nav--line {
+      padding-bottom: 5px;
+      .taroify-cascader__tab {
+        padding: 0 10px;
+      }
+      .taroify-tabs__tab__content-ellipsis {
+        font-size: 15px;
+      }
+    }
+    .taroify-tabs__line {
+      width: 60px;
+    }
+  }
+  .taroify-cascader__options {
+    height: 350px;
+    .taroify-cascader__option {
+      width: 100px;
+      padding: 10px;
+      font-size: 15px;
+    }
+  }
+  .taroify-cascader__active-icon  {
+    font-size: 20px;
+  }
+}
+.profession-height {
+  height: 30px;
 }
 
 //InforItem

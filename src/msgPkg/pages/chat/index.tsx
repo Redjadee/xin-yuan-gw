@@ -16,16 +16,16 @@ export interface MessageItem {
 }
 interface conversationType {
   content: string
-  contenttype: 1 | 2 | 3 | 4 | 5 //内容类型: 1-文本 2-图片 3-语音 4-视频 5-文件
+  contenttype?: 1 | 2 | 3 | 4 | 5 //内容类型: 1-文本 2-图片 3-语音 4-视频 5-文件
   
-  fromuseravatar: string //头像图片链接
-  fromusername: string
-  fromuserid: string //发送者用户ID
+  fromuseravatar?: string //头像图片链接
+  fromusername?: string
+  fromuserid?: string //发送者用户ID
 
-  isread: 0 | 1 //0-未读 1-已读
+  isread?: 0 | 1 //0-未读 1-已读
   createdat: string
 
-  messageitems: MessageItem[]
+  messageitems?: MessageItem[]
 }
 
 function Notification({val}) { //TODO
@@ -76,16 +76,16 @@ function ChatChild(val: conversationType) {
   return (
     <>
       <Time val={val.createdat}  />
-      <Bubble type={type} content={val.content} avatar={val.fromuseravatar} />
+      <Bubble type={type} content={val.content} avatar={val.fromuseravatar || ''} />
     </>
   )
 }
 
 export default function Chat() {
-  const [ from, setFrom ] = useState({ id: '', type: '', title: '' })
+  const [ from, setFrom ] = useState({ id: '', type: '', title: ''})
   const [ fromChanged, setFromChanged ] = useState(false)
   useLoad(options => {
-    setFrom({id: options.id, type: options.type, title: options.title })
+    setFrom({id: options.id || '', type: options.type, title: options.title })
     setFromChanged(true)
   })
 

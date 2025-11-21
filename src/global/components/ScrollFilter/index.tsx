@@ -39,14 +39,25 @@ export default function ScrollFilter({ type, getFilterIdx, className }: propsTyp
     const controller = new AbortController()
 
     const getNums = async () => {
-      const number1Res = await list(controller.signal, '0', '2', '', undefined) as Array<number>
-      const number2Res = await list(controller.signal, '0', '0', '', undefined) as Array<number>
-      const number3Res = await list(controller.signal, '0', '3', '', undefined) as Array<number>
-      if(number1Res && number2Res && number3Res) {
-        console.log(number1Res, number2Res, number3Res)
-        setAdminNums([number1Res.length, number2Res.length, number3Res.length])
+      try {
+        const [ongoingRes, unpublishedRes, endedRes] = await Promise.all([
+          list(controller.signal, '0', 2, '', undefined), // 进行中
+          list(controller.signal, '0', 0, '', undefined), // 待发布
+          list(controller.signal, '0', 3, '', undefined)  // 已结束
+        ])
+
+        if(ongoingRes?.data && unpublishedRes?.data && endedRes?.data) {
+          setAdminNums([
+            ongoingRes.data.activities.length,
+            unpublishedRes.data.activities.length,
+            endedRes.data.activities.length
+          ])
+        }
+      } catch (error) {
+        console.log('Failed to fetch admin counts:', error)
       }
     }
+
     if(type === 'admin') getNums()
 
     return () => controller.abort()

@@ -21,7 +21,8 @@ function Roles({ roleIds, id, onRoleIdsChange }: propsType) {
   const [localRoleIds, setLocalRoleIds] = useState(roleIds ? roleIds : [])
   const roleMap = [2, 3, 4]
   const checked = useMemo(() => roleMap.map(id => localRoleIds.includes(id)), [localRoleIds])
- 
+  const [ changed, setChanged ] = useState(false)
+
   useEffect(() => {
     const controller = new AbortController()
 
@@ -34,7 +35,7 @@ function Roles({ roleIds, id, onRoleIdsChange }: propsType) {
       }
     }
     if(roleIds) {
-      updateRoles()
+      if(id !== '' && changed) updateRoles()
     } else if(onRoleIdsChange) {
       const lastChangedRoleId = localRoleIds[localRoleIds.length - 1]
       if(lastChangedRoleId !== undefined) {
@@ -43,7 +44,7 @@ function Roles({ roleIds, id, onRoleIdsChange }: propsType) {
     }
 
     return () => controller.abort()
-  }, [localRoleIds, roleIds, onRoleIdsChange])
+  }, [localRoleIds, roleIds, onRoleIdsChange, id, changed])
 
   //pop window
   const [ pop, setPop ] = useState(false)
@@ -57,6 +58,7 @@ function Roles({ roleIds, id, onRoleIdsChange }: propsType) {
           ? prev.filter(id => id !== pendingRoleId)
           : [...prev, pendingRoleId]
       )
+      setChanged(true)
       setConfirm(false)
       setPendingRoleId(null)
     }
@@ -112,10 +114,10 @@ export default function AdminManage() {
         if(res) showMsg(res.msg)
       }
     }
-    getRoles()
+    if(from.id !== '') getRoles()
 
     return () => controller.abort()
-  }, [])
+  }, [from])
   
   //pop window
   const [ pop, setPop ] = useState(false)
@@ -161,9 +163,12 @@ export default function AdminManage() {
   const handleQuery = async () => {
     const res = await userQuery(name, stuId)
     if(res?.data) {
+      showMsg(res.data.message)
       const Res = await usersRoles(roleIds, res?.data.users[0].id)
       if(Res?.data) {
-        showMsg(res.data.message)
+        showMsg(Res.data.message)
+      } else {
+        if(Res) showMsg(Res.msg)
       }
     } else {
       if(res) showMsg(res.msg)

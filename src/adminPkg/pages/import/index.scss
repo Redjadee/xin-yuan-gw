@@ -1,0 +1,86 @@
+.import {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .import-pop-up {
+    max-height: 120px;
+  }
+  .form {
+    padding-top: 10px;
+    padding-bottom: 5px;
+  }
+  .gender-selection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    border-bottom: #F0F0F0 1px solid;
+    }
+    .submit-box {
+    background-color: #ECECEC;
+    width: 100%;
+    .submit-button {
+      background-color: #fff;
+      margin-top: 5px;
+      width: 100%;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    }
+}
+
+.taroify-cascader {
+  height: 430px;
+  min-height: 430px;
+  margin-bottom: 20px;
+  .taroify-cascader__header {
+    font-size: 17px;
+    height: 60px;
+  }
+  .taroify-tabs__wrap {
+    height: 25px !important;
+    .taroify-tabs__nav--line {
+      padding-bottom: 5px;
+      .taroify-cascader__tab {
+        padding: 0 10px;
+      }
+      .taroify-tabs__tab__content-ellipsis {
+        font-size: 15px;
+      }
+    }
+    .taroify-tabs__line {
+      width: 60px;
+    }
+  }
+  .taroify-cascader__options {
+    height: 350px;
+    .taroify-cascader__option {
+      width: 100px;
+      padding: 10px;
+      font-size: 15px;
+    }
+  }
+  .taroify-cascader__active-icon  {
+    font-size: 20px;
+  }
+}
+
+.taroify-picker__cancel {
+  font-size: 16px;
+  color: #303030;
+}
+.taroify-picker__title {
+  font-size: 18px;
+  color: #303030;
+}
+.taroify-picker__confirm {
+  font-size: 16px;
+  color: #018BBC;
+}
+.taroify-picker-column {
+  font-size: 17px;
+  color: #000000;
+}

@@ -153,7 +153,7 @@ export default function Alumnus () {
     case 2: return label === '校友' ? setAlumFilter('location') : setOrganFilter('major')
     case 3: return label === '校友' ? setAlumFilter('industry') : setOrganFilter('location')
     case 4: return label === '校友' ? setAlumFilter('college') : setOrganFilter('overseas')
-    case 5: return label === '校友' ? {} : setOrganFilter('industry')
+    case 5: return label === '校友' ? setAlumFilter('grade') : setOrganFilter('industry')
     case 6: return label === '校友' ? {} : setOrganFilter('hobby')
   }
   }, [filter, label])

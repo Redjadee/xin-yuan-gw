@@ -1,6 +1,6 @@
 import { View, Text, Form, Input, Button, Image } from '@tarojs/components'
 import Title from '@/loginPkg/components/Title'
-import MyCheckBox from '@/loginPkg/components/MyCheckBox'
+// import MyCheckBox from '@/loginPkg/components/MyCheckBox'
 import GetSmsCode from '@/loginPkg/components/GetSmsCode'
 import { useState } from 'react'
 import Taro from '@tarojs/taro'
@@ -32,8 +32,8 @@ export default function Register() {
   const [ code, setCode ] = useState('')
   
   //同意协议政策
-  const [ agree, setAgree ] = useState(false)
-  const toggleAgree = () => setAgree(!agree)
+  // const [ agree, setAgree ] = useState(false)
+  // const toggleAgree = () => setAgree(!agree)
 
   //控制学号栏的显示与否  
   const [ showStuId, setShowStuId ] = useState(true)
@@ -50,11 +50,12 @@ export default function Register() {
   }
   
   const dispatch = useDispatch()
+  
   const handleSubmit = async () => {
-    if(type === '0' && !agree) {
-      showMsg('请先同意相关协议')
-      return
-    }
+    // if(type === '0' && !agree) {
+    //   showMsg('请先同意相关协议')
+    //   return
+    // }
     if(type === '0') {
       const res = await studentregister({ password: sha1(password), name, student_id: stuId, id_last_six: id, code, phone })
       if(res?.data) {
@@ -111,16 +112,16 @@ export default function Register() {
           <Input value={code} onInput={e => setCode(e.detail.value)} type='number' maxlength={6} className='input' placeholder='请输入手机验证码' placeholderClass='inputPH' />
           <GetSmsCode phone={phone} />
         </View>
-        <Button onClick={handleSubmit} className='button register-button'><Text>{ type === '0' ? '注册' : '确认'}</Text></Button>
+        <Button openType='agreePrivacyAuthorization' onClick={handleSubmit} className='button register-button'><Text>{ type === '0' ? '注册' : '确认'}</Text></Button>
         { type === '0' && <View className='foot-box' onClick={backToLogin}>
           <Text>已注册，去登录</Text>
           <Image src={`${homeImgBase}/headArrow.png`} className='arrow' />
         </View>}
-        { type === '0' && <View className='foot-box'>
+        {/* { type === '0' && <View className='foot-box'>
           <MyCheckBox checked={agree} toggleChecked={toggleAgree}>
             <Text className='agreement'>已阅读并同意<Text>《用户协议》</Text><Text>《隐私政策》</Text></Text>
           </MyCheckBox>
-        </View>}
+        </View>} */}
         { type === '0' && <Text className='foot-box wechat-enpower'>注册即表明同意授权微信</Text>}
       </Form>
     </View>

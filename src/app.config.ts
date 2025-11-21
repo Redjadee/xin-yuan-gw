@@ -63,6 +63,10 @@ export default defineAppConfig({
       'pages/import/index',
       'pages/newActivi/index',
       'pages/adminManage/index',
+      'pages/organizationNaudit/index',
+      'pages/newOrgan/index',
+      'pages/auditDetail/index',
+      'pages/newNotification/index'
     ]}
   ]
 });

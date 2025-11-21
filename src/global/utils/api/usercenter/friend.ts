@@ -71,7 +71,7 @@ export type alumnusSayhiType = {
   name: string
   isfollow: boolean
 }
-export type filterType = 'recommend' | 'all' | 'location' | 'industry' | 'college'
+export type filterType = 'recommend' | 'all' | 'location' | 'industry' | 'college' | 'grade'
 /**
  * 获取可打招呼的人员列表
  * @param filter 筛选选项: recommend-推荐, all-全部, location-同城, industry-同行业, college-同学院

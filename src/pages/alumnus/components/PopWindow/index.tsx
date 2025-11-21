@@ -5,7 +5,7 @@ import './index.scss'
 
 type propsType = {
   closePop: (type: boolean) => void
-  type: '关注用户' | '报名活动' | '退出组织' | '不可查看' | '注销' | '删除账号' | '禁用账号' | '修改账号'
+  type: '关注用户' | '报名活动' | '退出组织' | '不可查看' | '注销' | '删除账号' | '禁用账号' | '修改账号' | '全部通过' | '删除组织'
 }
 
 export default function PopWindow({ closePop, type }: propsType) {
@@ -20,6 +20,8 @@ export default function PopWindow({ closePop, type }: propsType) {
       case '删除账号': return ['确定删除账号？', '确定', '取消']
       case '禁用账号': return ['确定禁用账号？', '确定', '取消']
       case '修改账号': return ['确定修改账号？', '确定', '取消']
+      case '全部通过': return ['确定全部通过？', '确定', '取消']
+      case '删除组织': return ['确定删除组织？', '确定', '取消']
     }
   }, [type])
   

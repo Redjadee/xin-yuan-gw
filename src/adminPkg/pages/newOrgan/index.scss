@@ -1,0 +1,64 @@
+.new-organ {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 315px;
+    padding-top: 30px;
+    padding-bottom: 15px;
+    .cover {
+      width: 82px * 1.6;
+      height: 60px * 1.6;
+      background: #999999;
+      border-radius: 5px 5px 5px 5px;
+      opacity: 0.5;
+    }
+    .radio-group {
+      font-size: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+  }
+  .bottom-button {
+    position: absolute;
+    bottom: 0;
+    height: 60px;
+    width: 100%;
+    background-color: #ECECEC;
+  }
+  .explain-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 230px;
+    padding-top: 15px;
+    .bio-textarea-box {
+      height: 145px + 13px*2;
+    }
+    .bio-textarea {
+      height: 145px;
+    }
+  }
+}
+
+.taroify-picker__cancel {
+  font-size: 16px;
+  color: #303030;
+}
+.taroify-picker__title {
+  font-size: 18px;
+  color: #303030;
+}
+.taroify-picker__confirm {
+  font-size: 16px;
+  color: #018BBC;
+}
+.taroify-picker-column {
+  font-size: 17px;
+  color: #000000;
+}

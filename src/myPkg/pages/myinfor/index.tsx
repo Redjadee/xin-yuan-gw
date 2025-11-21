@@ -6,13 +6,14 @@
 import { View, Text, Image, Switch, PageContainer } from "@tarojs/components"
 import TextArea from "@/global/components/Textarea"
 import { useState, useMemo, useCallback, useEffect, useRef } from "react"
-import type { userInforType, myInforType } from "@/global/utils/api/usercenter/user"
-import { updateuserinfo } from "@/global/utils/api/usercenter/user"
+import type { userInforType, myInforType, jobCategoryType } from "@/global/utils/api/usercenter/user"
+import { updateuserinfo, getjobcategories } from "@/global/utils/api/usercenter/user"
 import { showMsg } from "@/global/utils/common"
 import { getCurrentInstance } from "@tarojs/taro"
-import { AreaPicker, DatetimePicker } from '@taroify/core'
+import { AreaPicker, DatetimePicker, Cascader } from '@taroify/core'
 import '@taroify/core/datetime-picker/style/index'
 import '@taroify/core/area-picker/style/index'
+import '@taroify/core/cascader/style/index'
 import { areaList } from "@vant/area-data"
 import { myImgBase } from "@/global/assets/images/imgBases"
 import { fileUpload } from "@/global/utils/api/usercenter/fileupload"
@@ -66,7 +67,25 @@ function PopUp({ handleSetInfor, K, pop, closePop, infor }: popupPropsType) {
   const defaultDate = useMemo(() => infor.birthday !== '' ? new Date(infor.birthday) : new Date(2000, 0, 1), [infor])
   //Area
   const defaultArea = useMemo(() => infor.province !== '' && infor.city !== '' && infor.district !== '' && infor.province && infor.city && infor.district ? [infor.province, infor.city, infor.district] : ["110000", "110100", "110101"], [infor])
-  //
+  //职业
+  const [ jobs, setJobs ] = useState<jobCategoryType[]>([])
+  useEffect(() => {
+    const getJobs = async () => {
+      const res = await getjobcategories()
+      if(res?.data) {
+        setJobs(res.data.categories)
+      } else {
+        if(res) showMsg(res.msg)
+      }
+    }
+    getJobs()
+  }, [])
+  const fieldNames = {
+    label: 'name',
+    value: 'code',
+    children: 'subLevelModelList'
+  }
+
   const content = useMemo(() => {
     switch(K) {
       case 'bio': return (
@@ -93,18 +112,18 @@ function PopUp({ handleSetInfor, K, pop, closePop, infor }: popupPropsType) {
         </DatetimePicker>
       )
       case 'profession': return (
-        <View className="bio-page">
-          <Text className="title">职业</Text>
-          <TextArea
-            key="profession-textarea" // Add key to force re-creation
-            boxClass="bio-textarea-box"
-            textareaClass="bio-textarea"
-            placeHolder="请输入您的职业"
-            maxlength={15}
-            handleContent={handleSubmit}
-            initialValue={infor.profession}
-          />
-        </View>
+        <>
+        <Cascader 
+          options={jobs}
+          fieldNames={fieldNames}
+          title='请选择职业'
+          placeholder='请选择'
+          onChange={(_val, options) => {
+            handleSubmit(options[options.length - 1].children as string)
+          }}
+        />
+        <View className="profession-height"></View>
+        </>
       )
       case 'place': return (
         <AreaPicker defaultValue={defaultArea} areaList={areaList} title={'选择地区'} onConfirm={handleSubmit} onCancel={handleBack} confirmText={'确认'} cancelText={'取消'}  />
@@ -117,6 +136,7 @@ function PopUp({ handleSetInfor, K, pop, closePop, infor }: popupPropsType) {
       show={pop}
       round={true}
       onClickOverlay={handleBack}
+      className="myinfor-pop-up"
     >
       {content}
     </PageContainer>
@@ -150,7 +170,7 @@ function InforItem({ label, val, K, openPop, handleSetInfor }: inforItemType) {
       const changeAvatar = async () => {
         try {
           const finalURL = await fileUpload('avatar', 'original')
-          if(finalURL) handleSetInfor('avatar', finalURL)
+          if(finalURL && finalURL !== '') handleSetInfor('avatar', finalURL)
         } catch (error) {
           console.error('Upload failed:', error)
         }

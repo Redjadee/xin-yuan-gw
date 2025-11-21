@@ -3,34 +3,34 @@ import axios from 'axios'
 import { showMsg } from "../../common"
 
 export type actiType = orginActiType & {
-    locationname: string
-    organizerid: string //举办组织id
+    locationname?: string
+    organizerid?: string //举办组织id
     title: string
     coverurl: string
     description: string
 
-    id: string
-    isparticipated: 0 | 1
-    type: '0' | '1' | '2' | '3' //0-免费活动 1-付费活动 2-直播活动 3-线下活动
+    id?: string
+    isparticipated?: 0 | 1
+    type: 0 | 1 | 2 | 3 //0-免费活动 1-付费活动 2-直播活动 3-线下活动
 
     starttime: string
     endtime: string
-    status: number //0-草稿 1-已发布 2-进行中 3-已结束 4-已取消
+    status: 0 | 1 | 2 | 3 | 4 //0-草稿 1-已发布 2-进行中 3-已结束 4-已取消
     
     createdat?: string
     updatedat?: string
 }
 export type orginActiType = { //同时出现在活动和组织中的属性
-    address: string //详细地址
-    district: string
-    city: string
-    contactperson: string
-    contactphone: string
-    province: string
+    address?: string //详细地址
+    district?: string
+    city?: string
+    contactperson?: string
+    contactphone?: string
+    province?: string
 }
 
 export type actiTypeAdmin = actiType & {
-    isfeatured?: '0' | '1' //是否推荐 0-否 1-是
+    isfeatured?: 0 | 1 //是否推荐 0-否 1-是
     maxparticipants?: number //0-无限制
     registrationdeadline?: string //报名截止时间
 }
@@ -89,14 +89,14 @@ export async function enroll(id: string) {
  * @param type 0-免费活动 1-付费活动 2-直播活动 3-线下活动
  * @returns 成功-活动object[]
  */
-export async function list(signal: AbortSignal, isparticipated: '1' | '0' | '2', status: '0' | '1' | '2' | '3' | '4', keyword: string, type?: '0' | '1' | '2' | '3') {    
+export async function list(signal: AbortSignal, isparticipated: '1' | '0' | '2', status: 0 | 1 | 2 | 3 | 4, keyword: string, type?: 0 | 1 | 2 | 3) {    
     let url = `/api/activity/activity/act/list?status=${status}`
     if(isparticipated === '1') url += '&isparticipated=1'
     if(type) url += `&type=${type}`
     if(keyword !== '') url+= `&keyword=${keyword}`
     try {
         const res = await http.get( url , { signal } )
-        if (res && res.data) return res.data.activities
+        return res
     } catch (err) {    
         console.log(err)
     }
@@ -155,10 +155,10 @@ export async function Actidelete(id: string) {
  * @param id 活动id
  * @returns 成功-活动object，失败-undefined
  */
-export async function adminDetail(id: string): Promise<actiTypeAdmin | undefined> {
+export async function adminDetail(id: string, signal: AbortSignal) {
     try {
-        const res = await http.get( `/api/activity/activity/admin/detail/${id}` )
-        if(res && res.data) return res.data.activity
+        const res = await http.get( `/api/activity/activity/admin/detail/${id}`, { signal } )
+        return res
     } catch (err) {
         console.log(err)
         return undefined

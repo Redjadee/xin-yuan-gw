@@ -319,3 +319,23 @@ export async function changephonebycode(code: string, newphone: string) {
     console.log(err)
   }
 }
+
+export type jobCategoryType = {
+  name: string
+  code: number
+  subLevelModelList: jobCategoryType
+}
+/**
+ * 获取职业分类列表
+ * @returns data: { categories }
+ */
+export async function getjobcategories() {
+  try {
+    const res = await http.get(
+      '/api/user/user/getjobcategories',
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}

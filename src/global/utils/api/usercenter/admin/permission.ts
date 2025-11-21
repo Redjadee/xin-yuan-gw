@@ -120,7 +120,7 @@ export async function usersRoles(roleids: number[], userid: string, signal?: Abo
 export async function usersRolesget(userid: string, signal: AbortSignal) {
   try {
     const res = await http.get(
-      `/api/user/admin/permission/users/roles/${userid}`,
+      `/api/user/admin/permission/users/roles?userid=${userid}`,
       { signal }
     )
     return res

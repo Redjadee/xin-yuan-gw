@@ -12,6 +12,45 @@ import { setTabBar } from "@/store/tabBarSlice"
 
 import './index.scss'
 
+//下载报表
+const downloadReport = async () => {
+  //new Date().toISOString().split('T')[0]
+  const res = await reportDownload('2025-11-16')
+  if(res?.data) {
+    Taro.downloadFile({
+      url: res.data.downloadurl,        
+      success: res => {
+        const filePath = res.tempFilePath
+        Taro.getFileSystemManager().saveFile({
+          tempFilePath: filePath,
+          success: () => console.log("打开报表成功")
+        })
+      }
+    })
+  } else {
+    if(res) showMsg(res.msg)
+  }
+}
+//查看报表
+  const openReport = async () => {
+    //new Date().toISOString().split('T')[0]
+    const res = await reportDownload('2025-11-16')
+    if(res?.data) {
+      Taro.downloadFile({
+        url: res.data.downloadurl,        
+        success: res => {
+          const filePath = res.tempFilePath
+          Taro.openDocument({
+            filePath: filePath,
+            success: () => console.log("打开报表成功")
+          })
+        }
+      })
+    } else {
+      if(res) showMsg(res.msg)
+    }
+  }
+
 function DataOverview() {
   const labels = ['校友总量', '7日活跃率', '活动总量']
   const [nums, setNums] = useState<dataOverviewType>({
@@ -44,26 +83,6 @@ function DataOverview() {
   ], [nums])
   const showNums = useMemo(() => [nums.totalusercount, nums.lastsevendayactivepercentage, nums.activitotalcount], [nums])
   const Numsdecorate = ['人', '%', '']
-
-  //下载报表
-  const downloadReport = async () => {
-    //new Date().toISOString().split('T')[0]
-    const res = await reportDownload('2025-11-16')
-    if(res?.data) {
-      Taro.downloadFile({
-        url: res.data.downloadurl,        
-        success: res => {
-          const filePath = res.tempFilePath
-          Taro.saveFile({
-            tempFilePath: filePath,
-            success: () => console.log("打开报表成功")
-          })
-        }
-      })
-    } else {
-      if(res) showMsg(res.msg)
-    }
-  }
 
   return (
     <View className="data-overview">
@@ -102,26 +121,37 @@ export default function AdminHome() {
 
   const labels = useMemo(() => {
     let returnArr: string[] = []
+
+    // If has chief permission (1), get all permissions and return
     if (adminIdxs?.includes(1)) {
-      returnArr = returnArr.concat([ ...chief, ...operator, ...auditor ])
-    } else if (adminIdxs?.includes(2)) {
-      returnArr = returnArr.concat([ ...operator, ...auditor ])
-    } else if (adminIdxs?.includes(3)) {
-      returnArr = returnArr.concat(dataAnalysis)
-    } else if (adminIdxs?.includes(4)) {
-      returnArr = returnArr.concat(auditor)
+      return [...chief, ...operator, ...auditor]
     }
+
+    // Otherwise, accumulate permissions from 2, 3, 4
+    if (adminIdxs?.includes(2)) {
+      returnArr = returnArr.concat(...operator, ...auditor)
+    }
+    if (adminIdxs?.includes(3)) {
+      returnArr = returnArr.concat(dataAnalysis)
+    }
+    if (adminIdxs?.includes(4)) {
+      if(adminIdxs?.includes(2)) {}
+      else returnArr = returnArr.concat(auditor)
+    }
+
     return returnArr
   }, [adminIdxs])
 
   const handleRouter = (label: string) => {
     switch(label) {
       case '活动设置': Taro.navigateTo({ url: '/activityPkg/pages/allview/index?type=2' }); break;
-      case '通知发布': Taro.navigateTo({ url: '' }); break;
-      case '学生名单导入': Taro.navigateTo({ url: '' }); break;
-      case '组织设置': Taro.navigateTo({ url: '' }); break;
-      case '身份认证审核': Taro.navigateTo({ url: '' }); break;
+      case '通知发布': Taro.navigateTo({ url: '/adminPkg/pages/newNotification/index' }); break;
+      case '学生名单导入': Taro.navigateTo({ url: '/adminPkg/pages/import/index' }); break;
+      case '组织设置': Taro.navigateTo({ url: '/adminPkg/pages/organizationNaudit/index?label=组织' }); break;
+      case '身份认证审核': Taro.navigateTo({ url: '/adminPkg/pages/organizationNaudit/index?label=校友' }); break;
       case '管理员账号管理': Taro.navigateTo({ url: '/adminPkg/pages/setting/index?label=管理员账号管理' }); break;
+      case '查看数据报表': openReport();break;
+      case '导出数据报表': downloadReport();break;
     }
   }
 
