@@ -15,19 +15,20 @@ export interface MsgShowType {
   fromuseravatar: string //头像图片链接
   fromusername: string
   fromuserid: string //发送者用户ID
+  id: string
 
   isread: 0 | 1 //0-未读 1-已读
   createdat: string
 
-  messageitem: MessageItem[]
+  messageitems: MessageItem[]
 }
 
-function Message({ fromuseravatar, fromusername, content, createdat: time, fromuserid, messageitem }: MsgShowType) {
+function Message({ fromuseravatar, fromusername, content, createdat: time, fromuserid, id, messageitems }: MsgShowType) {
   const key = useMemo(() => {
-    if(messageitem) return messageitem.filter(val => val.itemkey === 'messagetype')
-    else return [{ itemvalue: 'personal' }]
-  }, [messageitem])
-  const handleRouter = useCallback(() => Taro.navigateTo({ url: `/msgPkg/pages/chat/index?id=${fromuserid}&type=${key[0].itemvalue}&title=${fromusername}` }) , [key, fromuserid, fromusername])
+    if(messageitems) return messageitems.filter(val => val.itemkey === 'messagetype')
+    else return [{ itemvalue: 'broadcast' }]
+  }, [messageitems])
+  const handleRouter = useCallback(() => Taro.navigateTo({ url: `/msgPkg/pages/chat/index?id=${fromuserid || id}&type=${key[0].itemvalue}&title=${fromusername}` }) , [key, fromuserid, fromusername, id])
   
   return (
     <View className='msg' onClick={handleRouter}>

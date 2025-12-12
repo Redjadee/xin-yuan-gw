@@ -202,22 +202,30 @@ export default function Login() {
   useEffect(() => {
     const controller = new AbortController()
 
-    const getInfor = async () => {
-      try {
-        const res = await getuserinfo('0', controller.signal)
-        if(res?.data) {
-          const { userinfo } = res.data            
-          if(userinfo.isverified) dispatch(verifySuccess()) //查信息字段 更新全局状态
-          
-          const { roleids } = userinfo  
-          if(roleids.length !== 0 && isAdmin === '1') toAdmin(roleids)
-          else NormalbackRouter(userinfo.isverified) 
-        } else {
-          if(res) showMsg(res.msg)
+    const getInfor = () => {
+      Taro.getPrivacySetting({
+        success: async res => {
+          if(res.needAuthorization) {} 
+          else {
+            try {
+              const res = await getuserinfo('0', controller.signal)
+              if(res?.data) {
+                const { userinfo } = res.data            
+                if(userinfo.isverified) dispatch(verifySuccess()) //查信息字段 更新全局状态
+                
+                const { roleids } = userinfo  
+                if(roleids.length !== 0 && isAdmin === '1') toAdmin(roleids)
+                else NormalbackRouter(userinfo.isverified) 
+              } else {
+                if(res) showMsg(res.msg)
+              }
+            } catch (err) {
+              console.log(err)
+            }
+          }
         }
-      } catch (err) {
-        console.log(err)
-      }
+      })
+      
     }
     if(token) getInfor()
 
@@ -252,6 +260,43 @@ export default function Login() {
 
     return () => controller.abort()
   }, [loginStart])
+
+  const privacyCheck = (type: 'normal' | 'wechat') => {
+    // 1. 获取隐私设置，判断是否需要授权
+    Taro.getPrivacySetting({
+      success: res => {
+        if (res.needAuthorization) {
+          // 2. 需要授权：直接调用 requirePrivacyAuthorize
+          // 【关键点】：此时全局不要有 Taro.onNeedPrivacyAuthorization 的监听代码
+          // 微信发现你没监听，且这里请求了授权，就会自动弹出官方弹窗
+          Taro.requirePrivacyAuthorize({
+            success: () => {
+              // 用户点击了官方弹窗的“同意”
+              console.log('官方弹窗：用户同意')
+              handleLogin(type)
+            },
+            fail: () => {
+              // 用户点击了官方弹窗的“拒绝”
+              console.log('官方弹窗：用户拒绝')
+              // 这里可以加个 Toast 提示用户必须授权才能登录
+              Taro.showToast({ title: '需要同意隐私协议才能登录', icon: 'none' })
+            }
+          })
+        } else {
+          // 3. 不需要授权（之前同意过，ec.）：直接登录
+          handleLogin(type)
+        }
+      },
+      fail: err => console.log(err)
+    })
+  }
+
+  // 简单的登录分发封装
+  const handleLogin = (type: string) => {
+    if (type === 'normal') normalLoginClick()
+    else wechatLogin()
+  }
+  
   const normalLoginClick = () => {
     if(password === '' && account === '') showMsg('账号密码不能为空')
     else if(account === '') showMsg('账号不能为空')
@@ -297,9 +342,9 @@ export default function Login() {
           </MyCheckBox>
           <Text onClick={toForgot}>忘记密码？</Text>
         </View>
-        <Button className='button' onClick={normalLoginClick}><Text>登录</Text></Button>
+        <Button className='button' onClick={() => privacyCheck('normal')}><Text>登录</Text></Button>
       </Form>
-      {isAdmin !== '1' && <Button className='button wechat' onClick={wechatLogin} >
+      {isAdmin !== '1' && <Button className='button wechat' onClick={() => privacyCheck('wechat')} >
         <View className='box'>
           <Image src={`${loginImgBase}/wechatLogo.png`} className='logo' />
           <Text>微信快速登录</Text>

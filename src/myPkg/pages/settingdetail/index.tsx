@@ -25,8 +25,11 @@ export default function Settingdetail() {
     wechatnotificationenabled: 1,
     notificationtiming: 1,
     hideprofile: false,
-    showphone: 4
+    showphone: 0  // 默认都不分享
   })
+
+  // Fallback: 简单的手机号分享状态
+  const [sharePhone, setSharePhone] = useState(false)
   const handleSetStatuses = useCallback(<K extends keyof settingType>(
     key: K, val: settingType[K]
   ) => {
@@ -53,7 +56,8 @@ export default function Settingdetail() {
       if(res?.data) {
         const { notificationtiming, showphone, wechatnotificationenabled } = res.data
         handleSetStatuses('notificationtiming', notificationtiming)
-        handleSetStatuses('showphone', showphone)
+        // Fallback: 简化处理，如果原值是2或3或4，设置为分享手机号，否则不分享
+        setSharePhone(showphone === 2 || showphone === 3 || showphone === 4)
         handleSetStatuses('wechatnotificationenabled', wechatnotificationenabled)
       } else {
         if(res) showMsg(res.msg)
@@ -80,28 +84,10 @@ export default function Settingdetail() {
       handleSetStatuses('notificationtiming', num)
     }
   } 
-  //手机号微信号分享
-  const shareInit = useMemo(() => {
-    switch(statuses.showphone) {
-      case 0: return [false, false, false]
-      case 1: return [false, false, true]
-      case 2: return [false, true, false]
-      case 3: return [false, true, true]
-      case 4: return [true, true, true]
-    }
-  }, [statuses.showphone])
-  const [share, setShare] = useState(shareInit)
-  const setCheckedValue = (index: number, value: boolean) => {
-    setShare(prev => {
-      const newShare = prev.map((v, i) => (i === index ? value : v))
-
-      // If both share[1] and share[2] are true, set share[0] to true
-      if (newShare[1] && newShare[2]) {
-        newShare[0] = true
-      }
-
-      return newShare
-    })
+  // 手机号微信号分享 - 原有复杂逻辑已注释
+  // Fallback: 简单的手机号分享切换逻辑
+  const toggleSharePhone = () => {
+    setSharePhone(prev => !prev)
   }
 
   //submit
@@ -119,27 +105,48 @@ export default function Settingdetail() {
 
     return () => controller.abort()
   }, [statuses.hideprofile])
+  // 原有的复杂API提交逻辑已注释
+  // useEffect(() => {
+  //   const controller = new AbortController()
+  //   const { notificationtiming, wechatnotificationenabled } = statuses
+  //   //reverse logic: transform boolean array back to integer for showphone
+  //   const [a, b, c] = share
+  //   const handleShowphone = () => {
+  //     if (!a && !b && !c) {
+  //       return 0
+  //     } else if (!a && !b && c) {
+  //       return 1
+  //     } else if (!a && b && !c) {
+  //       return 2
+  //     } else if (!a && b && c) {
+  //       return 3
+  //     } else if (a && b && c) {
+  //       return 4
+  //     } else {
+  //       return statuses.showphone
+  //     }
+  //   }
+  //   const showphone: 1 | 2 | 3 | 4 | 0 = handleShowphone()
+
+  //   const updateNotify = async () => {
+  //     const res = await updatenotificationsettings({ notificationtiming, showphone, wechatnotificationenabled })
+  //     if(res?.data) {}
+  //     else {
+  //       if(res) showMsg(res.msg)
+  //     }
+  //   }
+  //   updateNotify()
+
+  //   return () => controller.abort()
+  // }, [statuses.notificationtiming, statuses.wechatnotificationenabled, share])
+
+  // Fallback: 简单的API提交逻辑
   useEffect(() => {
     const controller = new AbortController()
     const { notificationtiming, wechatnotificationenabled } = statuses
-    //reverse logic: transform boolean array back to integer for showphone
-    const [a, b, c] = share
-    const handleShowphone = () => {
-      if (!a && !b && !c) {
-        return 0
-      } else if (!a && !b && c) {
-        return 1
-      } else if (!a && b && !c) {
-        return 2
-      } else if (!a && b && c) {
-        return 3
-      } else if (a && b && c) {
-        return 4
-      } else {
-        return statuses.showphone
-      }
-    }
-    const showphone: 1 | 2 | 3 | 4 | 0 = handleShowphone()
+
+    // Fallback: 简单逻辑 - 分享手机号为2，不分享为0
+    const showphone: 0 | 2 = sharePhone ? 2 : 0
 
     const updateNotify = async () => {
       const res = await updatenotificationsettings({ notificationtiming, showphone, wechatnotificationenabled })
@@ -151,7 +158,7 @@ export default function Settingdetail() {
     updateNotify()
 
     return () => controller.abort()
-  }, [statuses.notificationtiming, statuses.wechatnotificationenabled, share])
+  }, [statuses.notificationtiming, statuses.wechatnotificationenabled, sharePhone])
 
   const content = useMemo(() => {
     if(label !== '') {
@@ -166,9 +173,14 @@ export default function Settingdetail() {
         case '隐私设置': return (
           <>
           <SettingItem content="隐藏个人信息" isChecked={statuses.hideprofile} onToggle={() => handleSetStatuses('hideprofile', !statuses.hideprofile)} />
-          <SettingItem content="打招呼同时分享微信号和手机号" onToggle={() => setCheckedValue(0, !share[0])} isChecked={share[0]} className={share[0] ? '' : 'no-border'} />
+
+          {/* 原有的复杂分享逻辑已注释 */}
+          {/* <SettingItem content="打招呼同时分享微信号和手机号" onToggle={() => setCheckedValue(0, !share[0])} isChecked={share[0]} className={share[0] ? '' : 'no-border'} />
           {!share[0] && <SettingItem content="交换联系方式选择手机号" onToggle={() => setCheckedValue(1, !share[1])} isChecked={share[1]} />}
-          {!share[0] && <SettingItem content="交换联系方式选择微信号" onToggle={() => setCheckedValue(2, !share[2])} isChecked={share[2]} className="no-border" />}
+          {!share[0] && <SettingItem content="交换联系方式选择微信号" onToggle={() => setCheckedValue(2, !share[2])} isChecked={share[2]} className="no-border" /> */}
+
+          {/* Fallback: 简单的手机号分享选项 */}
+          <SettingItem content="交换联系方式分享手机号" onToggle={toggleSharePhone} isChecked={sharePhone} className="no-border" />
           </>
         )
         case '账号安全': {
@@ -183,7 +195,7 @@ export default function Settingdetail() {
         }
       }
     }
-  }, [label, getNotify, statuses.notificationtiming, share, statuses.hideprofile])
+  }, [label, getNotify, statuses.notificationtiming, sharePhone, statuses.hideprofile])
   return (
     <View className="setting-detail">
       {content}

@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from '@tarojs/components'
-import { useLoad } from '@tarojs/taro'
+import { useLoad, useDidShow } from '@tarojs/taro'
 import { useMemo, useState, useRef, useEffect } from 'react'
 import AlumnusItem from './components/AlumnusItem'
 import PopWindow from './components/PopWindow'
@@ -36,6 +36,7 @@ export default function Alumnus () {
   const [ organFilter, setOrganFilter ] = useState<orginFilterType>('recommend')
   const [ refresh, setRefresh ] = useState(false) //关注、取消关注操作 刷新 重新获取list
   const handleRefresh = () => setRefresh(!refresh)
+  useDidShow(() => handleRefresh())
   //popWindow Hook
   const [ pop, setPop ] = useState(false)
   const setStatusRef = useRef<setStatusType | null>(null)
@@ -133,7 +134,7 @@ export default function Alumnus () {
       getAlum()
     } else {
       const getOrg = async () => {
-        const res = await orgList(controller.signal, inputVal, organFilter) //FIXME
+        const res = await orgList(controller.signal, inputVal, organFilter)
         if(res?.data) {
           setOrganizations(res.data.organizations)
         } else {

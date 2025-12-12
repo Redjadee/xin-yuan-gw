@@ -5,8 +5,8 @@ export type orginSayhiType = {
   avatar: string 
   name: string
   bio: string
-  isfollow?: boolean
-  id?: string
+  isfollow: boolean
+  id: string
 }
 export type orginType = orginActiType & orginSayhiType & {
   adminuserid?: string
@@ -16,10 +16,12 @@ export type orginType = orginActiType & orginSayhiType & {
  * 获取已加入的组织列表
  * @returns data: { organizations, total }
  */
-export async function orgContactList(signal: AbortSignal) {
+export async function orgContactList(signal: AbortSignal, id: string) {
+  let url = '/api/activity/org/contact/list'
+  if(id !== '') url += `?id=${id}`
   try {
     const res = http.get(
-      '/api/activity/org/contact/list',
+      url,
       { signal }
     )
     return res

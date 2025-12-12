@@ -8,7 +8,7 @@ import { myImgBase } from "@/global/assets/images/imgBases"
 import './index.scss'
 
 interface propsType {
-  type: '活动列表' | '消息列表' | '校友组织列表' | '校友通讯录' | '组织通讯录' | '我的活动' | '校友审核列表' | '组织管理列表' | '活动管理'
+  type: '活动列表' | '消息列表' | '校友组织列表' | '校友通讯录' | '组织通讯录' | '我的活动' | '校友审核列表' | '组织管理列表' | '活动管理' | '未找到相关联系人' | '他人加入的组织'
   className?: string
 }
 
@@ -24,6 +24,8 @@ export default function VoidHint({ type, className }: propsType) {
     '还没有活动哟，快去报名吧！',
     '还没有审核哟，休息一下吧！',
     '还没有活动哟，快去添加吧！',
+    '没有找到相关联系人',
+    '暂无数据'
   ]  
   const showHint = useMemo(() => {
     switch (type) {
@@ -36,6 +38,8 @@ export default function VoidHint({ type, className }: propsType) {
       case '校友审核列表': return hints[6]
       case '组织管理列表': return hints[4]
       case '活动管理': return hints[7]
+      case '未找到相关联系人': return hints[8]
+      case '他人加入的组织': return hints[9]
     }
   }, [type])
 

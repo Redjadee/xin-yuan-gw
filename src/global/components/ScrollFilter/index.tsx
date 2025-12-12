@@ -34,7 +34,6 @@ export default function ScrollFilter({ type, getFilterIdx, className }: propsTyp
   const filterStyle = useCallback((currentIndex: number) => currentIndex === selected ? 'filter filter-selected' : 'filter', [selected])
 
   const [ adminNum, setAdminNums ] = useState([0, 0, 0])
-  console.log(adminNum)
   useEffect(() => {
     const controller = new AbortController()
 

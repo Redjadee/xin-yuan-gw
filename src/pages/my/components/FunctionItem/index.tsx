@@ -9,12 +9,26 @@ interface functionItemType {
   label: string
   index: number
   url: string
+  hideprofile: boolean
+  openForbidden?: () => void
 }
 
-export default function FunctionItem({ href, label, index, url }: functionItemType) {
+export default function FunctionItem({ href, label, index, url, hideprofile: permitted, openForbidden }: functionItemType) {
+  const handleClick = () => {
+    if(!openForbidden) {
+      Taro.navigateTo({ url })
+      return 
+    }
+    
+    if(permitted) {
+      Taro.navigateTo({ url })
+    } else {
+      if(openForbidden) openForbidden()
+    }
+  }
   return (
     <View 
-      onClick={() => Taro.navigateTo({ url })} 
+      onClick={handleClick} 
       className='function-item'
       style={index === 1 ? {marginBottom: 6} : {}}
       key={`function-item-${index}`}>

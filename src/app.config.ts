@@ -8,9 +8,11 @@ export default defineAppConfig({
     backgroundTextStyle: 'light',
 
     navigationBarBackgroundColor: '#018BBC',
-    navigationBarTitleText: '信缘 · 广外'
+    navigationBarTitleText: '广外信院校友之家'
   },
-  
+
+  __usePrivacyCheck__: true,
+
   tabBar: {
     custom: true,
     list: [
@@ -35,7 +37,7 @@ export default defineAppConfig({
 
     color: '#9CC4E6',
     selectedColor: '#018BBC'
-  }, 
+  },
   subPackages: [
     { root: "loginPkg/", pages: [
       "pages/login/index",
@@ -55,7 +57,8 @@ export default defineAppConfig({
     ]},
     { root: 'msgPkg/', pages: [
       'pages/allmsg/index',
-      'pages/chat/index'
+      'pages/chat/index',
+      'pages/infor/index'
     ]},
     { root: 'adminPkg/', pages: [
       'pages/home/index',
@@ -68,5 +71,17 @@ export default defineAppConfig({
       'pages/auditDetail/index',
       'pages/newNotification/index'
     ]}
-  ]
+  ],
+  preloadRule: {
+    // 【预下载策略1】进入首页时预下载常用分包
+    'pages/index/index': {
+      network: 'all',
+      packages: ['myPkg', 'loginPkg']
+    },
+    // 【预下载策略2】进入"我的"页面时预下载个人中心分包
+    'pages/my/index': {
+      network: 'all',
+      packages: ['myPkg']
+    }
+  }
 });

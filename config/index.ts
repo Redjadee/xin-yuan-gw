@@ -9,6 +9,7 @@ export default defineConfig<'webpack5'>(async (merge, {
   command,
   mode
 }) => {
+  const path = require('path'); // 记得引入 path
   const baseConfig: UserConfigExport<'webpack5'> = {
     projectName: 'xygw',
     date: '2025-8-7',
@@ -32,7 +33,7 @@ export default defineConfig<'webpack5'>(async (merge, {
     compiler: {
       type: 'webpack5',
       prebundle: {
-        enable: true
+        enable: false
       }
     },
     cache: {
@@ -53,13 +54,71 @@ export default defineConfig<'webpack5'>(async (merge, {
             generateScopedName: '[name]__[local]___[hash:base64:5]'
           }
         }
+      },      
+      // 1. 关闭预编译 (解决体积大/拆包干扰问题)
+      compiler: {
+        type: 'webpack5',
+        prebundle: { enable: false },
       },
+
+      // 2. 关闭主包优化
+      optimizeMainPackage: { enable: false },
+      
+      // 3. 【防盗锁1】强制锁定输出文件名
+      // 保证 pages/index/index.js 永远叫这个名字，不会变成 index-123.js
+      output: {
+        filename: '[name].js',
+        chunkFilename: '[name].js',
+      },
+
       webpackChain(chain) {
         chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin);
+
+        chain.optimization.splitChunks({
+          // 1. 全局策略：只拆异步，保护页面入口不被拆碎
+          chunks: 'async', 
+          minSize: 0,
+          minChunks: 1,
+          maxSize: 0,
+          
+          cacheGroups: {
+            default: false,
+            common: false, 
+
+            vendors: {
+              chunks: 'all', 
+              name: 'vendors',
+              priority: 20,
+              enforce: true,
+              
+              test: (module) => {
+                const path = module.resource;
+                if (!path) return false;
+                
+                const isNodeModules = /[\\/]node_modules[\\/]/.test(path);
+                
+                // --- 黑名单 (踢出 Taroify sha1 base64) ---
+                const isTaroify = /[\\/]node_modules[\\/]@taroify[\\/]/.test(path);
+                const isVant = /[\\/]node_modules[\\/]@vant[\\/]/.test(path);
+                const isCrypto = /[\\/]node_modules[\\/](sha1|js-base64)[\\/]/.test(path);
+                
+                if (isTaroify || isVant || isCrypto) {
+                  return false; // 坚决踢出，去分包冗余
+                }
+
+                // --- 默认策略 ---
+                // 其他 node_modules 只要不是黑名单，都进主包
+                // 这会把 React, Taro, Core-JS 都带进去
+                return isNodeModules;
+              },
+            },
+          }
+        });
       },
+
       compile: {
         include: [(filename: string) => /node_modules\/(?!(.pnpm|@babel|core-js|style-loader|css-loader|react|react-dom))(@?[^/]+)/.test(filename)]
-      }
+      },
     },
     h5: {
       publicPath: '/',

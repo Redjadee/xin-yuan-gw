@@ -1,6 +1,27 @@
 import type { UserConfigExport } from "@tarojs/cli"
 
 export default {
+  // 确保 terser (JS 压缩器) 是开启的
+  jsMinimizer: 'terser', 
+  terser: {
+    enable: true,
+    config: {
+      // 🚨 关键配置：防止混淆函数名和类名
+      keep_classnames: true,
+      keep_fnames: true,
+      
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      }
+    }
+  },
+  enableSourceMap: false,
+  cssMinimizer: 'csso',
+  csso: {
+    enable: true,
+    config: {}
+  },
   mini: {},
   h5: {
     /**

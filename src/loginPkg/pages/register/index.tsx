@@ -51,6 +51,36 @@ export default function Register() {
   
   const dispatch = useDispatch()
   
+  const privacyCheck = () => {
+    // 1. 获取隐私设置，判断是否需要授权
+    Taro.getPrivacySetting({
+      success: res => {
+        if (res.needAuthorization) {
+          // 2. 需要授权：直接调用 requirePrivacyAuthorize
+          // 【关键点】：此时全局不要有 Taro.onNeedPrivacyAuthorization 的监听代码
+          // 微信发现你没监听，且这里请求了授权，就会自动弹出官方弹窗
+          Taro.requirePrivacyAuthorize({
+            success: () => {
+              // 用户点击了官方弹窗的“同意”
+              console.log('官方弹窗：用户同意')
+              handleSubmit()
+            },
+            fail: () => {
+              // 用户点击了官方弹窗的“拒绝”
+              console.log('官方弹窗：用户拒绝')
+              // 这里可以加个 Toast 提示用户必须授权才能登录
+              Taro.showToast({ title: '需要同意隐私协议才能登录', icon: 'none' })
+            }
+          })
+        } else {
+          // 3. 不需要授权（之前同意过，ec.）：直接登录
+          handleSubmit()
+        }
+      },
+      fail: err => console.log(err)
+    })
+  }
+
   const handleSubmit = async () => {
     // if(type === '0' && !agree) {
     //   showMsg('请先同意相关协议')
@@ -112,7 +142,7 @@ export default function Register() {
           <Input value={code} onInput={e => setCode(e.detail.value)} type='number' maxlength={6} className='input' placeholder='请输入手机验证码' placeholderClass='inputPH' />
           <GetSmsCode phone={phone} />
         </View>
-        <Button openType='agreePrivacyAuthorization' onClick={handleSubmit} className='button register-button'><Text>{ type === '0' ? '注册' : '确认'}</Text></Button>
+        <Button onClick={privacyCheck} className='button register-button'><Text>{ type === '0' ? '注册' : '确认'}</Text></Button>
         { type === '0' && <View className='foot-box' onClick={backToLogin}>
           <Text>已注册，去登录</Text>
           <Image src={`${homeImgBase}/headArrow.png`} className='arrow' />

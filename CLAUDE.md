@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Taro-based mini-program called "信缘 · 广外" (Xinyuan GDUFS), a social networking application for Guangdong University of Foreign Studies alumni. The app supports multiple platforms including WeChat Mini Program, H5, and other mini-program platforms.
+This is a Taro-based mini-program called "广外信院校友之家" (Xinyuan GDUFS), a social networking application for Guangdong University of Foreign Studies alumni. The app supports multiple platforms including WeChat Mini Program, H5, and other mini-program platforms.
 
 ## Development Commands
 

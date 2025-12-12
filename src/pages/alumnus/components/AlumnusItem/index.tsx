@@ -1,5 +1,6 @@
 import { View, Text, Image } from '@tarojs/components'
-import React, { useState } from 'react'
+import Taro from '@tarojs/taro'
+import React, { useCallback, useState } from 'react'
 import type { alumnusSayhiType } from '@/global/utils/api/usercenter/friend'
 import type { orginSayhiType } from '@/global/utils/api/activitycenter/org'
 import { alumnusImgBase, profile as profileHref } from '@/global/assets/images/imgBases'
@@ -62,21 +63,27 @@ export default function AlumnusItem({ value, openPop, type, refresh }: propsType
     }
   }
 
-  const handleOpen = () => {
+  const handleOpen = (e) => {
+    e.stopPropagation() // 阻止事件冒泡，避免触发父级的路由事件
     if (status === true) {
       openPop(setStatus, recall)
     } else {
-      sayHi()      
+      sayHi()
     }
   }
   
+  const toInfor = useCallback(() => {
+    const sendType = type === '校友' ? '个人' : '组织'
+    Taro.navigateTo({ url: `/msgPkg/pages/infor/index?type=${sendType}&id=${value.id}&status=${status}` })
+  }, [type, status])
+
   const profile = value.avatar ? value.avatar : profileHref
   return (
-    <View className='alumnus-item'>
+    <View className='alumnus-item' onClick={toInfor}>
       <Image src={profile} className='profile' />
       <View className='border-box'>
         <View className='middle-box'>
-          <Text className='name'>{value.name}</Text>
+          <Text className={`name ${type === '组织' ? 'org-name' : ''}`}>{value.name}</Text>
           <Text className='description'>{value.bio}</Text>
         </View>
         <View onClick={handleOpen}

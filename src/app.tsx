@@ -1,7 +1,17 @@
+// 1. 引入我们自己写的类
+import { AbortController as LocalAbortController } from '@/global/utils/api/AbortController'
+
+// 2. 挂载到全局环境
+// 这样无论你的代码哪里写了 new AbortController()，用的都是我们这个不会报错的版本
+const globalScope = (typeof global !== 'undefined' ? global : (typeof window !== 'undefined' ? window : {}));
+(globalScope as any).AbortController = LocalAbortController;
+// 有些库可能会检查 AbortSignal，也补上
+(globalScope as any).AbortSignal = LocalAbortController.prototype.signal?.constructor;
+
 import { PropsWithChildren } from 'react'
 import { useLaunch } from '@tarojs/taro'
 import Taro from '@tarojs/taro'
-import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
+import 'abortcontroller-polyfill'
 
 import { Provider } from 'react-redux'
 import { store } from './store'

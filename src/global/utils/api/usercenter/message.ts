@@ -36,6 +36,23 @@ export async function conversation(id: string, type: conversationType, signal: A
 }
 
 /**
+ * 是否已发送联系方式
+ * @param touserid 接收打招呼的用户ID
+ * @returns data: { exchanged: boolean }
+ */
+export async function isexchanged(signal: AbortSignal, touserid: string) {
+  try {
+    const res = await http.get(
+      `/api/user/message/isexchanged?touserid=${touserid}`,
+      { signal }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+/**
  * 获取消息列表
  * @returns data: { msgs, total }
  */
@@ -78,6 +95,23 @@ export async function readall() {
     return res
   } catch (err) {
     console.log(err)
+  }
+}
+
+/**
+ * 发送联系方式
+ * @param phone 手机号
+ * @param touserid 接收打招呼的用户ID
+ */
+export async function sendContact(phone: string, touserid: string) {
+  try {
+    const res = await http.post(
+      '/api/user/message/send/contact',
+      { phone, touserid, wechat: '' }
+    )
+    return res
+  } catch (err) {
+    console.log(err)    
   }
 }
 

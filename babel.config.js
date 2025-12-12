@@ -1,9 +1,21 @@
-// babel-preset-taro 更多选项和默认值：
-// https://docs.taro.zone/docs/next/babel-config
+// babel.config.js
 module.exports = {
-  presets: [['taro', {
-    framework: 'react',
-    ts: true,
-    compiler: 'webpack5',
-  }]]
-};
+  presets: [
+    ['taro', {
+      framework: 'react',
+      ts: true,
+      compiler: 'webpack5',
+    }]
+  ],
+  plugins: [
+    [
+      'import',
+      {
+        libraryName: '@taroify/core',
+        libraryDirectory: '', // 注意这里
+        style: true,
+      },
+      '@taroify/core',
+    ],
+  ],
+}

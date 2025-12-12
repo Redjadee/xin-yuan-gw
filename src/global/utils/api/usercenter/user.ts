@@ -339,3 +339,19 @@ export async function getjobcategories() {
     console.log(err)
   }
 }
+
+/**
+ * 获取上次发送的手机号和微信号
+ * @returns data: { phone, wechat }
+ */
+export async function getlastnumber(signal: AbortSignal) {
+  try {
+    const res = await http.get(
+      '/api/user/user/getlastnumber',
+      { signal }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
