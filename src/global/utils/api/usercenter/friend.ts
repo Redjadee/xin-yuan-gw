@@ -71,7 +71,7 @@ export type alumnusSayhiType = {
   name: string
   isfollow: boolean
 }
-export type filterType = 'recommend' | 'all' | 'location' | 'industry' | 'college' | 'grade'
+export type filterType = 'recommend' | 'all' | 'location' | 'industry' | 'career' | 'college' | 'grade'
 /**
  * 获取可打招呼的人员列表
  * @param filter 筛选选项: recommend-推荐, all-全部, location-同城, industry-同行业, college-同学院
@@ -90,6 +90,38 @@ export async function potentialList(filter: filterType, signal: AbortSignal, key
 }
 
 /**
+ * 根据职业搜索用户
+ * @param occupation 职业关键词
+ * @returns data: { total, users }
+ */
+export async function occupation(occupation: string) {
+  try {
+    const res = await http.get(
+      `/api/user/friend/search/occupation?occupation=${occupation}`,
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+/**
+ * 查询通讯录中包含哪几届的校友
+ * @returns data: { enrollmentyears: string[], total }
+ */
+export async function enrollmentyears(signal: AbortSignal) {
+  try {
+    const res = await http.get(
+      '/api/user/friend/contact/enrollmentyears',
+      { signal }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+/**
  * 取消关注用户
  * @param userid 要取消关注的用户ID
  */
@@ -98,6 +130,23 @@ export async function friendUnfollow(userid: string) {
     const res = await http.post(
       '/api/user/friend/unfollow',
       { userid }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+/**
+ * 根据入学年份查询该届校友
+ * @param enrollmentYear 
+ * @returns data: { users, total }
+ */
+export async function enrollmentyearsGetAlumnus(signal: AbortSignal, enrollmentYear: string) {
+  try {
+    const res = await http.get(
+      `/api/user/friend/contact/year/${enrollmentYear}`,
+      { signal }
     )
     return res
   } catch (err) {

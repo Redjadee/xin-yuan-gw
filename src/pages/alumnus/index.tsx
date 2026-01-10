@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from '@tarojs/components'
+import { View, Text, ScrollView, Image } from '@tarojs/components'
 import { useLoad, useDidShow } from '@tarojs/taro'
 import { useMemo, useState, useRef, useEffect } from 'react'
 import AlumnusItem from './components/AlumnusItem'
@@ -11,15 +11,166 @@ import { switchVisible } from '@/store/tabBarSlice'
 import Taro from '@tarojs/taro'
 import { showMsg } from '@/global/utils/common'
 
-import { potentialList } from '@/global/utils/api/usercenter/friend'
+import { getjobcategories } from '@/global/utils/api/usercenter/user'
+import type { jobCategoryType } from '@/global/utils/api/usercenter/user'
+import { potentialList, occupation } from '@/global/utils/api/usercenter/friend'
 import { orgList } from '@/global/utils/api/activitycenter/org'
 import type { alumnusSayhiType, filterType } from '@/global/utils/api/usercenter/friend'
 import type { orginSayhiType, orginFilterType } from '@/global/utils/api/activitycenter/org'
 
+import { myImgBase } from '@/global/assets/images/imgBases'
 import './index.scss'
 
-const alumnusFilter = ['推荐', '全部', '同城', '同行', '同院', '同级']
+const alumnusFilter = ['推荐', '全部', '同城', '同行', '职业', '同院', '同级']
 const organizationFilter = ['推荐', '全部', '专业', '地方', '海外', '行业', '兴趣爱好']
+
+
+interface CareerPathItem {
+  name: string
+  code: number
+  subLevelModelList?: jobCategoryType[]
+}
+
+function Career ({ refresh, openPop }: { refresh: () => void, openPop: () => void }) {
+  const [ career, setCareer ] = useState<jobCategoryType[]>([])
+  const [ currentLevel, setCurrentLevel ] = useState(0)
+  const [ selectedPath, setSelectedPath ] = useState<CareerPathItem[]>([])
+  const [ careerUsers, setCareerUsers ] = useState<alumnusSayhiType[]>()
+  const [ loading, setLoading ] = useState(false)
+  const lastClickTimeRef = useRef(0)
+  const THROTTLE_DURATION = 500 // 500ms节流
+
+  useEffect(() => {
+    const getCareers = async () => {
+      const res = await getjobcategories()
+      if(res?.data) {
+        setCareer(res.data.categories)
+      } else {
+        if(res) showMsg(res.msg)
+      }
+    }
+    getCareers()
+  }, [])
+
+  const handleLevelClick = async (item: jobCategoryType, level: number) => {
+    const now = Date.now()
+    if (now - lastClickTimeRef.current < THROTTLE_DURATION) {
+      return
+    }
+    lastClickTimeRef.current = now
+
+    const newPathItem: CareerPathItem = {
+      name: item.name,
+      code: item.code,
+      subLevelModelList: item.subLevelModelList
+    }
+
+    if (level === 2) {
+      // 点击第3层，使用 occupation 接口获取校友列表
+      setLoading(true)
+      const res = await occupation(item.name)
+      if(res?.data) {
+        setCareerUsers(res.data.users)
+        setSelectedPath([...selectedPath, newPathItem])
+        setCurrentLevel(3)
+      } else {
+        if(res) showMsg(res.msg)
+      }
+      setLoading(false)
+    } else {
+      // 进入下一层
+      setSelectedPath([...selectedPath, newPathItem])
+      setCurrentLevel(level + 1)
+    }
+  }
+
+  const handleBreadcrumbClick = (breadcrumbIndex: number) => {
+    // 面包屑索引: 0=校友, 1=第1层, 2=第2层, 3=第3层
+    // 对应层级: 0, 1, 2, 3
+    const newLevel = breadcrumbIndex
+    setCurrentLevel(newLevel)
+    setSelectedPath(selectedPath.slice(0, newLevel))
+    if (newLevel < 3) {
+      setCareerUsers(undefined)
+    }
+  }
+
+  const getCurrentLevelData = (): jobCategoryType[] => {
+    if (currentLevel === 0) return career
+    if (currentLevel === 1) return selectedPath[0]?.subLevelModelList as any || []
+    if (currentLevel === 2) return selectedPath[1]?.subLevelModelList as any || []
+    return []
+  }
+
+  return (
+    <View className='career-container'>
+      {/* 面包屑导航 */}
+      <View className='career-breadcrumb'>
+        {/* 固定第一级：校友 */}
+        <View className='breadcrumb-item'>
+          <Text
+            className={currentLevel === 0 ? 'current' : ''}
+            onClick={() => handleBreadcrumbClick(0)}
+          >
+            校友
+          </Text>
+          {selectedPath.length > 0 && <Text className='separator'>{'>'}</Text>}
+        </View>
+        {/* 动态层级：第1层、第2层、第3层 */}
+        {selectedPath.map((item, index) => (
+          <View key={item.code} className='breadcrumb-item'>
+            <Text
+              className={currentLevel === index + 1 ? 'current' : ''}
+              onClick={() => handleBreadcrumbClick(index + 1)}
+            >
+              {item.name}
+            </Text>
+            {index < selectedPath.length - 1 && <Text className='separator'>{'>'}</Text>}
+          </View>
+        ))}
+      </View>
+
+      {/* 层级内容 */}
+      {currentLevel < 3 ? (
+        <View className='career-levels' style={{ transform: `translateX(-${currentLevel * 375}px)` }}>
+          {[0, 1, 2].map((level) => (
+            <View key={level} className='career-level'>
+              {getCurrentLevelData().map(item => (
+                <View
+                  className='career-item'
+                  key={`level-${level}-${item.code}`}
+                  onClick={() => handleLevelClick(item, level)}
+                >
+                  <Text>{item.name}</Text>
+                  <Image src={`${myImgBase}/itemArrow.png`} className='arrow' />
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
+      ) : (
+        // 第4层：显示校友列表
+        <View className='career-users'>
+          {loading ? (
+            <View className='loading'>加载中...</View>
+          ) : careerUsers && careerUsers.length !== 0 ? (
+            careerUsers.map((value, index) => (
+              <AlumnusItem
+                key={`career-user-${index}`}
+                type='校友'
+                value={value}
+                openPop={openPop}
+                refresh={refresh}
+              />
+            ))
+          ) : (
+            <VoidHint type='校友组织列表' />
+          )}
+        </View>
+      )}
+    </View>
+  )
+}
 
 export default function Alumnus () {
   //head Hook
@@ -46,6 +197,8 @@ export default function Alumnus () {
   const [ inputVal, setInputVal ] = useState('')
   const getInputVal = (inputVal: string) => setInputVal(inputVal)
   const [ isInputing, setIsInputing ] = useState(false)
+  
+  
   //弹窗控制
   /**
    * 控制弹窗打开
@@ -131,7 +284,7 @@ export default function Alumnus () {
           if(res) showMsg(res.msg)
         }               
       }
-      getAlum()
+      getAlum()        
     } else {
       const getOrg = async () => {
         const res = await orgList(controller.signal, inputVal, organFilter)
@@ -153,12 +306,38 @@ export default function Alumnus () {
     case 1: return label === '校友' ? setAlumFilter('all') : setOrganFilter('all')
     case 2: return label === '校友' ? setAlumFilter('location') : setOrganFilter('major')
     case 3: return label === '校友' ? setAlumFilter('industry') : setOrganFilter('location')
-    case 4: return label === '校友' ? setAlumFilter('college') : setOrganFilter('overseas')
-    case 5: return label === '校友' ? setAlumFilter('grade') : setOrganFilter('industry')
-    case 6: return label === '校友' ? {} : setOrganFilter('hobby')
+    case 4: return label === '校友' ? setAlumFilter('career') : setOrganFilter('overseas')
+    case 5: return label === '校友' ? setAlumFilter('college') : setOrganFilter('industry')
+    case 6: return label === '校友' ? setAlumFilter('grade') : setOrganFilter('hobby')
   }
   }, [filter, label])
-  
+
+  const contents = useMemo(() => {
+    if (label === '校友') {
+      if(alumFilter !== 'career') {
+        
+        if (alumnuses && alumnuses.length !== 0) {
+          return alumnuses.map((value, index) => (
+            <AlumnusItem key={`alumnus-item-${index}`} type='校友' value={value} openPop={openPop} refresh={handleRefresh} />
+          ))
+        } else {
+          return <VoidHint type='校友组织列表' />
+        }
+
+      } else {
+        return <Career refresh={handleRefresh} openPop={openPop} />
+      }
+    } else {
+      if (organizations && organizations.length !== 0) {
+        return organizations.map((value, index) => (
+          <AlumnusItem key={`alumnus-item-o-${index}`} type='组织' value={value} openPop={openPop} refresh={handleRefresh} />
+        ))
+      } else {
+        return <VoidHint type='校友组织列表' />
+      }
+    }
+  }, [label, alumnuses, organizations, openPop, handleRefresh, alumFilter])
+
   return (
     <View className='alumnus'>
       {pop && <PopWindow closePop={closePop} type='关注用户' />}
@@ -183,14 +362,7 @@ export default function Alumnus () {
           </View>
         </ScrollView>}
         <View className='alumnus-box'>
-          { label === '校友' ? 
-            (alumnuses && alumnuses.length !== 0 ? alumnuses.map((value, index) => (
-              <AlumnusItem key={`alumnus-item-${index}`} type='校友' value={value} openPop={openPop} refresh={handleRefresh} />
-            )) : <VoidHint type='校友组织列表' />) :
-            (organizations && organizations.length !== 0 ? organizations.map((value, index) => (
-              <AlumnusItem key={`alumnus-item-o-${index}`} type='组织' value={value} openPop={openPop} refresh={handleRefresh} />
-            )) : <VoidHint type='校友组织列表' />) 
-          }
+          {contents}
         </View>
       </View>
     </View>

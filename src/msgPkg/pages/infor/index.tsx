@@ -104,7 +104,7 @@ export default function InforPage() {
     {
       href: `${myImgBase}/item2.png`,
       label: '加入的组织',
-      url: '/myPkg/pages/contact/index?type=2'
+      url: `/myPkg/pages/contact/index?type=2&id=${id}`
     },
     {
       href: `${myImgBase}/item3.png`,
@@ -115,7 +115,7 @@ export default function InforPage() {
     {
       href: `${myImgBase}/item3.png`,
       label: '相关活动',
-      url: `/activityPkg/pages/allview/index?type=3&id=${id}`
+      url: `/activityPkg/pages/allview/index?type=4&id=${id}`
     }
   ]
   , [type, id])
@@ -137,10 +137,10 @@ export default function InforPage() {
         <Image src={`${myImgBase}/bgimg.png`} className='head-bgimg' />
 
         <View className='head-wrapper'>
-          <Image src={profileHref} className='profile' />
-          <View className='middle-box'>
+          <Image src={profileHref} className={`profile ${type === '组织' ? 'org-profile' : ''}`} />
+          <View className={`middle-box ${type === '组织' ? 'org-middle' : ''}`}>
             <Text className={`name ${type === '组织' ? 'org-name' : ''}`}>{name}</Text>
-            <Text>{type === '个人' ? '学号' : '编号'}：{formatId}</Text>
+            <Text>编号：{formatId}</Text>
           </View>
           <View onClick={handleOpen} className={status === true ? 'button selected' : 'button'}>
             {type === '个人' ?
@@ -150,7 +150,15 @@ export default function InforPage() {
           </View>
         </View>
       </View>
-      {functionItemList.map((value, index) => FunctionItem({...value, index, hideprofile: type === '个人' && infor ? (infor as userInforType).hideprofile : true, openForbidden}))}
+      {functionItemList.map((value, index) => (
+        <FunctionItem
+          key={index}
+          {...value}
+          index={index}
+          hideprofile={type === '个人' ? (infor ? (infor as userInforType).hideprofile : true) : false}
+          openForbidden={openForbidden}
+        />
+      ))}
     </View>
   )
 }

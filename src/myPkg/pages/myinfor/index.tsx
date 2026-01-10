@@ -3,7 +3,7 @@
  * https://docs.taro.zone/docs/vant/
  */
 
-import { View, Text, Image, Switch, PageContainer } from "@tarojs/components"
+import { View, Text, Image, Switch, PageContainer, Button } from "@tarojs/components"
 import TextArea from "@/global/components/Textarea"
 import { useState, useMemo, useCallback, useEffect, useRef } from "react"
 import type { userInforType, myInforType, jobCategoryType } from "@/global/utils/api/usercenter/user"
@@ -18,6 +18,7 @@ import { areaList } from "@vant/area-data"
 import { myImgBase } from "@/global/assets/images/imgBases"
 import { fileUpload } from "@/global/utils/api/usercenter/fileupload"
 
+import '@/global/style/form.scss'
 import './index.scss'
 
 interface popupPropsType {
@@ -171,6 +172,7 @@ function InforItem({ label, val, K, openPop, handleSetInfor }: inforItemType) {
         try {
           const finalURL = await fileUpload('avatar', 'original')
           if(finalURL && finalURL !== '') handleSetInfor('avatar', finalURL)
+            console.log(finalURL)
         } catch (error) {
           console.error('Upload failed:', error)
         }
@@ -213,6 +215,7 @@ export default function Myinfor() {
     major: '',
   })
 
+  const [ pending, setPending ] = useState(false)
   const [ hide, setHide ] = useState(false)
   const toggleHide = () => setHide(!hide)
   const handleSetInfor = useCallback(<K extends keyof myInforType>(
@@ -247,6 +250,7 @@ export default function Myinfor() {
       eventChannel.on('acceptUserinfor', data => {
         setInfor(typeFormatter(data))
         setHide(data.hideprofile)
+        setPending(data.pending)
       } )
     }
 
@@ -267,21 +271,15 @@ export default function Myinfor() {
   const closePop = () => isPop(false)
 
   //submit
-  useEffect(() => {
-    const controller = new AbortController()
-
-    const handleSubmitInfo = async () => {
-      const res = await updateuserinfo(infor, true, hide, controller.signal)
-      if(res?.data) {
-        showMsg(res.data.message)
-      } else {
-        if(res) showMsg(res.msg)
-      }
+  const handleSubmitInfo = async () => {
+    const res = await updateuserinfo(infor, false, hide)
+    if(res?.data) {
+      showMsg(res.data.message)
+      setPending(true)
+    } else {
+      if(res) showMsg(res.msg)
     }
-    handleSubmitInfo()
-
-    return () => controller.abort()
-  }, [infor])
+  }
 
   return (
     <View className="my-infor">
@@ -295,6 +293,7 @@ export default function Myinfor() {
         <Text>隐藏个人信息</Text>
         <Switch type='switch' color='#33A2C9' onClick={toggleHide} checked={hide} />
       </View>
+      <Button onClick={handleSubmitInfo} disabled={pending} className={['button myinfor-button', 'pending'].join(' ')}><Text>{pending ? '审核中，请耐心等待' : '确认'}</Text></Button>
     </View>
   )
 }

@@ -173,12 +173,11 @@ export type myInforType = {
  * @param hideprofile 隐私设置: 0-公开 1-隐藏
  * @returns 成功-更新后的用户信息
  */
-export async function updateuserinfo( value: myInforType | null, returndata: boolean, hideprofile: boolean, signal: AbortSignal ) {
+export async function updateuserinfo( value: myInforType | null, returndata: boolean, hideprofile: boolean) {
   try {
     const res = await http.post(
       '/api/user/user/updateuserinfo',
       { ...value, returndata, hideprofile },
-      { signal }
     )
     // if(res && res.data) return res.data.userinfo
     return res
@@ -323,7 +322,7 @@ export async function changephonebycode(code: string, newphone: string) {
 export type jobCategoryType = {
   name: string
   code: number
-  subLevelModelList: jobCategoryType
+  subLevelModelList: jobCategoryType[]
 }
 /**
  * 获取职业分类列表
@@ -348,6 +347,40 @@ export async function getlastnumber(signal: AbortSignal) {
   try {
     const res = await http.get(
       '/api/user/user/getlastnumber',
+      { signal }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+/**
+ * 获取用户参加的活动列表
+ * @param userid 
+ * @returns data: { activities }
+ */
+export async function getuseractivities(signal: AbortSignal, userid: string) {
+  try {
+    const res = await http.get(
+      `/api/user/user/getuseractivities/${userid}`,
+      { signal }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+/**
+ * 获取用户参加的组织列表
+ * @param userid 
+ * @returns data: { organizations }
+ */
+export async function getuserorganizations(signal: AbortSignal, userid: string) {
+  try {
+    const res = await http.get(
+      `/api/user/user/getuserorganizations/${userid}`,
       { signal }
     )
     return res

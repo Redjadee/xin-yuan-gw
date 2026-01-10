@@ -9,17 +9,20 @@ import Taro from '@tarojs/taro'
 import type { actiType } from '@/global/utils/api/activitycenter/activity'
 import { list } from '@/global/utils/api/activitycenter/activity'
 import { showMsg } from '@/global/utils/common'
+import { getuseractivities } from '@/global/utils/api/usercenter/user'
+import { orgActivities } from '@/global/utils/api/activitycenter/org'
 
 import './index.scss'
 import AdminButton from '@/adminPkg/components/AdminButton'
 
 export default function Allview() {
-  const [ type, setType ] = useState<'1' | '0' | '' | '2' | '3'>('') // 0-全部活动 1-我的活动 2-管理端 3-他人的参与活动
+  const [ type, setType ] = useState<'1' | '0' | '' | '2' | '3' | '4'>('') // 0-全部活动 1-我的活动 2-管理端 3-他人的参与活动 4-组织的活动
   const [ id, setId ] = useState('')
   useLoad((options) => {
     setType(options.type)
     if(options.type === '2') Taro.setNavigationBarTitle({ title: '活动设置' })
-    if(options.type === '3') setId(options.id)
+    if(options.type === '3' || options.type === '4') setId(options.id)
+    if(options.type === '4') Taro.setNavigationBarTitle({ title: '相关活动' })
   })
   //活动查询 Hook
   const [ status, setStatus ] = useState<0 | 1 | 2 | 3 | 4>(type === '2' ? 0 : 1)
@@ -36,7 +39,7 @@ export default function Allview() {
 
     const getList = async () => {
       if(type !== '') {
-        const res = await list(controller.signal, type, status, inputVal, actiType, id)
+        const res = await list(controller.signal, type, status, inputVal, actiType)
         if (res?.data) {
           setActis(res.data.activities)
         } else {
@@ -44,7 +47,21 @@ export default function Allview() {
         }
       }
     }
-    if(type !== '') getList()
+
+    const getOthersList = async () => {
+      const res = type === '3' ? await getuseractivities(controller.signal, id) : await orgActivities(controller.signal, id)
+      if(res?.data) {
+        setActis(res.data.activities)
+      } else {
+        if(res) showMsg(res.msg)
+      }
+    }
+
+    if(type !== '') {
+      if(type === '3' || type === '4' || id !== '') {
+        getOthersList()
+      } else getList()
+    }
 
     return () => controller.abort()
   }, [type, status, inputVal, actiType, id])
@@ -70,13 +87,24 @@ export default function Allview() {
   const toNewActivi = () => Taro.navigateTo({ url: '/adminPkg/pages/newActivi/index' })
 
   const AdminHeight = useMemo(() => ({height: 93}), [type])
+
+  const voidHintType = useMemo(() => {
+    switch(type) {
+      case '': return '他人加入的组织'
+      case '0': return '活动列表'
+      case '1': return '我的活动'
+      case '2': return '活动管理'
+      case '3':
+      case '4': return '他人加入的组织'
+    }
+  }, [type])
   return (
     <View className='allview'>
       <SearchTab className='search' setIsInputing={setIsInputing} getInputVal={getInputVal} />
-      {type !== '3' && <ScrollFilter type={type === '0' ? 'all' : type === '1' ? 'my' : 'admin'} getFilterIdx={getFilterIdx} className={isInputing && inputVal ? 'scroll-view-hide' : '' } />}
+      {(type !== '3' && type !== '4') && <ScrollFilter type={type === '0' ? 'all' : type === '1' ? 'my' : 'admin'} getFilterIdx={getFilterIdx} className={isInputing && inputVal ? 'scroll-view-hide' : '' } />}
       <View className='container'>
         {actis?.length === 0 ?
-        <VoidHint type={type === '0' ? '活动列表' : type === '1' ? '我的活动' : '活动管理' } />  :
+        <VoidHint type={voidHintType} />  :
         actis && actis.map((value, index) => <ActiItem {...value} className={ index !== actis.length - 1? 'acti-item-border' : ''} key={`acti-item-${index}`} isAdmin={type === '2'} />)
       }
       </View>

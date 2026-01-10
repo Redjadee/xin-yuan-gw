@@ -18,6 +18,7 @@ export default function My () {
   useDidHide(() => setShow(false))
   
   const [ infor, setInfor ] = useState<userInforType>()
+  const [ pending, setIspending ] = useState(false)
   useEffect(() => {
     const controller = new AbortController()
 
@@ -25,6 +26,7 @@ export default function My () {
       const res = await getuserinfo('0', controller.signal)
       if(res?.data) {
         setInfor(res.data.userinfo)
+        setIspending(res.data.haspendingaudit)
       } else {
         if(res) showMsg(res.msg)
       }
@@ -43,7 +45,7 @@ export default function My () {
     Taro.navigateTo({
       url: '/myPkg/pages/myinfor/index',
       success: res => {
-        res.eventChannel.emit('acceptUserinfor', { ...infor })
+        res.eventChannel.emit('acceptUserinfor', { ...infor, pending })
       }
     })
   }
@@ -83,7 +85,14 @@ export default function My () {
           <Image src={`${myImgBase}/myDetail.png`} className='arrow'  />
         </View>
       </View>
-      {functionItemList.map((value, index) => FunctionItem({...value, index}))}
+      {functionItemList.map((value, index) => 
+        <FunctionItem
+          key={index}
+          {...value}
+          index={index}
+          hideprofile={false}
+        />
+      )}
     </View>
   )
 }

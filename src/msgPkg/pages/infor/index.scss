@@ -24,7 +24,10 @@
             .profile {
                 width: 66px;
                 height: 66px;
-                border-radius: 50%;            
+                border-radius: 50%;
+                &.org-profile {
+                    margin-left: -10px;
+                }
             }
             .middle-box {
                 display: flex;
@@ -33,6 +36,9 @@
                 flex: 1;
                 padding-right: 8px;
                 width: 50px;
+                &.org-middle {
+                    margin-left: -6px;
+                }
                 .name {
                     font-size: 21px;
                     color: #FFFFFF;
@@ -41,11 +47,11 @@
                         font-size: 16px;
                         font-weight: 500;
                         line-height: 1.3;
-                        max-width: 200px;
+                        max-width: 150px;
                         word-wrap: break-word;
                         word-break: break-all;
                         display: -webkit-box;
-                        -webkit-line-clamp: 2;
+                        line-clamp: 2;
                         -webkit-box-orient: vertical;
                         overflow: hidden;
                     }

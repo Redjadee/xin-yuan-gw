@@ -89,12 +89,11 @@ export async function enroll(id: string) {
  * @param type 0-免费活动 1-付费活动 2-直播活动 3-线下活动
  * @returns 成功-活动object[]
  */
-export async function list(signal: AbortSignal, isparticipated: '1' | '0' | '2' | '3', status: 0 | 1 | 2 | 3 | 4, keyword: string, type?: 0 | 1 | 2 | 3, id?: string) {    
+export async function list(signal: AbortSignal, isparticipated: string, status: 0 | 1 | 2 | 3 | 4, keyword: string, type?: 0 | 1 | 2 | 3) {    
     let url = `/api/activity/activity/act/list?status=${status}`
     if(isparticipated === '1') url += '&isparticipated=1'
     if(type) url += `&type=${type}`
     if(keyword !== '') url+= `&keyword=${keyword}`
-    if(id && id !== '') url+= `&id=${id}`
     try {
         const res = await http.get( url , { signal } )
         return res

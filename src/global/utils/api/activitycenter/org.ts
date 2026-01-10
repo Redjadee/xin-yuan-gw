@@ -98,3 +98,20 @@ export async function orgList(signal: AbortSignal, keyword: string, filter: orgi
     console.log(err)
   }
 }
+
+/**
+ * 获取组织活动
+ * @param signal 
+ * @returns data: { total, activities }
+ */
+export async function orgActivities(signal: AbortSignal, id: string) {
+  try {
+    const res = http.get(
+      `/api/activity/org/activities/${id}`,
+      { signal }
+    )
+    return res
+  } catch (err) {
+    console.log(err)
+  }
+}

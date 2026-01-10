@@ -112,9 +112,16 @@
   margin-top: 10px;
   .hide-profile {
     width: 340px;
-    padding-top: 27px;
+    padding-top: 22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+  .myinfor-button {
+    position: absolute;
+    bottom: 20px;
+    &.pending {
+      background-color: #CECECE;
+    }
   }
 }
