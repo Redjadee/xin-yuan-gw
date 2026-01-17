@@ -37,7 +37,9 @@ function Career ({ refresh, openPop }: { refresh: () => void, openPop: () => voi
   const [ selectedPath, setSelectedPath ] = useState<CareerPathItem[]>([])
   const [ careerUsers, setCareerUsers ] = useState<alumnusSayhiType[]>()
   const [ loading, setLoading ] = useState(false)
+  const [ containerWidth, setContainerWidth ] = useState(375)
   const lastClickTimeRef = useRef(0)
+  const containerRef = useRef<any>(null)
   const THROTTLE_DURATION = 500 // 500ms节流
 
   useEffect(() => {
@@ -50,6 +52,18 @@ function Career ({ refresh, openPop }: { refresh: () => void, openPop: () => voi
       }
     }
     getCareers()
+  }, [])
+
+  useEffect(() => {
+    if(containerRef.current) {
+      const query = Taro.createSelectorQuery()
+      query.select('.career-container').boundingClientRect()
+      query.exec((res) => {
+        if(res && res[0]) {
+          setContainerWidth(res[0].width)
+        }
+      })
+    }
   }, [])
 
   const handleLevelClick = async (item: jobCategoryType, level: number) => {
@@ -103,7 +117,7 @@ function Career ({ refresh, openPop }: { refresh: () => void, openPop: () => voi
   }
 
   return (
-    <View className='career-container'>
+    <View className='career-container' ref={containerRef}>
       {/* 面包屑导航 */}
       <View className='career-breadcrumb'>
         {/* 固定第一级：校友 */}
@@ -132,7 +146,7 @@ function Career ({ refresh, openPop }: { refresh: () => void, openPop: () => voi
 
       {/* 层级内容 */}
       {currentLevel < 3 ? (
-        <View className='career-levels' style={{ transform: `translateX(-${currentLevel * 375}px)` }}>
+        <View className='career-levels' style={{ transform: `translateX(-${currentLevel * containerWidth}px)` }}>
           {[0, 1, 2].map((level) => (
             <View key={level} className='career-level'>
               {getCurrentLevelData().map(item => (
