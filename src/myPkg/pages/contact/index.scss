@@ -79,10 +79,10 @@
 .contact-levels {
   display: flex;
   transition: transform 0.3s ease;
-  width: 750px;
+  width: 200%;
 
   .contact-level {
-    width: 375px;
+    width: 50%;
     flex-shrink: 0;
   }
 }

@@ -39,6 +39,8 @@ export default function AlphabetList() {
   const [ currentLevel, setCurrentLevel ] = useState(0) // 0=分类列表, 1=人员列表
   const [ selectedCategory, setSelectedCategory ] = useState<CategoryItem | null>(null)
   const [ enrollmentYears, setEnrollmentYears ] = useState<string[]>([])
+  const [ containerWidth, setContainerWidth ] = useState(375)
+  const containerRef = useRef<any>(null)
 
   //contact
   const [alpha, setAlpha] = useState<string>('');
@@ -65,6 +67,18 @@ export default function AlphabetList() {
       console.error('获取系统信息失败', e);
     }
   }, []);
+
+  useEffect(() => {
+    if(containerRef.current) {
+      const query = Taro.createSelectorQuery()
+      query.select('.contact-levels').boundingClientRect()
+      query.exec((res) => {
+        if(res && res[0]) {
+          setContainerWidth(res[0].width / 2)
+        }
+      })
+    }
+  }, [])
 
   const handlerAlphaTap = (e: any) => {
     const { ap } = e.currentTarget.dataset;
@@ -277,7 +291,7 @@ export default function AlphabetList() {
       {/* 内容区域 */}
       {type === '0' ? (
         // 校友通讯录：两层结构
-        <View className='contact-levels' style={{ transform: `translateX(-${currentLevel * 375}px)` }}>
+        <View className='contact-levels' ref={containerRef} style={{ transform: `translateX(-${currentLevel * containerWidth}px)` }}>
           {/* 第一层：分类列表 */}
           <View className='contact-level'>
             {renderCategoryLevel()}
