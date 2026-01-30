@@ -2,7 +2,7 @@ import { View, Text, Image, RadioGroup, Radio, Input, Switch, PageContainer } fr
 import TextArea from "@/global/components/Textarea"
 import { DatetimePicker } from '@taroify/core'
 import '@taroify/core/datetime-picker/style/index'
-import { useState, useRef, useMemo } from "react"
+import { useState, useMemo } from "react"
 import { create, adminDetail, update } from "@/global/utils/api/activitycenter/activity"
 import { fileUpload } from "@/global/utils/api/usercenter/fileupload"
 import { useLoad } from '@tarojs/taro'
@@ -48,9 +48,13 @@ export default function NewActivi() {
   const [ pop, setPop ] = useState(false) // 时间选择弹窗显示状态
   const openPop = () => setPop(true) // 打开时间选择弹窗
   const handleBack = () => setPop(false) // 关闭时间选择弹窗
-  const nowDate = useRef(new Date()) // 当前日期（作为最大可选日期）
-  const minDate = useRef(new Date(1970, 0, 1)) // 最小可选日期
-  const defaultDate = useMemo(() => new Date(2000, 0, 1), []) // 默认日期
+  const minDate = useMemo(() => new Date(), [])
+  const maxDate = useMemo(() => {
+    const date = new Date()
+    date.setFullYear(date.getFullYear() + 10)
+    return date
+  }, [])
+  const defaultDate = useMemo(() => new Date(), []) // 默认日期
   const [ dateType, setDateType ] = useState<'date' | 'hour-minute'>('date') // 选择器类型: 日期 或 时间
 
   // 活动时间数据结构 - 分别存储开始和结束的日期和时间
@@ -220,7 +224,7 @@ export default function NewActivi() {
       show={pop}
       round={true}
       onClickOverlay={handleBack}>
-        <DatetimePicker type={dateType} onCancel={handleBack} onConfirm={handleSubmitDate} defaultValue={defaultDate} max={nowDate.current} min={minDate.current}>
+        <DatetimePicker type={dateType} onCancel={handleBack} onConfirm={handleSubmitDate} defaultValue={defaultDate} max={maxDate} min={minDate}>
           <DatetimePicker.Toolbar>
             <DatetimePicker.Button>取消</DatetimePicker.Button>
             <DatetimePicker.Title>选择日期</DatetimePicker.Title>
