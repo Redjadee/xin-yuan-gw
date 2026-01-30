@@ -12,6 +12,16 @@ import PopWindow from '@/pages/alumnus/components/PopWindow'
 import { myImgBase } from '@/global/assets/images/imgBases'
 import './index.scss'
 
+/**
+ * 个人/组织信息页面
+ *
+ * URL 参数说明：
+ * @param type - 信息类型
+ *   - '个人': 查看个人信息
+ *   - '组织': 查看组织信息
+ * @param id - 用户ID 或 组织ID
+ * @param status - 关系状态（是否已关注/已加入）
+ */
 export default function InforPage() {
   const [type, setType] = useState<'' | '个人' | '组织'>("")
   const [id, setId] = useState("")

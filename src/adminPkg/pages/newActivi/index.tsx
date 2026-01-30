@@ -198,7 +198,7 @@ export default function NewActivi() {
   return (
     <View className="new-acti">
       <View className="header">
-        <Image src={formData.coverurl} className="cover" onClick={handleUpload} />
+        <Image src={formData.coverurl} className="cover" mode="aspectFill" onClick={handleUpload} />
         <RadioGroup className="radio-group">
           <Radio checked={formData.type === 2} color="#018BBC" onClick={() => updateField('type', 2)}>直播</Radio>
           <Radio checked={formData.type === 3} color="#018BBC" onClick={() => updateField('type', 3)}>线下</Radio>

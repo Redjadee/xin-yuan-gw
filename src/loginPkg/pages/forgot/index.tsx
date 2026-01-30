@@ -11,6 +11,15 @@ import { showMsg } from "@/global/utils/common"
 import './index.scss'
 import '@/global/style/form.scss'
 
+/**
+ * 忘记密码/人工申诉页面
+ *
+ * URL 参数说明：
+ * @param type - 页面类型
+ *   - '0': 忘记密码（通过验证码重置密码）
+ *   - '1': 人工申诉（从注册页跳转，申诉学号问题）
+ *   - '2': 人工申诉（更换手机号）
+ */
 export default function Forgot() {
   const [type, setType] = useState('')
   useLoad((options) => {

@@ -169,6 +169,14 @@ function ChatChild(val: conversationType) {
 }
 
 /* ----- */
+/**
+ * 聊天页面
+ *
+ * URL 参数说明：
+ * @param id - 对方的 ID（用户ID 或 组织ID）
+ * @param type - 聊天类型（'个人' 或 '组织'）
+ * @param title - 聊天对象的名称（用于显示标题）
+ */
 export default function Chat() {
   const [ from, setFrom ] = useState({ id: '', type: '', title: ''})
   const [ fromChanged, setFromChanged ] = useState(false)

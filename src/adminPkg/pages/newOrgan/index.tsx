@@ -214,7 +214,7 @@ export default function NewOrgan() {
     <View className="new-organ">
       {deletePop && <PopWindow closePop={closeDeletePop} type='删除组织' />}
       <View className="header">
-        <Image src={formData.avatar} className="cover" onClick={handleUpload} />
+        <Image src={formData.avatar} className="cover" mode="aspectFill" onClick={handleUpload} />
       </View>
       <Input value={formData.name} onInput={e => updateField('name', e.detail.value)} placeholder="请输入组织名称" placeholderClass='inputPH' className='input' />
       <Input

@@ -188,7 +188,7 @@ function InforItem({ label, val, K, openPop, handleSetInfor }: inforItemType) {
       <Text className="label">{label}</Text>
       <View className="right-box" onClick={handleClick}>
         {label === '头像' ?
-          <Image className="avatar" src={finalVal} /> :
+          <Image className="avatar" src={finalVal} mode="aspectFill" /> :
           <Text>{finalVal}</Text>}
         { !(label === '头像' || label === '姓名' || label === '性别' || label === '专业') ? 
         <Image className="arrow" src={`${myImgBase}/itemArrow.png`} /> :

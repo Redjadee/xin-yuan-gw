@@ -15,6 +15,18 @@ import { orgActivities } from '@/global/utils/api/activitycenter/org'
 import './index.scss'
 import AdminButton from '@/adminPkg/components/AdminButton'
 
+/**
+ * 活动列表页面
+ *
+ * URL 参数说明：
+ * @param type - 活动列表类型
+ *   - '0': 全部活动
+ *   - '1': 我的活动（我参与的）
+ *   - '2': 管理端活动列表
+ *   - '3': 他人的参与活动
+ *   - '4': 组织的活动
+ * @param id - 用户ID 或 组织ID（type 为 '3' 或 '4' 时需要）
+ */
 export default function Allview() {
   const [ type, setType ] = useState<'1' | '0' | '' | '2' | '3' | '4'>('') // 0-全部活动 1-我的活动 2-管理端 3-他人的参与活动 4-组织的活动
   const [ id, setId ] = useState('')

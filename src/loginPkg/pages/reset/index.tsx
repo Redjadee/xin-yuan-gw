@@ -10,6 +10,16 @@ import { sha1 } from "js-sha1"
 import './index.scss'
 import '@/global/style/form.scss'
 
+/**
+ * 重置密码/修改密码页面
+ *
+ * URL 参数说明：
+ * @param type - 页面类型
+ *   - '0': 忘记密码后重置（需要 token 和 code 参数）
+ *   - '1': 修改密码（需要输入原密码）
+ * @param token - 重置密码的临时令牌（type 为 '0' 时需要）
+ * @param code - 验证码（type 为 '0' 时需要）
+ */
 export default function Reset() {
   const [ para, setPara ] = useState({
     type: '0',

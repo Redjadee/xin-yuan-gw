@@ -148,6 +148,7 @@ export const fileUpload = async (imagetype: imageType, sizeType: 'compressed'| '
       count: 1, // 默认9
       sizeType: [sizeType],
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      camera: 'back',
       success: async function (res) {
         try {
           const tempFilePath = res.tempFiles[0].tempFilePath;

@@ -27,6 +27,16 @@ type CategoryItem = {
   year?: string
 }
 
+/**
+ * 通讯录页面
+ *
+ * URL 参数说明：
+ * @param type - 通讯录类型
+ *   - '0': 校友通讯录（两层结构：分类列表 → 人员列表）
+ *   - '1': 组织通讯录（直接显示字母索引列表）
+ *   - 其他值: 他人加入的组织（直接显示字母索引列表）
+ * @param id - 组织/用户 ID（type 为 '1' 或其他时需要）
+ */
 export default function AlphabetList() {
   const [ type, setType ] = useState('')
   const [ id, setId ] = useState('')
@@ -39,8 +49,6 @@ export default function AlphabetList() {
   const [ currentLevel, setCurrentLevel ] = useState(0) // 0=分类列表, 1=人员列表
   const [ selectedCategory, setSelectedCategory ] = useState<CategoryItem | null>(null)
   const [ enrollmentYears, setEnrollmentYears ] = useState<string[]>([])
-  const [ containerWidth, setContainerWidth ] = useState(375)
-  const containerRef = useRef<any>(null)
 
   //contact
   const [alpha, setAlpha] = useState<string>('');
@@ -67,18 +75,6 @@ export default function AlphabetList() {
       console.error('获取系统信息失败', e);
     }
   }, []);
-
-  useEffect(() => {
-    if(containerRef.current) {
-      const query = Taro.createSelectorQuery()
-      query.select('.contact-levels').boundingClientRect()
-      query.exec((res) => {
-        if(res && res[0]) {
-          setContainerWidth(res[0].width / 2)
-        }
-      })
-    }
-  }, [])
 
   const handlerAlphaTap = (e: any) => {
     const { ap } = e.currentTarget.dataset;
@@ -291,7 +287,7 @@ export default function AlphabetList() {
       {/* 内容区域 */}
       {type === '0' ? (
         // 校友通讯录：两层结构
-        <View className='contact-levels' ref={containerRef} style={{ transform: `translateX(-${currentLevel * containerWidth}px)` }}>
+        <View className='contact-levels' style={{ transform: `translateX(-${currentLevel * 50}%)` }}>
           {/* 第一层：分类列表 */}
           <View className='contact-level'>
             {renderCategoryLevel()}

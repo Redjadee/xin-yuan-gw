@@ -17,9 +17,17 @@ import { homeImgBase } from '@/global/assets/images/imgBases'
 import './index.scss'
 import '@/global/style/form.scss'
 
+/**
+ * 注册/身份认证页面
+ *
+ * URL 参数说明：
+ * @param type - 页面类型
+ *   - '0': 注册（新用户注册）
+ *   - '1': 身份认证（已登录用户完善信息）
+ */
 export default function Register() {
   const [type, setType] = useState('')
-  
+
   useLoad((options) => {
     setType(options.type)
   })
