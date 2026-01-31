@@ -2,7 +2,7 @@ import { View, Text, Input, RadioGroup, Radio, Button, PageContainer } from '@ta
 import { useState, useMemo, useRef } from 'react'
 import { alumniAdd, alumniImport, type newAlumni } from '@/global/utils/api/usercenter/admin/alumni'
 import { showMsg } from '@/global/utils/common'
-import { fileUpload } from '@/global/utils/api/usercenter/fileupload'
+import Taro from '@tarojs/taro'
 import { DatetimePicker, Picker } from '@taroify/core'
 import '@taroify/core/datetime-picker/style/index'
 import '@taroify/core/picker/style/index'
@@ -60,9 +60,7 @@ function PopUp({ type, updateField, handleBack, pop, isCustomMajor }: propsType)
       )
     } else {
       const departmentOptions = [
-        { label: '计算机学院', value: '计算机学院' },
-        { label: '数学学院', value: '数学学院' },
-        { label: '物理学院', value: '物理学院' }
+        { label: '信息科学与技术学院（网络空间安全学院）', value: '信息科学与技术学院（网络空间安全学院）' },
       ]
       const majorOptions = [
         { label: '计算机科学与技术', value: '计算机科学与技术' },
@@ -113,25 +111,46 @@ export default function Import() {
   const updateField = (field: keyof newAlumni, value: string | number) => setFormData(prev => ({ ...prev, [field]: value }))
   
   // 处理文件导入
-  const handleFileImport = async () => {
-    try {
-      showMsg('请选择文件...')
-      // 使用现有的fileUpload API上传文件，获取URL
-      const fileUrl = await fileUpload('avatar', 'original')
+  const handleFileImport = () => {
+    Taro.chooseMessageFile({
+      count: 1,
+      type: 'file',
+      extension: ['xlsx', 'xls', 'csv'],
+      success: async (res) => {
+        const file = res.tempFiles[0]
+        const { path, size, name } = file
 
-      showMsg('正在导入校友数据...')
-      // 调用校友导入API
-      const importResult = await alumniImport(fileUrl)
+        // 验证文件大小 (10MB)
+        const MAX_SIZE = 10 * 1024 * 1024
+        if (size > MAX_SIZE) {
+          showMsg('文件大小不能超过10MB')
+          return
+        }
 
-      if (importResult?.data) {
-        showMsg(importResult.data.message || '导入成功')
-      } else {
-        if (importResult) showMsg(importResult.msg || '导入失败')
+        // 验证文件扩展名
+        const ext = name.substring(name.lastIndexOf('.')).toLowerCase()
+        if (!['.xlsx', '.xls', '.csv'].includes(ext)) {
+          showMsg('仅支持xlsx、xls、csv格式')
+          return
+        }
+
+        try {
+          showMsg('正在导入校友数据...')
+          const importResult = await alumniImport(path)
+          if (importResult?.data) {
+            showMsg(importResult.data.message)
+          } else {
+            if (importResult) showMsg(importResult.msg)
+          }
+        } catch (error) {
+          console.log('导入失败：', error)
+          showMsg('导入失败，请重试')
+        }
+      },
+      fail: () => {
+        showMsg('选择文件失败')
       }
-    } catch (error) {
-      console.log('文件导入失败：', error)
-      showMsg('导入失败，请重试')
-    }
+    })
   }
 
   // 处理表单提交
